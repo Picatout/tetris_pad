@@ -1,0 +1,59 @@
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 219 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 225 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 235 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 237 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 238 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 249 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 251 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 252 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 268 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 283 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 285 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 292 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 75 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 313 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 314 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 316 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 318 : Using default destination of 1 (file).
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 322 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 326 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 330 : Using default destination of 1 (file).
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 333 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 338 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 359 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 377 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 379 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 382 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 383 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 384 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 386 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 408 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 409 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 413 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 434 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 182 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 176 : Using default destination of 1 (file).
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 182 : Using default destination of 1 (file).
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 484 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 485 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 487 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 492 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 493 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 494 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 496 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 497 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[305] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 499 : Using default destination of 1 (file).
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 499 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 502 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 503 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 504 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 506 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 508 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 509 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 511 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 513 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 515 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 516 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 518 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 519 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm 522 : Register in operand not in bank 0.  Ensure that bank bits are correct.

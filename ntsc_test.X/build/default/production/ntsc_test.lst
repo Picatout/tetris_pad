@@ -1,0 +1,1873 @@
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001     include p12f1572.inc
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ; Build date : Sep 13 2016
+                      00005 ;  MPASM PIC12F1572 processor include
+                      00006 ; 
+                      00007 ;  (c) Copyright 1999-2016 Microchip Technology, All rights reserved
+                      00008 ;==========================================================================
+                      00009 
+                      01601         LIST
+                      00002     
+                      00003     radix dec
+                      00004     
+8007   3FE7           00005     __config _CONFIG1, _FOSC_ECH&_WDTE_OFF
+8008   1EFF           00006     __config _CONFIG2, _PLLEN_OFF&_LVP_OFF 
+                      00007 
+  01312D00            00008 FOSC equ 20000000 ; 20Mhz
+  00000032            00009 TC equ 50 ; nanosecondes 
+  004C4B40            00010 FCY equ FOSC/4    ; 5Mhz
+  000000C8            00011 TCY equ 200 ; nanoseconds
+                      00012 
+                      00013 
+  00000030            00014 XSIZE equ 48  ; horizontal pixels
+  00000020            00015 YSIZE equ 32  ; vertical pixels
+  00000006            00016 BPL equ XSIZE/8 ; bytes per line 
+  000000C0            00017 BUFFER_SIZE equ  YSIZE*BPL  ; video buffer size
+  00002030            00018 VIDEO_BUFFER equ 0x2000+(3*80-BUFFER_SIZE) ; buffer address
+  00000028            00019 VERT_DLY equ 40
+  0000003C            00020 FIRST_VIDEO equ VERT_DLY+20  ; first video output line
+  000000BB            00021 LAST_VIDEO equ FIRST_VIDEO+4*YSIZE-1  ; last video output line
+  0000019A            00022 PIXEL_TXREG equ TXREG
+  00000011            00023 TX_PIR equ PIR1
+  00000050            00024 HORZ_DLY equ 16*5  ; there is 5 TCY/µsec
+                      00025  
+  00000001            00026 VIDEO_OUT equ RA1
+  0000010C            00027 VIDEO_LAT equ LATA
+  00000002            00028 SYNC_OUT equ RA2 
+  00000DB3            00029 SYNC_PWMDCL equ PWM3DCL ; duty cycle low byte
+  00000DB4            00030 SYNC_PWMDCH equ PWM3DCH ; high byte    
+  00000DB5            00031 SYNC_PWMPRL equ PWM3PRL ; pwm period low byte
+  00000DB6            00032 SYNC_PWMPRH equ PWM3PRH ; high byte 
+  00000DB1            00033 SYNC_PWMPH equ PWM3PH ; pwm phase
+  00000DB7            00034 SYNC_PWMOF equ PWM3OF ; pwm offset
+  00000DB9            00035 SYNC_PWMTMR equ PWM3TMR ; timer
+  00000DBB            00036 SYNC_PWMCON equ PWM3CON ; control SFR
+  00000DBE            00037 SYNC_PWMCLKCON equ PWM3CLKCON  ; clock control SFR
+  00000DC0            00038 SYNC_PWMOFCON equ PWM3OFCON ; offset control SFR
+  00000DBF            00039 SYNC_PWMLDCON equ PWM3LDCON ; load control SFR
+  00000006            00040 SYNC_IE equ PWM3IE  ; interrupt enable bit
+  00000006            00041 SYNC_IF equ PWM3IF  ; interrupt flag bit
+  00000093            00042 SYNC_PIE equ PIE3 ; interrupt enable SFR
+  00000013            00043 SYNC_PIR equ PIR3 ; interrupt flag SFR 
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+  00000DBC            00044 SYNC_PWMINTE equ PWM3INTE
+  00000DBD            00045 SYNC_PWMINTF equ PWM3INTF
+                      00046  
+  000004F5            00047 HORZ_PERIOD equ FOSC/15748-1 ; 15748 hertz
+  0000005E            00048 HORZ_PULSE equ 4700/TC ; 4.7µsec 
+  00000106            00049 LAST_LINE equ 262
+  00000000            00050 F_VSYNC equ 0
+  00000001            00051 F_EVEN equ 1
+  00000002            00052 F_MUTEX equ 2
+                      00053  
+                      00054 disable_video macro
+                      00055     bsf flags, F_MUTEX
+                      00056     endm
+                      00057     
+                      00058 enable_video macro
+                      00059     bcf flags, F_MUTEX
+                      00060     endm
+                      00061     
+                      00062 tcyDelay macro n ; delay in TCY cycles  5TCY per µsec.  
+                      00063     variable r=n%5
+                      00064     variable q=n/5
+                      00065     while r>1
+                      00066     bra $+1
+                      00067 r-=2
+                      00068     endw
+                      00069     if r==1
+                      00070     nop
+                      00071     endif
+                      00072     if q
+                      00073     movlw q
+                      00074     bra $+1
+                      00075     decfsz WREG
+                      00076     bra $-2
+                      00077     endif
+                      00078     endm
+                      00079 
+                      00080 case macro n, label
+                      00081     xorlw n
+                      00082     skpnz
+                      00083     bra label
+                      00084     xorlw n
+                      00085     endm
+                      00086     
+                      00087 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00088 ; software stack for arguments passing
+                      00089 ; SP is Stack Pointer
+                      00090 ; T is Top Of Stack
+                      00091 #define SP FSR1
+                      00092 #define T INDF1
+                      00093 
+                      00094  
+  0000001F            00095 S0 equ 0x1F ; stack base address - 1
+                      00096 
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00097 pstack_init macro ; initialise stack pointer
+                      00098     clrf FSR1H
+                      00099     movlw S0
+                      00100     movwf FSR1L
+                      00101     endm
+                      00102     
+                      00103 push macro   ; ( -- n ) push WREG on stack
+                      00104     movwi ++SP
+                      00105     endm
+                      00106 
+                      00107 pop macro   ; ( n -- )  pop T in WREG
+                      00108     moviw SP--
+                      00109     endm
+                      00110     
+                      00111 drop macro  ; ( n -- ) ; discard T
+                      00112    addfsr SP,-1
+                      00113    endm
+                      00114 
+                      00115 drop_n macro n  ; discard n elements  n<32
+                      00116     addfsr SP,-n
+                      00117     endm
+                      00118     
+                      00119 lit macro  n ; ( -- n ) ; push a literal
+                      00120    movlw n
+                      00121    movwi ++SP 
+                      00122    endm
+                      00123 
+                      00124 dup macro ; ( n -- n n ) duplicate T
+                      00125     movfw T
+                      00126     movwi ++SP
+                      00127     endm
+                      00128     
+                      00129 over macro ; ( n1 n2 -- n1 n2 n1 )
+                      00130     moviw -1[SP]
+                      00131     push
+                      00132     endm
+                      00133     
+                      00134 swap macro ; exchange WREG and T
+                      00135     xorwf T
+                      00136     xorwf T,W
+                      00137     xorwf T
+                      00138     endm
+                      00139  
+                      00140 store macro var ; ( n -- ) pop T in variable
+                      00141    moviw SP--
+                      00142    movwf var
+                      00143    endm
+                      00144    
+                      00145 fetch macro var  ; ( -- n ) push var on stack
+                      00146    movfw var
+                      00147    movwi ++SP
+                      00148    endm
+                      00149 
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00150 pick macro n  ; pick nth element of stack to WREG
+                      00151     moviw -n[SP]
+                      00152     endm
+                      00153 
+                      00154 insert macro n ;  insert WREG at position n on stack
+                      00155    movwi -n[SP]
+                      00156    endm
+                      00157    
+                      00158 movtw macro ; ( n -- n ) overwrite WREG with T
+                      00159    movfw T
+                      00160    endm
+                      00161    
+                      00162 movwt macro ; ( n1 -- n2 ) overwrite T with WREG
+                      00163     movwf T
+                      00164     endm
+                      00165     
+                      00166 add macro  ; add WREG to T result on T
+                      00167     addwf T
+                      00168    endm
+                      00169    
+                      00170 sub macro  ; substract WREG from T result on T
+                      00171    subwf T
+                      00172    endm
+                      00173 
+                      00174 inc_n macro n ; increament nth element of stack
+                      00175     moviw -n[SP]
+                      00176     incf WREG
+                      00177     movwi -n[SP]
+                      00178     endm
+                      00179     
+                      00180 dec_n macro n ; decreament nth element of stack
+                      00181     moviw -n[SP]
+                      00182     decf WREG
+                      00183     movwi -n[SP]
+                      00184     endm
+                      00185     
+                      00186 zbranch macro label ; branch if T == 0
+                      00187     pop
+                      00188     skpnz
+                      00189     bra label
+                      00190     endm
+                      00191     
+                      00192 tbranch macro label ; branch if T != 0
+                      00193     pop
+                      00194     skpz
+                      00195     bra label
+                      00196     endm
+                      00197     
+                      00198 reserve macro n ; reserve n bytes on stack for local variables
+                      00199     addfsr SP, n 
+                      00200     endm
+                      00201     
+                      00202 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00203     
+                      00204     udata_shr
+                      00205 ;scan lines counter    
+0000                  00206 lcountL res 1
+0001                  00207 lcountH res 1
+                      00208 ; boolean flags 
+0002                  00209 flags res 1
+0003                  00210 rcount res 1
+0004                  00211 temp res 1
+0005                  00212 accaL res 1
+0006                  00213 accaH res 1
+                      00214  
+                      00215 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00216  
+                      00217     org 0
+0000   0023           00218     banksel ANSELA
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0001   018C           00219     clrf ANSELA
+0002   2???           00220     goto init
+                      00221     
+                      00222     org 4
+0004                  00223 isr:
+0004   003B           00224     banksel SYNC_PWMINTF
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0005   103D           00225     bcf SYNC_PWMINTF,PRIF
+0006   1C00           00226     btfss flags, F_VSYNC
+0007   3???           00227     bra isr01
+0008   08??           00228     movfw lcountL
+0009   3A03           00229     xorlw 3
+000A   1D03           00230     skpz
+000B   3???           00231     bra isr_exit
+000C                  00232 vsync_end:
+000C   003B           00233     banksel SYNC_PWMDCL
+000D   305E           00234     movlw HORZ_PULSE&0xff
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+000E   00B3           00235     movwf SYNC_PWMDCL
+000F   3000           00236     movlw HORZ_PULSE>>8
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0010   00B4           00237     movwf SYNC_PWMDCH
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0011   17BF           00238     bsf SYNC_PWMLDCON,7
+0012   1000           00239     bcf flags, F_VSYNC
+0013   3???           00240     bra isr_exit
+0014                  00241 isr01:    
+0014   08??           00242     movfw lcountL
+0015   06??           00243     xorwf lcountH,W
+0016   1D03           00244     skpz
+0017   3???           00245     bra isr02
+0018                  00246 vsync_start:
+0018   003B           00247     banksel SYNC_PWMDCL
+0019   3097           00248     movlw (HORZ_PERIOD-HORZ_PULSE)&0xff
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001A   00B3           00249     movwf SYNC_PWMDCL
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+001B   3004           00250     movlw (HORZ_PERIOD-HORZ_PULSE)>>8
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001C   00B4           00251     movwf SYNC_PWMDCH
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001D   17BF           00252     bsf SYNC_PWMLDCON,7
+001E   1400           00253     bsf flags, F_VSYNC
+001F   3???           00254     bra isr_exit
+0020                  00255 isr02:
+0020   1C00           00256     btfss lcountH,0
+0021   3???           00257     bra lt_256
+0022                  00258 gt_255: ; lcount>255
+0022   3006           00259     movlw LAST_LINE&0xff
+0023   1C80           00260     btfss flags,F_EVEN
+0024   3E01           00261     addlw 1
+0025   06??           00262     xorwf lcountL,W
+0026   1D03           00263     skpz
+0027   3???           00264     bra isr_exit
+0028   01??           00265     clrf lcountL
+0029   01??           00266     clrf lcountH
+002A   3002           00267     movlw 1<<F_EVEN
+Message[305]: Using default destination of 1 (file).
+002B   06??           00268     xorwf flags
+002C   3???           00269     bra isr_exit
+002D                  00270 lt_256:
+002D   1900           00271     btfsc flags, F_MUTEX
+002E   3???           00272     bra isr_exit
+002F   08??           00273     movfw lcountL
+0030   3C3B           00274     sublw FIRST_VIDEO-1
+0031   1803           00275     skpnc
+0032   3???           00276     bra isr_exit
+0033   08??           00277     movfw lcountL
+0034   3CBB           00278     sublw LAST_VIDEO
+0035   1C03           00279     skpc
+0036   3???           00280     bra isr_exit
+0037   2???           00281     call video_serialize
+0038                  00282 isr_exit:
+Message[305]: Using default destination of 1 (file).
+0038   0A??           00283     incf lcountL
+0039   1903           00284     skpnz
+Message[305]: Using default destination of 1 (file).
+003A   0A??           00285     incf lcountH
+003B   0009           00286     retfie
+                      00287 
+                      00288 ; WREG*6  because BPL=6
+                      00289 ; WREG*6=WREG*4+WREG*2    
+003C                  00290 mult6: 
+003C   00??           00291     movwf temp
+Message[305]: Using default destination of 1 (file).
+003D   35??           00292     lslf temp
+003E   35??           00293     lslf temp,W
+003F   07??           00294     addwf temp,W
+0040   0008           00295     return
+                      00296     
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00297 ; serialise video pixels to scan line
+                      00298 ; due to timing constrain use specialized 
+                      00299 ; division and multiplication    
+0041                  00300 video_serialize: 
+                      00301 ;    movfw FSR0L
+                      00302 ;    push
+                      00303 ;    movfw FSR0H
+                      00304 ;    push
+                      00305 ;    lit 0 ; ( x )
+                      00306     tcyDelay HORZ_DLY
+  0000                    M     variable r=HORZ_DLY%5
+  0010                    M     variable q=HORZ_DLY/5
+                          M     while r>1
+                          M     bra $+1
+                          M r-=2
+                          M     endw
+                          M     if r==1
+                          M     nop
+                          M     endif
+                          M     if q
+0041   3010               M     movlw q
+0042   3???               M     bra $+1
+Message[305]: Using default destination of 1 (file).
+0043   0B89               M     decfsz WREG
+0044   3???               M     bra $-2
+                          M     endif
+0045   3030           00307     movlw VIDEO_BUFFER&0xff
+0046   0084           00308     movwf FSR0L
+0047   3020           00309     movlw VIDEO_BUFFER>>8
+0048   0085           00310     movwf FSR0H
+0049   303C           00311     movlw FIRST_VIDEO
+004A   02??           00312     subwf lcountL,W
+Message[305]: Using default destination of 1 (file).
+004B   3689           00313     lsrf WREG
+Message[305]: Using default destination of 1 (file).
+004C   3689           00314     lsrf WREG
+004D   2???           00315     call mult6
+Message[305]: Using default destination of 1 (file).
+004E   0784           00316     addwf FSR0L
+004F   0103           00317     clrw
+Message[305]: Using default destination of 1 (file).
+0050   3D85           00318     addwfc FSR0H
+0051   3006           00319     movlw XSIZE/8
+0052   00??           00320     movwf rcount
+0053   0023           00321     banksel RCSTA
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0054   179D           00322     bsf RCSTA,SPEN
+0055                  00323 pixels_loop:    
+0055   0012           00324     moviw FSR0++
+0056   0023           00325     banksel PIXEL_TXREG
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0057   009A           00326     movwf PIXEL_TXREG
+0058   0020           00327     banksel TX_PIR
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0059   1E11           00328     btfss TX_PIR,TXIF
+005A   3???           00329     bra $-1
+Message[305]: Using default destination of 1 (file).
+005B   0B??           00330     decfsz rcount
+005C   3???           00331     bra pixels_loop
+005D   0023           00332     banksel PIXEL_TXREG
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+005E   019A           00333     clrf PIXEL_TXREG
+005F   0020           00334     banksel TX_PIR
+0060   1E11           00335     btfss TX_PIR,TXIF
+0061   3???           00336     bra $-1
+0062   0023           00337     banksel RCSTA
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0063   139D           00338     bcf RCSTA, SPEN
+                      00339 ;    pop
+                      00340 ;    movwf FSR0H
+                      00341 ;    pop
+                      00342 ;    movwf FSR0L
+0064   0008           00343     return
+                      00344 
+                      00345 ; fill_buffer
+                      00346 ; fill screen buffer with WREG value    
+0065                  00347 fill_buffer: 
+0065   00??           00348     movwf temp
+                      00349     disable_video
+0066   1500               M     bsf flags, F_MUTEX
+0067   3020           00350     movlw VIDEO_BUFFER>>8
+0068   0085           00351     movwf FSR0H
+0069   3030           00352     movlw VIDEO_BUFFER&0xff
+006A   0084           00353     movwf FSR0L
+006B   30C0           00354     movlw BUFFER_SIZE
+006C   00??           00355     movwf rcount
+006D   08??           00356     movfw temp
+006E                  00357 fill_loop:    
+006E   001A           00358     movwi FSR0++
+Message[305]: Using default destination of 1 (file).
+006F   0B??           00359     decfsz rcount
+0070   3???           00360     bra fill_loop
+                      00361     enable_video
+0071   1100               M     bcf flags, F_MUTEX
+0072   0008           00362     return
+                      00363 
+                      00364 ;set video pointer at 
+                      00365 ; byte that contain pixel {x,y}
+                      00366 ; output:
+                      00367 ;   WREG = pixel offset, 0 left, 7 right  
+                      00368 ;   Z=0 if offset==0    
+0073                  00369 set_video_ptr:  ; ( x y -- )
+0073   3020           00370     movlw VIDEO_BUFFER>>8
+0074   0085           00371     movwf FSR0H
+0075   3030           00372     movlw VIDEO_BUFFER&0xff
+0076   0084           00373     movwf FSR0L
+                      00374     ; buffer_addr+y*BPL
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00375     pop         ; ( x y -- x )
+0077   0017               M     moviw SP--
+0078   2???           00376     call mult6
+Message[305]: Using default destination of 1 (file).
+0079   0784           00377     addwf FSR0L
+007A   0103           00378     clrw
+Message[305]: Using default destination of 1 (file).
+007B   3D85           00379     addwfc FSR0H
+                      00380     ; buffer_addr+x/8
+007C   3601           00381     lsrf T,W   
+Message[305]: Using default destination of 1 (file).
+007D   3689           00382     lsrf WREG
+Message[305]: Using default destination of 1 (file).
+007E   3689           00383     lsrf WREG
+Message[305]: Using default destination of 1 (file).
+007F   0784           00384     addwf FSR0L
+0080   0103           00385     clrw
+Message[305]: Using default destination of 1 (file).
+0081   3D85           00386     addwfc FSR0H
+                      00387     pop            
+0082   0017               M     moviw SP--
+0083   3907           00388     andlw 7
+0084   0008           00389     return
+                      00390 
+                      00391     
+0085                  00392 xor_pixel: ; ( x y -- ) inverse le pixel
+                      00393     disable_video
+0085   1500               M     bsf flags, F_MUTEX
+                      00394     pick 1
+0086   3F7F               M     moviw -1[SP]
+                      00395     push
+0087   001C               M     movwi ++SP
+                      00396     pick 1
+0088   3F7F               M     moviw -1[SP]
+                      00397     push        ; x y x y
+0089   001C               M     movwi ++SP
+008A   0804           00398     movfw FSR0L
+                      00399     insert 3
+008B   3FFD               M    movwi -3[SP]
+008C   0805           00400     movfw FSR0H
+                      00401     insert 2    ; FSR0L FSR0H x y 
+008D   3FFE               M    movwi -2[SP]
+008E   2???           00402     call set_video_ptr  ;FSR0L FSR0H 
+                      00403     push        ; FSR0L FSR0H bit
+008F   001C               M     movwi ++SP
+0090   3001           00404     movlw 0x1
+0091   1903           00405     skpnz
+0092   3???           00406     bra xorp01
+0093                  00407 xorp00:
+Message[305]: Using default destination of 1 (file).
+0093   3589           00408     lslf WREG
+Message[305]: Using default destination of 1 (file).
+0094   0B81           00409     decfsz T
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0095   3???           00410     bra xorp00
+0096                  00411 xorp01:
+                      00412     drop        ; FSR0L FSR0H
+0096   317F               M    addfsr SP,-1
+Message[305]: Using default destination of 1 (file).
+0097   0680           00413     xorwf INDF0 
+                      00414     pop         ; FSR0L
+0098   0017               M     moviw SP--
+0099   0085           00415     movwf FSR0H
+                      00416     pop         ; vide
+009A   0017               M     moviw SP--
+009B   0084           00417     movwf FSR0L
+                      00418     enable_video
+009C   1100               M     bcf flags, F_MUTEX
+009D   0008           00419     return
+                      00420 
+                      00421 ; draw horizontal line ( length  y x -- )
+                      00422 ; inputs:
+                      00423 ;   length of line
+                      00424 ;   {x,y} left,top coordinates       
+                      00425 #define xcoord accaL    
+009E                  00426 hline:
+                      00427     pick 2
+009E   3F7E               M     moviw -2[SP]
+                      00428     push
+009F   001C               M     movwi ++SP
+                      00429     zbranch hline_done
+                          M     pop
+00A0   0017               M     moviw SP--
+00A1   1903               M     skpnz
+00A2   3???               M     bra hline_done
+                      00430     dup
+00A3   0801               M     movfw T
+00A4   001C               M     movwi ++SP
+                      00431     pick 2
+00A5   3F7E               M     moviw -2[SP]
+                      00432     push
+00A6   001C               M     movwi ++SP
+00A7   2???           00433     call xor_pixel
+Message[305]: Using default destination of 1 (file).
+00A8   0A81           00434     incf T
+                      00435     dec_n 2
+00A9   3F7E               M     moviw -2[SP]
+Message[305]: Using default destination of 1 (file).
+00AA   0389               M     decf WREG
+00AB   3FFE               M     movwi -2[SP]
+00AC   3???           00436     bra hline
+00AD                  00437 hline_done:    
+                      00438     drop_n 3
+00AD   317D               M     addfsr SP,-3
+00AE   0008           00439     return
+                      00440     
+                      00441 ; draw box ( height width top left )
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00AF                  00442 box:
+                      00443     pick 2
+00AF   3F7E               M     moviw -2[SP]
+                      00444     push
+00B0   001C               M     movwi ++SP
+                      00445     pick 2
+00B1   3F7E               M     moviw -2[SP]
+                      00446     push
+00B2   001C               M     movwi ++SP
+                      00447     pick 2
+00B3   3F7E               M     moviw -2[SP]
+                      00448     push
+00B4   001C               M     movwi ++SP
+00B5   2???           00449     call hline
+                      00450     inc_n 1
+00B6   3F7F               M     moviw -1[SP]
+Message[305]: Using default destination of 1 (file).
+00B7   0A89               M     incf WREG
+00B8   3FFF               M     movwi -1[SP]
+                      00451     dec_n 3 ; use height argument as line counter
+00B9   3F7D               M     moviw -3[SP]
+Message[305]: Using default destination of 1 (file).
+00BA   0389               M     decf WREG
+00BB   3FFD               M     movwi -3[SP]
+00BC   1D03           00452     skpz
+00BD   3???           00453     bra box
+                      00454     drop_n 4 ; clean stack frame
+00BE   317C               M     addfsr SP,-4
+00BF   0008           00455     return
+                      00456     
+                      00457 
+  0000000A            00458 WELL_WIDTH equ 10
+  00000016            00459 WELL_DEPTH equ 22 
+00C0                  00460 game_init:
+                      00461     lit 0   ; lit 0 to clear screen black
+00C0   3000               M    movlw 0
+00C1   001C               M    movwi ++SP 
+00C2   2???           00462     call fill_buffer ; clear screen white
+                      00463     lit WELL_DEPTH+1
+00C3   3017               M    movlw WELL_DEPTH+1
+00C4   001C               M    movwi ++SP 
+                      00464     lit WELL_WIDTH+2
+00C5   300C               M    movlw WELL_WIDTH+2
+00C6   001C               M    movwi ++SP 
+                      00465     lit 0
+00C7   3000               M    movlw 0
+00C8   001C               M    movwi ++SP 
+                      00466     lit 0
+00C9   3000               M    movlw 0
+00CA   001C               M    movwi ++SP 
+00CB   2???           00467     call box
+                      00468     ; draw game well
+                      00469     lit WELL_DEPTH
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00CC   3016               M    movlw WELL_DEPTH
+00CD   001C               M    movwi ++SP 
+                      00470     lit WELL_WIDTH
+00CE   300A               M    movlw WELL_WIDTH
+00CF   001C               M    movwi ++SP 
+                      00471     lit 0
+00D0   3000               M    movlw 0
+00D1   001C               M    movwi ++SP 
+                      00472     lit 1
+00D2   3001               M    movlw 1
+00D3   001C               M    movwi ++SP 
+00D4   2???           00473     call box
+                      00474     ; initialise variables
+00D5   0008           00475     return
+                      00476     
+00D6                  00477 tetris:
+                      00478     
+00D6   0008           00479     return
+                      00480     
+00D7                  00481 init:
+                      00482     pstack_init
+00D7   0187               M     clrf FSR1H
+00D8   301F               M     movlw S0
+00D9   0086               M     movwf FSR1L
+00DA   0021           00483     banksel TRISA
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00DB   110C           00484     bcf TRISA, SYNC_OUT
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00DC   108C           00485     bcf TRISA, VIDEO_OUT
+00DD   0022           00486     banksel VIDEO_LAT
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00DE   108C           00487     bcf VIDEO_LAT,VIDEO_OUT
+                      00488 ;configure EUSART in sychronsous mode
+                      00489 ;to use as pixel serializer
+00DF   0023           00490     banksel SPBRG
+00E0   3001           00491     movlw 1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00E1   009B           00492     movwf SPBRGL
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00E2   019C           00493     clrf SPBRGH
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00E3   019A           00494     clrf TXREG
+00E4   30B0           00495     movlw (1<<SYNC)|(1<<CSRC)|(1<<TXEN)
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00E5   009E           00496     movwf TXSTA
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00E6   179D           00497     bsf RCSTA, SPEN
+00E7   30CF           00498     movlw ~((1<<CREN)|(1<<SREN))
+Message[305]: Using default destination of 1 (file).
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00E8   059D           00499     andwf RCSTA
+                      00500 ; configure pwm video sync for horizontal period
+00E9   003B           00501     banksel SYNC_PWMDCH
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00EA   01B1           00502     clrf SYNC_PWMPH
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00EB   01B2           00503     clrf SYNC_PWMPH+1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00EC   01BF           00504     clrf SYNC_PWMLDCON
+00ED   30F5           00505     movlw HORZ_PERIOD&0XFF
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00EE   00B5           00506     movwf SYNC_PWMPRL
+00EF   3004           00507     movlw HORZ_PERIOD>>8
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00F0   00B6           00508     movwf SYNC_PWMPRH
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00F1   01BE           00509     clrf SYNC_PWMCLKCON
+00F2   30D0           00510     movlw (3<<OE)|(1<<POL)
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00F3   00BB           00511     movwf SYNC_PWMCON
+00F4   305E           00512     movlw HORZ_PULSE&0xff
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00F5   00B3           00513     movwf SYNC_PWMDCL
+00F6   3000           00514     movlw HORZ_PULSE>>8
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00F7   00B4           00515     movwf SYNC_PWMDCH
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00F8   17BF           00516     bsf SYNC_PWMLDCON,7
+                      00517    ;enable video interrupt on period match
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00F9   103D           00518     bcf SYNC_PWMINTF,PRIF
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00FA   143C           00519     bsf SYNC_PWMINTE,PRIE
+                      00520     ; enable peripheral interrupt
+00FB   0021           00521     banksel SYNC_PIE
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+00FC   1713           00522     bsf SYNC_PIE,SYNC_IE
+                      00523     ;enable interrupts
+00FD   30C0           00524     movlw (1<<GIE)|(1<<PEIE)
+00FE   008B           00525     movwf INTCON
+00FF   01??           00526     clrf lcountL
+0100   01??           00527     clrf lcountH
+0101   01??           00528     clrf flags
+0102                  00529 main:
+0102   2???           00530     call game_init
+0103   2???           00531     call tetris
+0104   3???           00532     bra $
+0105   3???           00533     bra main
+                      00534     
+3FE7 1EFF             00535     end
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 14
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ABDEN                             00000000
+ABDOVF                            00000007
+ADCON0                            0000009D
+ADCON1                            0000009E
+ADCON2                            0000009F
+ADCS0                             00000004
+ADCS1                             00000005
+ADCS2                             00000006
+ADDEN                             00000003
+ADFM                              00000007
+ADFVR0                            00000000
+ADFVR1                            00000001
+ADGO                              00000001
+ADIE                              00000006
+ADIF                              00000006
+ADON                              00000000
+ADPREF0                           00000000
+ADPREF1                           00000001
+ADRES                             0000009B
+ADRESH                            0000009C
+ADRESL                            0000009B
+ANSA0                             00000000
+ANSA1                             00000001
+ANSA2                             00000002
+ANSA4                             00000004
+ANSELA                            0000018C
+APFCON                            0000011D
+APFCON0                           0000011D
+BAUDCON                           0000019F
+BORCON                            00000116
+BORFS                             00000006
+BORRDY                            00000000
+BPL                               00000006
+BRG16                             00000003
+BRGH                              00000002
+BSR                               00000008
+BSR0                              00000000
+BSR1                              00000001
+BSR2                              00000002
+BSR3                              00000003
+BSR4                              00000004
+BSR_SHAD                          00000FE6
+BUFFER_SIZE                       000000C0
+C                                 00000000
+C1HYS                             00000001
+C1IE                              00000005
+C1IF                              00000005
+C1INTN                            00000006
+C1INTP                            00000007
+C1NCH0                            00000000
+C1NCH1                            00000001
+C1NCH2                            00000002
+C1OE                              00000005
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 15
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+C1ON                              00000007
+C1OUT                             00000006
+C1PCH0                            00000004
+C1PCH1                            00000005
+C1POL                             00000004
+C1SP                              00000002
+C1SYNC                            00000000
+CDAFVR0                           00000002
+CDAFVR1                           00000003
+CFGS                              00000006
+CHS0                              00000002
+CHS1                              00000003
+CHS2                              00000004
+CHS3                              00000005
+CHS4                              00000006
+CM1CON0                           00000111
+CM1CON1                           00000112
+CMOUT                             00000115
+CREN                              00000004
+CS0                               00000000
+CS1                               00000001
+CSRC                              00000007
+CWG1CON0                          00000693
+CWG1CON1                          00000694
+CWG1CON2                          00000695
+CWG1DBF                           00000692
+CWG1DBF0                          00000000
+CWG1DBF1                          00000001
+CWG1DBF2                          00000002
+CWG1DBF3                          00000003
+CWG1DBF4                          00000004
+CWG1DBF5                          00000005
+CWG1DBR                           00000691
+CWG1DBR0                          00000000
+CWG1DBR1                          00000001
+CWG1DBR2                          00000002
+CWG1DBR3                          00000003
+CWG1DBR4                          00000004
+CWG1DBR5                          00000005
+CWGASEL                           00000006
+CWGBSEL                           00000005
+C_SHAD                            00000000
+DACCON0                           00000118
+DACCON1                           00000119
+DACEN                             00000007
+DACLPS                            00000006
+DACOE                             00000005
+DACPSS0                           00000002
+DACPSS1                           00000003
+DACR0                             00000000
+DACR1                             00000001
+DACR2                             00000002
+DACR3                             00000003
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 16
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+DACR4                             00000004
+DC                                00000001
+DCIE                              00000001
+DCIF                              00000001
+DC_SHAD                           00000001
+EN                                00000007
+F                                 00000001
+FCY                               004C4B40
+FERR                              00000002
+FIRST_VIDEO                       0000003C
+FOSC                              01312D00
+FREE                              00000004
+FSR0                              00000004
+FSR0H                             00000005
+FSR0H_SHAD                        00000FE9
+FSR0L                             00000004
+FSR0L_SHAD                        00000FE8
+FSR0_SHAD                         00000FE8
+FSR1                              00000006
+FSR1H                             00000007
+FSR1H_SHAD                        00000FEB
+FSR1L                             00000006
+FSR1L_SHAD                        00000FEA
+FSR1_SHAD                         00000FEA
+FVRCON                            00000117
+FVREN                             00000007
+FVRRDY                            00000006
+F_EVEN                            00000001
+F_MUTEX                           00000002
+F_VSYNC                           00000000
+G1ARSEN                           00000006
+G1ASDLA0                          00000004
+G1ASDLA1                          00000005
+G1ASDLB0                          00000006
+G1ASDLB1                          00000007
+G1ASDSC1                          00000002
+G1ASDSFLT                         00000001
+G1ASE                             00000007
+G1CS0                             00000000
+G1EN                              00000007
+G1IS0                             00000000
+G1IS1                             00000001
+G1IS2                             00000002
+G1OEA                             00000005
+G1OEB                             00000006
+G1POLA                            00000003
+G1POLB                            00000004
+GIE                               00000007
+GO                                00000001
+GO_NOT_DONE                       00000001
+HFIOFL                            00000003
+HFIOFR                            00000004
+HFIOFS                            00000000
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 17
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+HORZ_DLY                          00000050
+HORZ_PERIOD                       000004F5
+HORZ_PULSE                        0000005E
+INDF0                             00000000
+INDF1                             00000001
+INLVLA                            0000038C
+INLVLA0                           00000000
+INLVLA1                           00000001
+INLVLA2                           00000002
+INLVLA3                           00000003
+INLVLA4                           00000004
+INLVLA5                           00000005
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IOCAF                             00000393
+IOCAF0                            00000000
+IOCAF1                            00000001
+IOCAF2                            00000002
+IOCAF3                            00000003
+IOCAF4                            00000004
+IOCAF5                            00000005
+IOCAN                             00000392
+IOCAN0                            00000000
+IOCAN1                            00000001
+IOCAN2                            00000002
+IOCAN3                            00000003
+IOCAN4                            00000004
+IOCAN5                            00000005
+IOCAP                             00000391
+IOCAP0                            00000000
+IOCAP1                            00000001
+IOCAP2                            00000002
+IOCAP3                            00000003
+IOCAP4                            00000004
+IOCAP5                            00000005
+IOCIE                             00000003
+IOCIF                             00000000
+IRCF0                             00000003
+IRCF1                             00000004
+IRCF2                             00000005
+IRCF3                             00000006
+LAST_LINE                         00000106
+LAST_VIDEO                        000000BB
+LATA                              0000010C
+LATA0                             00000000
+LATA1                             00000001
+LATA2                             00000002
+LATA4                             00000004
+LATA5                             00000005
+LDA                               00000007
+LDS0                              00000000
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 18
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+LDS1                              00000001
+LDT                               00000006
+LFIOFR                            00000001
+LWLO                              00000005
+MC1OUT                            00000000
+MFIOFR                            00000002
+MODE0                             00000002
+MODE1                             00000003
+MPWM1EN                           00000000
+MPWM1LD                           00000000
+MPWM1OUT                          00000000
+MPWM2EN                           00000001
+MPWM2LD                           00000001
+MPWM2OUT                          00000001
+MPWM3EN                           00000002
+MPWM3LD                           00000002
+MPWM3OUT                          00000002
+NOT_BOR                           00000000
+NOT_DONE                          00000001
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_RI                            00000002
+NOT_RMCLR                         00000003
+NOT_RWDT                          00000004
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+NOT_WPUEN                         00000007
+ODA0                              00000000
+ODA1                              00000001
+ODA2                              00000002
+ODA4                              00000004
+ODA5                              00000005
+ODCONA                            0000028C
+OE                                00000006
+OERR                              00000001
+OFIE                              00000003
+OFIF                              00000003
+OFM0                              00000005
+OFM1                              00000006
+OFO                               00000004
+OFS0                              00000000
+OFS1                              00000001
+OPTION_REG                        00000095
+OSCCON                            00000099
+OSCSTAT                           0000009A
+OSCTUNE                           00000098
+OSTS                              00000005
+OUT                               00000005
+P1SEL                             00000000
+P2SEL                             00000001
+PCL                               00000002
+PCLATH                            0000000A
+PCLATH_SHAD                       00000FE7
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 19
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PCON                              00000096
+PEIE                              00000006
+PHIE                              00000002
+PHIF                              00000002
+PIE1                              00000091
+PIE2                              00000092
+PIE3                              00000093
+PIR1                              00000011
+PIR2                              00000012
+PIR3                              00000013
+PIXEL_TXREG                       0000019A
+PLLR                              00000006
+PMADR                             00000191
+PMADRH                            00000192
+PMADRL                            00000191
+PMCON1                            00000195
+PMCON2                            00000196
+PMDAT                             00000193
+PMDATH                            00000194
+PMDATL                            00000193
+POL                               00000004
+PORTA                             0000000C
+PR2                               0000001B
+PRIE                              00000000
+PRIF                              00000000
+PS0_OPTION_REG                    00000000
+PS0_PWM1CLKCON                    00000004
+PS0_PWM2CLKCON                    00000004
+PS0_PWM3CLKCON                    00000004
+PS1_OPTION_REG                    00000001
+PS1_PWM1CLKCON                    00000005
+PS1_PWM2CLKCON                    00000005
+PS1_PWM3CLKCON                    00000005
+PS2_OPTION_REG                    00000002
+PS2_PWM1CLKCON                    00000006
+PS2_PWM2CLKCON                    00000006
+PS2_PWM3CLKCON                    00000006
+PSA                               00000003
+PWM1CLKCON                        00000D9E
+PWM1CON                           00000D9B
+PWM1CS0                           00000000
+PWM1CS1                           00000001
+PWM1DC                            00000D93
+PWM1DCH                           00000D94
+PWM1DCH0                          00000000
+PWM1DCH1                          00000001
+PWM1DCH2                          00000002
+PWM1DCH3                          00000003
+PWM1DCH4                          00000004
+PWM1DCH5                          00000005
+PWM1DCH6                          00000006
+PWM1DCH7                          00000007
+PWM1DCIE                          00000001
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 20
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PWM1DCIF                          00000001
+PWM1DCL                           00000D93
+PWM1DCL0                          00000000
+PWM1DCL1                          00000001
+PWM1DCL2                          00000002
+PWM1DCL3                          00000003
+PWM1DCL4                          00000004
+PWM1DCL5                          00000005
+PWM1DCL6                          00000006
+PWM1DCL7                          00000007
+PWM1EN                            00000007
+PWM1EN_A                          00000000
+PWM1IE                            00000004
+PWM1IF                            00000004
+PWM1INTCON                        00000D9C
+PWM1INTE                          00000D9C
+PWM1INTF                          00000D9D
+PWM1INTFLG                        00000D9D
+PWM1LD                            00000007
+PWM1LDA_A                         00000000
+PWM1LDCON                         00000D9F
+PWM1LDM                           00000006
+PWM1LDS0                          00000000
+PWM1LDS1                          00000001
+PWM1MODE0                         00000002
+PWM1MODE1                         00000003
+PWM1OE                            00000006
+PWM1OF                            00000D97
+PWM1OFCON                         00000DA0
+PWM1OFH                           00000D98
+PWM1OFH0                          00000000
+PWM1OFH1                          00000001
+PWM1OFH2                          00000002
+PWM1OFH3                          00000003
+PWM1OFH4                          00000004
+PWM1OFH5                          00000005
+PWM1OFH6                          00000006
+PWM1OFH7                          00000007
+PWM1OFIE                          00000003
+PWM1OFIF                          00000003
+PWM1OFL                           00000D97
+PWM1OFL0                          00000000
+PWM1OFL1                          00000001
+PWM1OFL2                          00000002
+PWM1OFL3                          00000003
+PWM1OFL4                          00000004
+PWM1OFL5                          00000005
+PWM1OFL6                          00000006
+PWM1OFL7                          00000007
+PWM1OFM0                          00000005
+PWM1OFM1                          00000006
+PWM1OFMC                          00000004
+PWM1OFS0                          00000000
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 21
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PWM1OFS1                          00000001
+PWM1OUT                           00000005
+PWM1OUT_A                         00000000
+PWM1PH                            00000D91
+PWM1PHH                           00000D92
+PWM1PHH0                          00000000
+PWM1PHH1                          00000001
+PWM1PHH2                          00000002
+PWM1PHH3                          00000003
+PWM1PHH4                          00000004
+PWM1PHH5                          00000005
+PWM1PHH6                          00000006
+PWM1PHH7                          00000007
+PWM1PHIE                          00000002
+PWM1PHIF                          00000002
+PWM1PHL                           00000D91
+PWM1PHL0                          00000000
+PWM1PHL1                          00000001
+PWM1PHL2                          00000002
+PWM1PHL3                          00000003
+PWM1PHL4                          00000004
+PWM1PHL5                          00000005
+PWM1PHL6                          00000006
+PWM1PHL7                          00000007
+PWM1POL                           00000004
+PWM1PR                            00000D95
+PWM1PRH                           00000D96
+PWM1PRH0                          00000000
+PWM1PRH1                          00000001
+PWM1PRH2                          00000002
+PWM1PRH3                          00000003
+PWM1PRH4                          00000004
+PWM1PRH5                          00000005
+PWM1PRH6                          00000006
+PWM1PRH7                          00000007
+PWM1PRIE                          00000000
+PWM1PRIF                          00000000
+PWM1PRL                           00000D95
+PWM1PRL0                          00000000
+PWM1PRL1                          00000001
+PWM1PRL2                          00000002
+PWM1PRL3                          00000003
+PWM1PRL4                          00000004
+PWM1PRL5                          00000005
+PWM1PRL6                          00000006
+PWM1PRL7                          00000007
+PWM1PS0                           00000004
+PWM1PS1                           00000005
+PWM1PS2                           00000006
+PWM1TMR                           00000D99
+PWM1TMRH                          00000D9A
+PWM1TMRH0                         00000000
+PWM1TMRH1                         00000001
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 22
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PWM1TMRH2                         00000002
+PWM1TMRH3                         00000003
+PWM1TMRH4                         00000004
+PWM1TMRH5                         00000005
+PWM1TMRH6                         00000006
+PWM1TMRH7                         00000007
+PWM1TMRL                          00000D99
+PWM1TMRL0                         00000000
+PWM1TMRL1                         00000001
+PWM1TMRL2                         00000002
+PWM1TMRL3                         00000003
+PWM1TMRL4                         00000004
+PWM1TMRL5                         00000005
+PWM1TMRL6                         00000006
+PWM1TMRL7                         00000007
+PWM2CLKCON                        00000DAE
+PWM2CON                           00000DAB
+PWM2CS0                           00000000
+PWM2CS1                           00000001
+PWM2DC                            00000DA3
+PWM2DCH                           00000DA4
+PWM2DCH0                          00000000
+PWM2DCH1                          00000001
+PWM2DCH2                          00000002
+PWM2DCH3                          00000003
+PWM2DCH4                          00000004
+PWM2DCH5                          00000005
+PWM2DCH6                          00000006
+PWM2DCH7                          00000007
+PWM2DCIE                          00000001
+PWM2DCIF                          00000001
+PWM2DCL                           00000DA3
+PWM2DCL0                          00000000
+PWM2DCL1                          00000001
+PWM2DCL2                          00000002
+PWM2DCL3                          00000003
+PWM2DCL4                          00000004
+PWM2DCL5                          00000005
+PWM2DCL6                          00000006
+PWM2DCL7                          00000007
+PWM2EN                            00000007
+PWM2EN_A                          00000001
+PWM2IE                            00000005
+PWM2IF                            00000005
+PWM2INTCON                        00000DAC
+PWM2INTE                          00000DAC
+PWM2INTF                          00000DAD
+PWM2INTFLG                        00000DAD
+PWM2LD                            00000007
+PWM2LDA_A                         00000001
+PWM2LDCON                         00000DAF
+PWM2LDM                           00000006
+PWM2LDS0                          00000000
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 23
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PWM2LDS1                          00000001
+PWM2MODE0                         00000002
+PWM2MODE1                         00000003
+PWM2OE                            00000006
+PWM2OF                            00000DA7
+PWM2OFCON                         00000DB0
+PWM2OFH                           00000DA8
+PWM2OFH0                          00000000
+PWM2OFH1                          00000001
+PWM2OFH2                          00000002
+PWM2OFH3                          00000003
+PWM2OFH4                          00000004
+PWM2OFH5                          00000005
+PWM2OFH6                          00000006
+PWM2OFH7                          00000007
+PWM2OFIE                          00000003
+PWM2OFIF                          00000003
+PWM2OFL                           00000DA7
+PWM2OFL0                          00000000
+PWM2OFL1                          00000001
+PWM2OFL2                          00000002
+PWM2OFL3                          00000003
+PWM2OFL4                          00000004
+PWM2OFL5                          00000005
+PWM2OFL6                          00000006
+PWM2OFL7                          00000007
+PWM2OFM0                          00000005
+PWM2OFM1                          00000006
+PWM2OFMC                          00000004
+PWM2OFS0                          00000000
+PWM2OFS1                          00000001
+PWM2OUT                           00000005
+PWM2OUT_A                         00000001
+PWM2PH                            00000DA1
+PWM2PHH                           00000DA2
+PWM2PHH0                          00000000
+PWM2PHH1                          00000001
+PWM2PHH2                          00000002
+PWM2PHH3                          00000003
+PWM2PHH4                          00000004
+PWM2PHH5                          00000005
+PWM2PHH6                          00000006
+PWM2PHH7                          00000007
+PWM2PHIE                          00000002
+PWM2PHIF                          00000002
+PWM2PHL                           00000DA1
+PWM2PHL0                          00000000
+PWM2PHL1                          00000001
+PWM2PHL2                          00000002
+PWM2PHL3                          00000003
+PWM2PHL4                          00000004
+PWM2PHL5                          00000005
+PWM2PHL6                          00000006
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 24
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PWM2PHL7                          00000007
+PWM2POL                           00000004
+PWM2PR                            00000DA5
+PWM2PRH                           00000DA6
+PWM2PRH0                          00000000
+PWM2PRH1                          00000001
+PWM2PRH2                          00000002
+PWM2PRH3                          00000003
+PWM2PRH4                          00000004
+PWM2PRH5                          00000005
+PWM2PRH6                          00000006
+PWM2PRH7                          00000007
+PWM2PRIE                          00000000
+PWM2PRIF                          00000000
+PWM2PRL                           00000DA5
+PWM2PRL0                          00000000
+PWM2PRL1                          00000001
+PWM2PRL2                          00000002
+PWM2PRL3                          00000003
+PWM2PRL4                          00000004
+PWM2PRL5                          00000005
+PWM2PRL6                          00000006
+PWM2PRL7                          00000007
+PWM2PS0                           00000004
+PWM2PS1                           00000005
+PWM2PS2                           00000006
+PWM2TMR                           00000DA9
+PWM2TMRH                          00000DAA
+PWM2TMRH0                         00000000
+PWM2TMRH1                         00000001
+PWM2TMRH2                         00000002
+PWM2TMRH3                         00000003
+PWM2TMRH4                         00000004
+PWM2TMRH5                         00000005
+PWM2TMRH6                         00000006
+PWM2TMRH7                         00000007
+PWM2TMRL                          00000DA9
+PWM2TMRL0                         00000000
+PWM2TMRL1                         00000001
+PWM2TMRL2                         00000002
+PWM2TMRL3                         00000003
+PWM2TMRL4                         00000004
+PWM2TMRL5                         00000005
+PWM2TMRL6                         00000006
+PWM2TMRL7                         00000007
+PWM3CLKCON                        00000DBE
+PWM3CON                           00000DBB
+PWM3CS0                           00000000
+PWM3CS1                           00000001
+PWM3DC                            00000DB3
+PWM3DCH                           00000DB4
+PWM3DCH0                          00000000
+PWM3DCH1                          00000001
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 25
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PWM3DCH2                          00000002
+PWM3DCH3                          00000003
+PWM3DCH4                          00000004
+PWM3DCH5                          00000005
+PWM3DCH6                          00000006
+PWM3DCH7                          00000007
+PWM3DCIE                          00000001
+PWM3DCIF                          00000001
+PWM3DCL                           00000DB3
+PWM3DCL0                          00000000
+PWM3DCL1                          00000001
+PWM3DCL2                          00000002
+PWM3DCL3                          00000003
+PWM3DCL4                          00000004
+PWM3DCL5                          00000005
+PWM3DCL6                          00000006
+PWM3DCL7                          00000007
+PWM3EN                            00000007
+PWM3EN_A                          00000002
+PWM3IE                            00000006
+PWM3IF                            00000006
+PWM3INTCON                        00000DBC
+PWM3INTE                          00000DBC
+PWM3INTF                          00000DBD
+PWM3INTFLG                        00000DBD
+PWM3LD                            00000007
+PWM3LDA_A                         00000002
+PWM3LDCON                         00000DBF
+PWM3LDM                           00000006
+PWM3LDS0                          00000000
+PWM3LDS1                          00000001
+PWM3MODE0                         00000002
+PWM3MODE1                         00000003
+PWM3OE                            00000006
+PWM3OF                            00000DB7
+PWM3OFCON                         00000DC0
+PWM3OFH                           00000DB8
+PWM3OFH0                          00000000
+PWM3OFH1                          00000001
+PWM3OFH2                          00000002
+PWM3OFH3                          00000003
+PWM3OFH4                          00000004
+PWM3OFH5                          00000005
+PWM3OFH6                          00000006
+PWM3OFH7                          00000007
+PWM3OFIE                          00000003
+PWM3OFIF                          00000003
+PWM3OFL                           00000DB7
+PWM3OFL0                          00000000
+PWM3OFL1                          00000001
+PWM3OFL2                          00000002
+PWM3OFL3                          00000003
+PWM3OFL4                          00000004
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 26
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PWM3OFL5                          00000005
+PWM3OFL6                          00000006
+PWM3OFL7                          00000007
+PWM3OFM0                          00000005
+PWM3OFM1                          00000006
+PWM3OFMC                          00000004
+PWM3OFS0                          00000000
+PWM3OFS1                          00000001
+PWM3OUT                           00000005
+PWM3OUT_A                         00000002
+PWM3PH                            00000DB1
+PWM3PHH                           00000DB2
+PWM3PHH0                          00000000
+PWM3PHH1                          00000001
+PWM3PHH2                          00000002
+PWM3PHH3                          00000003
+PWM3PHH4                          00000004
+PWM3PHH5                          00000005
+PWM3PHH6                          00000006
+PWM3PHH7                          00000007
+PWM3PHIE                          00000002
+PWM3PHIF                          00000002
+PWM3PHL                           00000DB1
+PWM3PHL0                          00000000
+PWM3PHL1                          00000001
+PWM3PHL2                          00000002
+PWM3PHL3                          00000003
+PWM3PHL4                          00000004
+PWM3PHL5                          00000005
+PWM3PHL6                          00000006
+PWM3PHL7                          00000007
+PWM3POL                           00000004
+PWM3PR                            00000DB5
+PWM3PRH                           00000DB6
+PWM3PRH0                          00000000
+PWM3PRH1                          00000001
+PWM3PRH2                          00000002
+PWM3PRH3                          00000003
+PWM3PRH4                          00000004
+PWM3PRH5                          00000005
+PWM3PRH6                          00000006
+PWM3PRH7                          00000007
+PWM3PRIE                          00000000
+PWM3PRIF                          00000000
+PWM3PRL                           00000DB5
+PWM3PRL0                          00000000
+PWM3PRL1                          00000001
+PWM3PRL2                          00000002
+PWM3PRL3                          00000003
+PWM3PRL4                          00000004
+PWM3PRL5                          00000005
+PWM3PRL6                          00000006
+PWM3PRL7                          00000007
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 27
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PWM3PS0                           00000004
+PWM3PS1                           00000005
+PWM3PS2                           00000006
+PWM3TMR                           00000DB9
+PWM3TMRH                          00000DBA
+PWM3TMRH0                         00000000
+PWM3TMRH1                         00000001
+PWM3TMRH2                         00000002
+PWM3TMRH3                         00000003
+PWM3TMRH4                         00000004
+PWM3TMRH5                         00000005
+PWM3TMRH6                         00000006
+PWM3TMRH7                         00000007
+PWM3TMRL                          00000DB9
+PWM3TMRL0                         00000000
+PWM3TMRL1                         00000001
+PWM3TMRL2                         00000002
+PWM3TMRL3                         00000003
+PWM3TMRL4                         00000004
+PWM3TMRL5                         00000005
+PWM3TMRL6                         00000006
+PWM3TMRL7                         00000007
+PWMEN                             00000D8E
+PWMLD                             00000D8F
+PWMOUT                            00000D90
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
+RA5                               00000005
+RCIDL                             00000006
+RCIE                              00000005
+RCIF                              00000005
+RCREG                             00000199
+RCSTA                             0000019D
+RD                                00000000
+RX9                               00000006
+RX9D                              00000000
+RXDTSEL                           00000007
+S0                                0000001F
+SBOREN                            00000007
+SCKP                              00000004
+SCS0                              00000000
+SCS1                              00000001
+SENDB                             00000003
+SLRA0                             00000000
+SLRA1                             00000001
+SLRA2                             00000002
+SLRA4                             00000004
+SLRA5                             00000005
+SLRCONA                           0000030C
+SP                                FSR1
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 28
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+SPBRG                             0000019B
+SPBRGH                            0000019C
+SPBRGL                            0000019B
+SPEN                              00000007
+SPLLEN                            00000007
+SREN                              00000005
+STATUS                            00000003
+STATUS_SHAD                       00000FE4
+STKOVF                            00000007
+STKPTR                            00000FED
+STKUNF                            00000006
+SWDTEN                            00000000
+SYNC                              00000004
+SYNC_IE                           00000006
+SYNC_IF                           00000006
+SYNC_OUT                          00000002
+SYNC_PIE                          00000093
+SYNC_PIR                          00000013
+SYNC_PWMCLKCON                    00000DBE
+SYNC_PWMCON                       00000DBB
+SYNC_PWMDCH                       00000DB4
+SYNC_PWMDCL                       00000DB3
+SYNC_PWMINTE                      00000DBC
+SYNC_PWMINTF                      00000DBD
+SYNC_PWMLDCON                     00000DBF
+SYNC_PWMOF                        00000DB7
+SYNC_PWMOFCON                     00000DC0
+SYNC_PWMPH                        00000DB1
+SYNC_PWMPRH                       00000DB6
+SYNC_PWMPRL                       00000DB5
+SYNC_PWMTMR                       00000DB9
+T                                 INDF1
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000018
+T1GCON                            00000019
+T1GGO                             00000003
+T1GGO_NOT_DONE                    00000003
+T1GPOL                            00000006
+T1GSEL                            00000003
+T1GSPM                            00000004
+T1GSS0                            00000000
+T1GSS1                            00000001
+T1GTM                             00000005
+T1GVAL                            00000002
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             0000001C
+T2OUTPS0                          00000003
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 29
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+T2OUTPS1                          00000004
+T2OUTPS2                          00000005
+T2OUTPS3                          00000006
+TC                                00000032
+TCY                               000000C8
+TMR0                              00000015
+TMR0CS                            00000005
+TMR0IE                            00000005
+TMR0IF                            00000002
+TMR0SE                            00000004
+TMR1                              00000016
+TMR1CS0                           00000006
+TMR1CS1                           00000007
+TMR1GE                            00000007
+TMR1GIE                           00000007
+TMR1GIF                           00000007
+TMR1H                             00000017
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             00000016
+TMR1ON                            00000000
+TMR2                              0000001A
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOS                               00000FEE
+TOSH                              00000FEF
+TOSL                              00000FEE
+TRIGSEL0                          00000004
+TRIGSEL1                          00000005
+TRIGSEL2                          00000006
+TRIGSEL3                          00000007
+TRISA                             0000008C
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISA5                            00000005
+TRMT                              00000001
+TSEN                              00000005
+TSRNG                             00000004
+TUN0                              00000000
+TUN1                              00000001
+TUN2                              00000002
+TUN3                              00000003
+TUN4                              00000004
+TUN5                              00000005
+TX9                               00000006
+TX9D                              00000000
+TXCKSEL                           00000002
+TXEN                              00000005
+TXIE                              00000004
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 30
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TXIF                              00000004
+TXREG                             0000019A
+TXSTA                             0000019E
+TX_PIR                            00000011
+VERT_DLY                          00000028
+VIDEO_BUFFER                      00002030
+VIDEO_LAT                         0000010C
+VIDEO_OUT                         00000001
+VREGCON                           00000197
+VREGPM                            00000001
+W                                 00000000
+WDTCON                            00000097
+WDTPS0                            00000001
+WDTPS1                            00000002
+WDTPS2                            00000003
+WDTPS3                            00000004
+WDTPS4                            00000005
+WELL_DEPTH                        00000016
+WELL_WIDTH                        0000000A
+WPUA                              0000020C
+WPUA0                             00000000
+WPUA1                             00000001
+WPUA2                             00000002
+WPUA3                             00000003
+WPUA4                             00000004
+WPUA5                             00000005
+WR                                00000001
+WREG                              00000009
+WREG_SHAD                         00000FE5
+WREN                              00000002
+WRERR                             00000003
+WUE                               00000001
+XSIZE                             00000030
+YSIZE                             00000020
+Z                                 00000002
+Z_SHAD                            00000002
+_.org_1_0042                      00000042
+_.org_1_0044                      00000044
+_.org_1_005A                      0000005A
+_.org_1_0061                      00000061
+_.org_1_0104                      00000104
+_BOREN_NSLEEP                     00003DFF
+_BOREN_OFF                        000039FF
+_BOREN_ON                         00003FFF
+_BOREN_SBODEN                     00003BFF
+_BORV_19                          00003FFF
+_BORV_HI                          00003BFF
+_BORV_LO                          00003FFF
+_CLKOUTEN_OFF                     00003FFF
+_CLKOUTEN_ON                      000037FF
+_CONFIG1                          00008007
+_CONFIG2                          00008008
+_CP_OFF                           00003FFF
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 31
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_CP_ON                            00003F7F
+_DEVID1                           00008006
+_FOSC_ECH                         00003FFF
+_FOSC_ECL                         00003FFD
+_FOSC_ECM                         00003FFE
+_FOSC_INTOSC                      00003FFC
+_IDLOC0                           00008000
+_IDLOC1                           00008001
+_IDLOC2                           00008002
+_IDLOC3                           00008003
+_LPBOREN_OFF                      00003FFF
+_LPBOREN_ON                       000037FF
+_LVP_OFF                          00001FFF
+_LVP_ON                           00003FFF
+_MCLRE_OFF                        00003FBF
+_MCLRE_ON                         00003FFF
+_PLLEN_OFF                        00003EFF
+_PLLEN_ON                         00003FFF
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FDF
+_STVREN_OFF                       00003DFF
+_STVREN_ON                        00003FFF
+_WDTE_NSLEEP                      00003FF7
+_WDTE_OFF                         00003FE7
+_WDTE_ON                          00003FFF
+_WDTE_SWDTEN                      00003FEF
+_WRT_ALL                          00003FFC
+_WRT_BOOT                         00003FFE
+_WRT_HALF                         00003FFD
+_WRT_OFF                          00003FFF
+__12F1572                         00000001
+accaH                             00000006
+accaL                             00000005
+add                               
+box                               000000AF
+case                              
+dec_n                             
+disable_video                     
+drop                              
+drop_n                            
+dup                               
+enable_video                      
+fetch                             
+fill_buffer                       00000065
+fill_loop                         0000006E
+flags                             00000002
+game_init                         000000C0
+gt_255                            00000022
+hline                             0000009E
+hline_done                        000000AD
+inc_n                             
+init                              000000D7
+insert                            
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-3-2016  21:56:52         PAGE 32
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+isr                               00000004
+isr01                             00000014
+isr02                             00000020
+isr_exit                          00000038
+lcountH                           00000001
+lcountL                           00000000
+lit                               
+lt_256                            0000002D
+main                              00000102
+movtw                             
+movwt                             
+mult6                             0000003C
+over                              
+pick                              
+pixels_loop                       00000055
+pop                               
+pstack_init                       
+push                              
+q                                 00000010
+r                                 00000000
+rcount                            00000003
+reserve                           
+set_video_ptr                     00000073
+store                             
+sub                               
+swap                              
+tbranch                           
+tcyDelay                          
+temp                              00000004
+tetris                            000000D6
+video_serialize                   00000041
+vsync_end                         0000000C
+vsync_start                       00000018
+xcoord                            accaL
+xor_pixel                         00000085
+xorp00                            00000093
+xorp01                            00000096
+zbranch                           
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :    59 reported,     0 suppressed
+
+
