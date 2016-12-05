@@ -345,19 +345,21 @@ pixels_loop:
 ; fill_buffer
 ; fill screen buffer with WREG value    
 fill_buffer: 
-    movwf temp
+    reserve 1
+    push
     disable_video
     movlw VIDEO_BUFFER>>8
     movwf FSR0H
     movlw VIDEO_BUFFER&0xff
     movwf FSR0L
     movlw BUFFER_SIZE
-    movwf rcount
-    movfw temp
+    insert 1
+    pop
 fill_loop:    
     movwi FSR0++
-    decfsz rcount
+    decfsz T
     bra fill_loop
+    drop
     enable_video
     return
 
@@ -388,8 +390,12 @@ set_video_ptr:  ; ( x y -- )
     andlw 7
     return
 
-    
-xor_pixel: ; ( x y -- ) inverse le pixel
+;inverse le pixel    
+; inputs:
+;   {x,y} coordinates
+; output:
+;   WREG=collision flag    
+xor_pixel: ; ( x y -- )
     disable_video
     pick 1
     push
@@ -409,68 +415,215 @@ xorp00:
     decfsz T
     bra xorp00
 xorp01:
-    drop	; FSR0L FSR0H
-    xorwf INDF0 
-    pop		; FSR0L
+    xorwf INDF0
+    andwf INDF0,W ; on screen bit value 0|1 for collision detection
+    movwf T
+    pick 1  
     movwf FSR0H
-    pop		; vide
+    pick 2
     movwf FSR0L
+    pop  ; collistion flag 0 -> no collision
+    drop_n 2
     enable_video
     return
 
+; draw row of pixels
+; draw up to 8 pixels.
+; stop when r==0    
+; input:
+;   {x,y} left coordinates
+;   r pixels to draw
+; output:
+;   f=collision flag    
+xor_row: ; ( f=0 x y r -- f )
+    movfw T ; check if r==0
+    skpnz
+    bra xor_row_done ; r==0 done
+    lslf T
+    skpc
+    bra xor_row02 ; bit==0 no draw
+    pick 2 ; pick x
+    push    ; f x y r x
+    pick 2 ; pick y
+    push    ; v x y r x y
+    call xor_pixel
+    push ; flag
+    pick 3 ; pick flag
+    iorwf T
+    pop	    
+    insert 3 ; store modified flag
+xor_row02:
+    inc_n 2  ; x+=1
+    bra xor_row
+xor_row_done: ; f x y r
+    drop_n 3  ; only keep f
+    return
+
+; read flash memory word
+; input:
+;   lo is low byte of address
+;   hi is high byte of address
+;   ofs offset in table (limited to 255 )    
+; output:
+;   PMDATH: PMDAL 
+get_flash_word: ; ( ofs lo hi -- )
+    banksel PMADR
+    pop
+    movwf PMADRH
+    pop
+    movwf PMADRL
+    pop
+    addwf PMADRL
+    clrw 
+    addwfc PMADRH
+read_flash:    
+    bcf PMCON1,CFGS
+    bsf PMCON1, RD
+    nop
+    nop
+    return
+    
+; draw digit 
+; input:
+;   x,y left/top coordinates
+;   d   digit to print    
+print_digit: ; ( x y d -- )
+    lslf T ; 2 words per digit
+    lit low(digits)
+    lit high(digits)
+    call get_flash_word  ; x y
+    lit 0   ; x y 0
+    pick 2 
+    push    ; x y 0 x
+    pick 2
+    push      ; x y 0 x y
+    swapf PMDATH,W
+    andlw 0xf0
+    push	; x y 0 x y r 
+    call xor_row ; x y 0
+    inc_n 1
+    pick 2 
+    push
+    pick 2
+    push      ; x y 0 x y
+    movlw 0xf0
+    andwf PMDATL,W
+    push    ; x y 0 x y r
+    call xor_row
+    inc_n 1
+    pick 2 
+    push
+    pick 2
+    push      ; x y 0 x y
+    swapf PMDATL,W
+    andlw 0xf0
+    push       ; x y 0 x y r
+    call xor_row  
+    inc_n 1
+    movlw 1
+    addwf PMADRL
+    clrw
+    addwfc PMADRH
+    call read_flash
+    pick 2 
+    push
+    pick 2
+    push      ; x y 0 x y
+    swapf PMDATH,W
+    andlw 0xf0
+    push    ; x y 0 x y r
+    call xor_row
+    inc_n 1
+    pick 2 
+    push
+    pick 2
+    push      ; x y 0 x y
+    movlw 0xf0
+    andwf PMDATL,W
+    push    ; x y 0 x y r
+    call xor_row
+    drop_n 3
+    return
+    
 ; draw horizontal line ( length  y x -- )
 ; inputs:
 ;   length of line
-;   {x,y} left,top coordinates       
-#define xcoord accaL    
+;   {x,y} left coordinates       
 hline:
     pick 2
-    push
-    zbranch hline_done
-    dup
+    skpnz
+    bra hline_done
+    decf WREG
+    insert 2
+    dup	    ; len y x x
     pick 2
-    push
+    push    ; len y x x y
     call xor_pixel
-    incf T
-    dec_n 2
+    incf T  ; len y x+1
     bra hline
 hline_done:    
     drop_n 3
     return
-    
-; draw box ( height width top left )
-box:
-    pick 2
-    push
-    pick 2
-    push
-    pick 2
-    push
-    call hline
-    inc_n 1
-    dec_n 3 ; use height argument as line counter
-    skpz
-    bra box
-    drop_n 4 ; clean stack frame
+
+;draw vertical line ( length x y -- )
+; inputs:
+;   length of line
+;   {x,y} top coordinate
+vline:  ; len y x
+    pick 2 
+    skpnz
+    bra vline_done
+    decf WREG
+    insert 2
+    pick 1	
+    push    ; len x y x
+    pick 1
+    push    ; len x y x y
+    call xor_pixel
+    incf T
+    bra vline
+vline_done:
+    drop_n 3
     return
     
-
 WELL_WIDTH equ 10
 WELL_DEPTH equ 22 
 game_init:
     lit 0   ; lit 0 to clear screen black
     call fill_buffer ; clear screen white
-    lit WELL_DEPTH+1
-    lit WELL_WIDTH+2
-    lit 0
-    lit 0
-    call box
-    ; draw game well
     lit WELL_DEPTH
-    lit WELL_WIDTH
     lit 0
-    lit 1
-    call box
+    lit 0
+     call vline
+    lit WELL_DEPTH
+    lit WELL_WIDTH+1
+    lit 0
+    call vline
+    lit WELL_WIDTH+2
+    lit WELL_DEPTH
+    lit 0
+    call hline
+    lit 10
+    lit 0
+    lit 24
+    lit 0
+gloop:
+    pick 2
+    push
+    pick 2
+    push
+    pick 2
+    push
+    call print_digit
+    dec_n 3
+    skpnz
+    bra g01
+    pick 2
+    addlw 4
+    insert 2
+    incf T
+    bra gloop
+g01:    
     ; initialise variables
     return
     
@@ -531,6 +684,21 @@ main:
     call tetris
     bra $
     bra main
+  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;   data tables
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+digits:
+    dw 0x3EAA,0x2AE0 ; 0
+    dw 0x34C4,0x24E0 ; 1
+    dw 0x3E2E,0x28E0 ; 2
+    dw 0x3E2E,0x22E0 ; 3
+    dw 0x3AAE,0x2220 ; 4
+    dw 0x3E8E,0x22E0 ; 5
+    dw 0x388E,0x2AE0 ; 6
+    dw 0x3E22,0x2220 ; 7
+    dw 0x3EAE,0x2AE0 ; 8
+    dw 0x3EAE,0x2220 ; 9
     
     end
 
