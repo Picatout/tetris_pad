@@ -1,4 +1,4 @@
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE  1
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -57,7 +57,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
   00000006            00041 SYNC_IF equ PWM3IF  ; interrupt flag bit
   00000093            00042 SYNC_PIE equ PIE3 ; interrupt enable SFR
   00000013            00043 SYNC_PIR equ PIR3 ; interrupt flag SFR 
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE  2
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -105,269 +105,288 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00083     bra label
                       00084     xorlw n
                       00085     endm
-                      00086     
-                      00087 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                      00088 ; software stack for arguments passing
-                      00089 ; SP is Stack Pointer
-                      00090 ; T is Top Of Stack
-                      00091 #define SP FSR1
-                      00092 #define T INDF1
-                      00093 
-                      00094  
-  0000001F            00095 S0 equ 0x1F ; stack base address - 1
-                      00096 
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE  3
+                      00086  
+                      00087 ldpmadr macro addr ; load PMADR register
+                      00088     movlw low(addr)
+                      00089     movwf PMADRL
+                      00090     movlw high(addr)
+                      00091     movwf PMADRH
+                      00092     endm
+                      00093     
+                      00094 addpmadr macro value ; add value to PMADR
+                      00095     movlw value
+                      00096     addwf PMADRL
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00097 pstack_init macro ; initialise stack pointer
-                      00098     clrf FSR1H
-                      00099     movlw S0
-                      00100     movwf FSR1L
-                      00101     endm
-                      00102     
-                      00103 push macro   ; ( -- n ) push WREG on stack
-                      00104     movwi ++SP
-                      00105     endm
-                      00106 
-                      00107 pop macro   ; ( n -- )  pop T in WREG
-                      00108     moviw SP--
-                      00109     endm
-                      00110     
-                      00111 drop macro  ; ( n -- ) ; discard T
-                      00112    addfsr SP,-1
-                      00113    endm
-                      00114 
-                      00115 drop_n macro n  ; discard n elements  n<32
-                      00116     addfsr SP,-n
-                      00117     endm
-                      00118     
-                      00119 lit macro  n ; ( -- n ) ; push a literal
-                      00120    movlw n
-                      00121    movwi ++SP 
-                      00122    endm
-                      00123 
-                      00124 dup macro ; ( n -- n n ) duplicate T
-                      00125     movfw T
-                      00126     movwi ++SP
-                      00127     endm
-                      00128     
-                      00129 over macro ; ( n1 n2 -- n1 n2 n1 )
-                      00130     moviw -1[SP]
-                      00131     push
+                      00097     clrw
+                      00098     addwfc PMADRH
+                      00099     endm
+                      00100     
+                      00101     
+                      00102 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00103 ; software stack for arguments passing
+                      00104 ; SP is Stack Pointer
+                      00105 ; T is Top Of Stack
+                      00106 #define SP FSR1
+                      00107 #define T INDF1
+                      00108 
+                      00109  
+  0000001F            00110 S0 equ 0x1F ; stack base address - 1
+                      00111 
+                      00112 pstack_init macro ; initialise stack pointer
+                      00113     clrf FSR1H
+                      00114     movlw S0
+                      00115     movwf FSR1L
+                      00116     endm
+                      00117     
+                      00118 push macro   ; ( -- n ) push WREG on stack
+                      00119     movwi ++SP
+                      00120     endm
+                      00121 
+                      00122 pop macro   ; ( n -- )  pop T in WREG
+                      00123     moviw SP--
+                      00124     endm
+                      00125     
+                      00126 drop macro  ; ( n -- ) ; discard T
+                      00127    addfsr SP,-1
+                      00128    endm
+                      00129 
+                      00130 drop_n macro n  ; discard n elements  n<32
+                      00131     addfsr SP,-n
                       00132     endm
                       00133     
-                      00134 swap macro ; exchange WREG and T
-                      00135     xorwf T
-                      00136     xorwf T,W
-                      00137     xorwf T
-                      00138     endm
-                      00139  
-                      00140 store macro var ; ( n -- ) pop T in variable
-                      00141    moviw SP--
-                      00142    movwf var
-                      00143    endm
-                      00144    
-                      00145 fetch macro var  ; ( -- n ) push var on stack
-                      00146    movfw var
-                      00147    movwi ++SP
-                      00148    endm
-                      00149 
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE  4
+                      00134 lit macro  n ; ( -- n ) ; push a literal
+                      00135    movlw n
+                      00136    movwi ++SP 
+                      00137    endm
+                      00138 
+                      00139 dup macro ; ( n -- n n ) duplicate T
+                      00140     movfw T
+                      00141     movwi ++SP
+                      00142     endm
+                      00143     
+                      00144 over macro ; ( n1 n2 -- n1 n2 n1 )
+                      00145     moviw -1[SP]
+                      00146     push
+                      00147     endm
+                      00148     
+                      00149 swap macro ; exchange WREG and T
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE  4
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00150 pick macro n  ; pick nth element of stack to WREG
-                      00151     moviw -n[SP]
-                      00152     endm
-                      00153 
-                      00154 insert macro n ;  insert WREG at position n on stack
-                      00155    movwi -n[SP]
-                      00156    endm
-                      00157    
-                      00158 movtw macro ; ( n -- n ) overwrite WREG with T
-                      00159    movfw T
-                      00160    endm
-                      00161    
-                      00162 movwt macro ; ( n1 -- n2 ) overwrite T with WREG
-                      00163     movwf T
-                      00164     endm
-                      00165     
-                      00166 add macro  ; add WREG to T result on T
-                      00167     addwf T
-                      00168    endm
-                      00169    
-                      00170 sub macro  ; substract WREG from T result on T
-                      00171    subwf T
-                      00172    endm
-                      00173 
-                      00174 inc_n macro n ; increament nth element of stack
-                      00175     moviw -n[SP]
-                      00176     incf WREG
-                      00177     movwi -n[SP]
-                      00178     endm
-                      00179     
-                      00180 dec_n macro n ; decreament nth element of stack
-                      00181     moviw -n[SP]
-                      00182     decf WREG
-                      00183     movwi -n[SP]
-                      00184     endm
-                      00185     
-                      00186 zbranch macro label ; branch if T == 0
-                      00187     pop
-                      00188     skpnz
-                      00189     bra label
-                      00190     endm
-                      00191     
-                      00192 tbranch macro label ; branch if T != 0
-                      00193     pop
-                      00194     skpz
-                      00195     bra label
-                      00196     endm
-                      00197     
-                      00198 reserve macro n ; reserve n bytes on stack for local variables
-                      00199     addfsr SP, n 
-                      00200     endm
-                      00201     
-                      00202 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE  5
+                      00150     xorwf T
+                      00151     xorwf T,W
+                      00152     xorwf T
+                      00153     endm
+                      00154  
+                      00155 store macro var ; ( n -- ) pop T in variable
+                      00156    moviw SP--
+                      00157    movwf var
+                      00158    endm
+                      00159    
+                      00160 fetch macro var  ; ( -- n ) push var on stack
+                      00161    movfw var
+                      00162    movwi ++SP
+                      00163    endm
+                      00164 
+                      00165 pick macro n  ; pick nth element of stack to WREG
+                      00166     moviw -n[SP]
+                      00167     endm
+                      00168 
+                      00169 insert macro n ;  insert WREG at position n on stack
+                      00170    movwi -n[SP]
+                      00171    endm
+                      00172    
+                      00173 movtw macro ; ( n -- n ) overwrite WREG with T
+                      00174    movfw T
+                      00175    endm
+                      00176    
+                      00177 movwt macro ; ( n1 -- n2 ) overwrite T with WREG
+                      00178     movwf T
+                      00179     endm
+                      00180     
+                      00181 add macro  ; add WREG to T result on T
+                      00182     addwf T
+                      00183    endm
+                      00184    
+                      00185 sub macro  ; substract WREG from T result on T
+                      00186    subwf T
+                      00187    endm
+                      00188 
+                      00189 inc_n macro n ; increament nth element of stack
+                      00190     moviw -n[SP]
+                      00191     incf WREG
+                      00192     movwi -n[SP]
+                      00193     endm
+                      00194     
+                      00195 dec_n macro n ; decreament nth element of stack
+                      00196     moviw -n[SP]
+                      00197     decf WREG
+                      00198     movwi -n[SP]
+                      00199     endm
+                      00200     
+                      00201 zbranch macro label ; branch if T == 0
+                      00202     pop
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE  5
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00203     
-                      00204     udata_shr
-                      00205 ;scan lines counter    
-0000                  00206 lcountL res 1
-0001                  00207 lcountH res 1
-                      00208 ; boolean flags 
-0002                  00209 flags res 1
-0003                  00210 rcount res 1
-0004                  00211 temp res 1
-0005                  00212 accaL res 1
-0006                  00213 accaH res 1
-                      00214  
-                      00215 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                      00216  
-                      00217     org 0
-0000   0023           00218     banksel ANSELA
+                      00203     skpnz
+                      00204     bra label
+                      00205     endm
+                      00206     
+                      00207 tbranch macro label ; branch if T != 0
+                      00208     pop
+                      00209     skpz
+                      00210     bra label
+                      00211     endm
+                      00212     
+                      00213 reserve macro n ; reserve n bytes on stack for local variables
+                      00214     addfsr SP, n 
+                      00215     endm
+                      00216     
+                      00217 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00218     
+                      00219     udata_shr
+                      00220 ;scan lines counter    
+0000                  00221 lcountL res 1
+0001                  00222 lcountH res 1
+                      00223 ; boolean flags 
+0002                  00224 flags res 1
+0003                  00225 rcount res 1
+0004                  00226 temp res 1
+0005                  00227 accaL res 1
+0006                  00228 accaH res 1
+                      00229  
+                      00230 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00231  
+                      00232     org 0
+0000   0023           00233     banksel ANSELA
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-0001   018C           00219     clrf ANSELA
-0002   2???           00220     goto init
-                      00221     
-                      00222     org 4
-0004                  00223 isr:
-0004   003B           00224     banksel SYNC_PWMINTF
+0001   018C           00234     clrf ANSELA
+0002   2???           00235     goto init
+                      00236     
+                      00237     org 4
+0004                  00238 isr:
+0004   003B           00239     banksel SYNC_PWMINTF
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-0005   103D           00225     bcf SYNC_PWMINTF,PRIF
-0006   1C00           00226     btfss flags, F_VSYNC
-0007   3???           00227     bra isr01
-0008   08??           00228     movfw lcountL
-0009   3A03           00229     xorlw 3
-000A   1D03           00230     skpz
-000B   3???           00231     bra isr_exit
-000C                  00232 vsync_end:
-000C   003B           00233     banksel SYNC_PWMDCL
-000D   305E           00234     movlw HORZ_PULSE&0xff
+0005   103D           00240     bcf SYNC_PWMINTF,PRIF
+0006   1C00           00241     btfss flags, F_VSYNC
+0007   3???           00242     bra isr01
+0008   08??           00243     movfw lcountL
+0009   3A03           00244     xorlw 3
+000A   1D03           00245     skpz
+000B   3???           00246     bra isr_exit
+000C                  00247 vsync_end:
+000C   003B           00248     banksel SYNC_PWMDCL
+000D   305E           00249     movlw HORZ_PULSE&0xff
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-000E   00B3           00235     movwf SYNC_PWMDCL
-000F   3000           00236     movlw HORZ_PULSE>>8
+000E   00B3           00250     movwf SYNC_PWMDCL
+000F   3000           00251     movlw HORZ_PULSE>>8
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-0010   00B4           00237     movwf SYNC_PWMDCH
-Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-0011   17BF           00238     bsf SYNC_PWMLDCON,7
-0012   1000           00239     bcf flags, F_VSYNC
-0013   3???           00240     bra isr_exit
-0014                  00241 isr01:    
-0014   08??           00242     movfw lcountL
-0015   06??           00243     xorwf lcountH,W
-0016   1D03           00244     skpz
-0017   3???           00245     bra isr02
-0018                  00246 vsync_start:
-0018   003B           00247     banksel SYNC_PWMDCL
-0019   3097           00248     movlw (HORZ_PERIOD-HORZ_PULSE)&0xff
-Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-001A   00B3           00249     movwf SYNC_PWMDCL
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE  6
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE  6
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-001B   3004           00250     movlw (HORZ_PERIOD-HORZ_PULSE)>>8
+0010   00B4           00252     movwf SYNC_PWMDCH
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-001C   00B4           00251     movwf SYNC_PWMDCH
+0011   17BF           00253     bsf SYNC_PWMLDCON,7
+0012   1000           00254     bcf flags, F_VSYNC
+0013   3???           00255     bra isr_exit
+0014                  00256 isr01:    
+0014   08??           00257     movfw lcountL
+0015   06??           00258     xorwf lcountH,W
+0016   1D03           00259     skpz
+0017   3???           00260     bra isr02
+0018                  00261 vsync_start:
+0018   003B           00262     banksel SYNC_PWMDCL
+0019   3097           00263     movlw (HORZ_PERIOD-HORZ_PULSE)&0xff
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-001D   17BF           00252     bsf SYNC_PWMLDCON,7
-001E   1400           00253     bsf flags, F_VSYNC
-001F   3???           00254     bra isr_exit
-0020                  00255 isr02:
-0020   1C00           00256     btfss lcountH,0
-0021   3???           00257     bra lt_256
-0022                  00258 gt_255: ; lcount>255
-0022   3006           00259     movlw LAST_LINE&0xff
-0023   1C80           00260     btfss flags,F_EVEN
-0024   3E01           00261     addlw 1
-0025   06??           00262     xorwf lcountL,W
-0026   1D03           00263     skpz
-0027   3???           00264     bra isr_exit
-0028   01??           00265     clrf lcountL
-0029   01??           00266     clrf lcountH
-002A   3002           00267     movlw 1<<F_EVEN
+001A   00B3           00264     movwf SYNC_PWMDCL
+001B   3004           00265     movlw (HORZ_PERIOD-HORZ_PULSE)>>8
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001C   00B4           00266     movwf SYNC_PWMDCH
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001D   17BF           00267     bsf SYNC_PWMLDCON,7
+001E   1400           00268     bsf flags, F_VSYNC
+001F   3???           00269     bra isr_exit
+0020                  00270 isr02:
+0020   1C00           00271     btfss lcountH,0
+0021   3???           00272     bra lt_256
+0022                  00273 gt_255: ; lcount>255
+0022   3006           00274     movlw LAST_LINE&0xff
+0023   1C80           00275     btfss flags,F_EVEN
+0024   3E01           00276     addlw 1
+0025   06??           00277     xorwf lcountL,W
+0026   1D03           00278     skpz
+0027   3???           00279     bra isr_exit
+0028   01??           00280     clrf lcountL
+0029   01??           00281     clrf lcountH
+002A   3002           00282     movlw 1<<F_EVEN
 Message[305]: Using default destination of 1 (file).
-002B   06??           00268     xorwf flags
-002C   3???           00269     bra isr_exit
-002D                  00270 lt_256:
-002D   1900           00271     btfsc flags, F_MUTEX
-002E   3???           00272     bra isr_exit
-002F   08??           00273     movfw lcountL
-0030   3C3B           00274     sublw FIRST_VIDEO-1
-0031   1803           00275     skpnc
-0032   3???           00276     bra isr_exit
-0033   08??           00277     movfw lcountL
-0034   3CBB           00278     sublw LAST_VIDEO
-0035   1C03           00279     skpc
-0036   3???           00280     bra isr_exit
-0037   2???           00281     call video_serialize
-0038                  00282 isr_exit:
+002B   06??           00283     xorwf flags
+002C   3???           00284     bra isr_exit
+002D                  00285 lt_256:
+002D   1900           00286     btfsc flags, F_MUTEX
+002E   3???           00287     bra isr_exit
+002F   08??           00288     movfw lcountL
+0030   3C3B           00289     sublw FIRST_VIDEO-1
+0031   1803           00290     skpnc
+0032   3???           00291     bra isr_exit
+0033   08??           00292     movfw lcountL
+0034   3CBB           00293     sublw LAST_VIDEO
+0035   1C03           00294     skpc
+0036   3???           00295     bra isr_exit
+0037   2???           00296     call video_serialize
+0038                  00297 isr_exit:
 Message[305]: Using default destination of 1 (file).
-0038   0A??           00283     incf lcountL
-0039   1903           00284     skpnz
-Message[305]: Using default destination of 1 (file).
-003A   0A??           00285     incf lcountH
-003B   0009           00286     retfie
-                      00287 
-                      00288 ; WREG*6  because BPL=6
-                      00289 ; WREG*6=WREG*4+WREG*2    
-003C                  00290 mult6: 
-003C   00??           00291     movwf temp
-Message[305]: Using default destination of 1 (file).
-003D   35??           00292     lslf temp
-003E   35??           00293     lslf temp,W
-003F   07??           00294     addwf temp,W
-0040   0008           00295     return
-                      00296     
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE  7
+0038   0A??           00298     incf lcountL
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE  7
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00297 ; serialise video pixels to scan line
-                      00298 ; due to timing constrain use specialized 
-                      00299 ; division and multiplication    
-0041                  00300 video_serialize: 
-                      00301 ;    movfw FSR0L
-                      00302 ;    push
-                      00303 ;    movfw FSR0H
-                      00304 ;    push
-                      00305 ;    lit 0 ; ( x )
-                      00306     tcyDelay HORZ_DLY
+0039   1903           00299     skpnz
+Message[305]: Using default destination of 1 (file).
+003A   0A??           00300     incf lcountH
+003B   0009           00301     retfie
+                      00302 
+                      00303 ; WREG*6  because BPL=6
+                      00304 ; WREG*6=WREG*4+WREG*2    
+003C                  00305 mult6: 
+003C   00??           00306     movwf temp
+Message[305]: Using default destination of 1 (file).
+003D   35??           00307     lslf temp    ; temp=2*WREG
+003E   35??           00308     lslf temp,W  ; WREG=4*WREG
+003F   07??           00309     addwf temp,W ; WREG=6*WREG
+0040   0008           00310     return
+                      00311     
+                      00312 ; serialise video pixels to scan line
+                      00313 ; due to timing constrain use specialized 
+                      00314 ; division and multiplication    
+0041                  00315 video_serialize: 
+0041   0804           00316     movfw FSR0L
+                      00317     push
+0042   001C               M     movwi ++SP
+0043   0805           00318     movfw FSR0H
+                      00319     push
+0044   001C               M     movwi ++SP
+                      00320     lit 0 ; ( x )
+0045   3000               M    movlw 0
+0046   001C               M    movwi ++SP 
+                      00321     tcyDelay HORZ_DLY
   0000                    M     variable r=HORZ_DLY%5
   0010                    M     variable q=HORZ_DLY/5
                           M     while r>1
@@ -378,429 +397,800 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                           M     nop
                           M     endif
                           M     if q
-0041   3010               M     movlw q
-0042   3???               M     bra $+1
+0047   3010               M     movlw q
+0048   3???               M     bra $+1
 Message[305]: Using default destination of 1 (file).
-0043   0B89               M     decfsz WREG
-0044   3???               M     bra $-2
+0049   0B89               M     decfsz WREG
+004A   3???               M     bra $-2
                           M     endif
-0045   3030           00307     movlw VIDEO_BUFFER&0xff
-0046   0084           00308     movwf FSR0L
-0047   3020           00309     movlw VIDEO_BUFFER>>8
-0048   0085           00310     movwf FSR0H
-0049   303C           00311     movlw FIRST_VIDEO
-004A   02??           00312     subwf lcountL,W
+004B   3030           00322     movlw VIDEO_BUFFER&0xff
+004C   0084           00323     movwf FSR0L
+004D   3020           00324     movlw VIDEO_BUFFER>>8
+004E   0085           00325     movwf FSR0H
+004F   303C           00326     movlw FIRST_VIDEO
+0050   02??           00327     subwf lcountL,W
 Message[305]: Using default destination of 1 (file).
-004B   3689           00313     lsrf WREG
-Message[305]: Using default destination of 1 (file).
-004C   3689           00314     lsrf WREG
-004D   2???           00315     call mult6
-Message[305]: Using default destination of 1 (file).
-004E   0784           00316     addwf FSR0L
-004F   0103           00317     clrw
-Message[305]: Using default destination of 1 (file).
-0050   3D85           00318     addwfc FSR0H
-0051   3006           00319     movlw XSIZE/8
-0052   00??           00320     movwf rcount
-0053   0023           00321     banksel RCSTA
-Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-0054   179D           00322     bsf RCSTA,SPEN
-0055                  00323 pixels_loop:    
-0055   0012           00324     moviw FSR0++
-0056   0023           00325     banksel PIXEL_TXREG
-Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-0057   009A           00326     movwf PIXEL_TXREG
-0058   0020           00327     banksel TX_PIR
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE  8
+0051   3689           00328     lsrf WREG
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE  8
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0059   1E11           00328     btfss TX_PIR,TXIF
-005A   3???           00329     bra $-1
 Message[305]: Using default destination of 1 (file).
-005B   0B??           00330     decfsz rcount
-005C   3???           00331     bra pixels_loop
-005D   0023           00332     banksel PIXEL_TXREG
-Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-005E   019A           00333     clrf PIXEL_TXREG
-005F   0020           00334     banksel TX_PIR
-0060   1E11           00335     btfss TX_PIR,TXIF
-0061   3???           00336     bra $-1
-0062   0023           00337     banksel RCSTA
-Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-0063   139D           00338     bcf RCSTA, SPEN
-                      00339 ;    pop
-                      00340 ;    movwf FSR0H
-                      00341 ;    pop
-                      00342 ;    movwf FSR0L
-0064   0008           00343     return
-                      00344 
-                      00345 ; fill_buffer
-                      00346 ; fill screen buffer with WREG value    
-0065                  00347 fill_buffer: 
-                      00348     reserve 1
-0065   3141               M     addfsr SP, 1 
-                      00349     push
-0066   001C               M     movwi ++SP
-                      00350     disable_video
-0067   1500               M     bsf flags, F_MUTEX
-0068   3020           00351     movlw VIDEO_BUFFER>>8
-0069   0085           00352     movwf FSR0H
-006A   3030           00353     movlw VIDEO_BUFFER&0xff
-006B   0084           00354     movwf FSR0L
-006C   30C0           00355     movlw BUFFER_SIZE
-                      00356     insert 1
-006D   3FFF               M    movwi -1[SP]
-                      00357     pop
-006E   0017               M     moviw SP--
-006F                  00358 fill_loop:    
-006F   001A           00359     movwi FSR0++
+0052   3689           00329     lsrf WREG
+0053   2???           00330     call mult6
 Message[305]: Using default destination of 1 (file).
-0070   0B81           00360     decfsz T
-0071   3???           00361     bra fill_loop
-                      00362     drop
-0072   317F               M    addfsr SP,-1
-                      00363     enable_video
-0073   1100               M     bcf flags, F_MUTEX
-0074   0008           00364     return
-                      00365 
-                      00366 ;set video pointer at 
-                      00367 ; byte that contain pixel {x,y}
-                      00368 ; output:
-                      00369 ;   WREG = pixel offset, 0 left, 7 right  
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE  9
+0054   0784           00331     addwf FSR0L
+0055   0103           00332     clrw
+Message[305]: Using default destination of 1 (file).
+0056   3D85           00333     addwfc FSR0H
+0057   3006           00334     movlw XSIZE/8
+0058   00??           00335     movwf rcount
+0059   0023           00336     banksel RCSTA
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+005A   179D           00337     bsf RCSTA,SPEN
+005B                  00338 pixels_loop:    
+005B   0012           00339     moviw FSR0++
+005C   0023           00340     banksel PIXEL_TXREG
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+005D   009A           00341     movwf PIXEL_TXREG
+005E   0020           00342     banksel TX_PIR
+005F   1E11           00343     btfss TX_PIR,TXIF
+0060   3???           00344     bra $-1
+Message[305]: Using default destination of 1 (file).
+0061   0B??           00345     decfsz rcount
+0062   3???           00346     bra pixels_loop
+0063   0023           00347     banksel PIXEL_TXREG
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0064   019A           00348     clrf PIXEL_TXREG
+0065   0020           00349     banksel TX_PIR
+0066   1E11           00350     btfss TX_PIR,TXIF
+0067   3???           00351     bra $-1
+0068   0023           00352     banksel RCSTA
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0069   139D           00353     bcf RCSTA, SPEN
+                      00354     pop
+006A   0017               M     moviw SP--
+006B   0085           00355     movwf FSR0H
+                      00356     pop
+006C   0017               M     moviw SP--
+006D   0084           00357     movwf FSR0L
+006E   0008           00358     return
+                      00359 
+                      00360 ; fill_buffer
+                      00361 ; fill screen buffer with WREG value    
+006F                  00362 fill_buffer: 
+                      00363     reserve 1
+006F   3141               M     addfsr SP, 1 
+                      00364     push
+0070   001C               M     movwi ++SP
+                      00365     disable_video
+0071   1500               M     bsf flags, F_MUTEX
+0072   3020           00366     movlw high(VIDEO_BUFFER)
+0073   0085           00367     movwf FSR0H
+0074   3030           00368     movlw low(VIDEO_BUFFER)
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE  9
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00370 ;   Z=0 if offset==0    
-0075                  00371 set_video_ptr:  ; ( x y -- )
-0075   3020           00372     movlw VIDEO_BUFFER>>8
-0076   0085           00373     movwf FSR0H
-0077   3030           00374     movlw VIDEO_BUFFER&0xff
-0078   0084           00375     movwf FSR0L
-                      00376     ; buffer_addr+y*BPL
-                      00377     pop         ; ( x y -- x )
-0079   0017               M     moviw SP--
-007A   2???           00378     call mult6
+0075   0084           00369     movwf FSR0L
+0076   30C0           00370     movlw BUFFER_SIZE
+                      00371     insert 1
+0077   3FFF               M    movwi -1[SP]
+                      00372     pop
+0078   0017               M     moviw SP--
+0079                  00373 fill_loop:    
+0079   001A           00374     movwi FSR0++
 Message[305]: Using default destination of 1 (file).
-007B   0784           00379     addwf FSR0L
-007C   0103           00380     clrw
+007A   0B81           00375     decfsz T
+007B   3???           00376     bra fill_loop
+                      00377     drop
+007C   317F               M    addfsr SP,-1
+                      00378     enable_video
+007D   1100               M     bcf flags, F_MUTEX
+007E   0008           00379     return
+                      00380 
+                      00381 ;set video pointer at 
+                      00382 ; byte that contain pixel {x,y}
+                      00383 ; output:
+                      00384 ;   WREG = pixel offset, 0 left, 7 right  
+                      00385 ;   Z=0 if offset==0    
+007F                  00386 set_video_ptr:  ; ( x y -- )
+007F   3020           00387     movlw high(VIDEO_BUFFER)
+0080   0085           00388     movwf FSR0H
+0081   3030           00389     movlw low(VIDEO_BUFFER)
+0082   0084           00390     movwf FSR0L
+                      00391 ; buffer_addr+y*BPL
+                      00392     pop         ; ( x y -- x )
+0083   0017               M     moviw SP--
+0084   2???           00393     call mult6
 Message[305]: Using default destination of 1 (file).
-007D   3D85           00381     addwfc FSR0H
-                      00382     ; buffer_addr+x/8
-007E   3601           00383     lsrf T,W   
+0085   0784           00394     addwf FSR0L
+0086   0103           00395     clrw
 Message[305]: Using default destination of 1 (file).
-007F   3689           00384     lsrf WREG
+0087   3D85           00396     addwfc FSR0H
+                      00397 ; buffer_addr+x/8
+0088   3601           00398     lsrf T,W   
 Message[305]: Using default destination of 1 (file).
-0080   3689           00385     lsrf WREG
+0089   3689           00399     lsrf WREG
 Message[305]: Using default destination of 1 (file).
-0081   0784           00386     addwf FSR0L
-0082   0103           00387     clrw
+008A   3689           00400     lsrf WREG
 Message[305]: Using default destination of 1 (file).
-0083   3D85           00388     addwfc FSR0H
-                      00389     pop            
-0084   0017               M     moviw SP--
-0085   3907           00390     andlw 7
-0086   0008           00391     return
-                      00392 
-                      00393     
-0087                  00394 xor_pixel: ; ( x y -- ) inverse le pixel
-                      00395     disable_video
-0087   1500               M     bsf flags, F_MUTEX
-                      00396     pick 1
-0088   3F7F               M     moviw -1[SP]
-                      00397     push
-0089   001C               M     movwi ++SP
-                      00398     pick 1
-008A   3F7F               M     moviw -1[SP]
-                      00399     push        ; x y x y
-008B   001C               M     movwi ++SP
-008C   0804           00400     movfw FSR0L
-                      00401     insert 3
-008D   3FFD               M    movwi -3[SP]
-008E   0805           00402     movfw FSR0H
-                      00403     insert 2    ; FSR0L FSR0H x y 
-008F   3FFE               M    movwi -2[SP]
-0090   2???           00404     call set_video_ptr  ;FSR0L FSR0H 
-                      00405     push        ; FSR0L FSR0H bit
-0091   001C               M     movwi ++SP
-0092   3001           00406     movlw 0x1
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 10
+008B   0784           00401     addwf FSR0L
+008C   0103           00402     clrw
+Message[305]: Using default destination of 1 (file).
+008D   3D85           00403     addwfc FSR0H
+                      00404     pop            
+008E   0017               M     moviw SP--
+008F   3907           00405     andlw 7
+0090   0008           00406     return
+                      00407 
+                      00408 ;inverse le pixel    
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 10
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0093   1903           00407     skpnz
-0094   3???           00408     bra xorp01
-0095                  00409 xorp00:
+                      00409 ; inputs:
+                      00410 ;   {x,y} coordinates
+                      00411 ; output:
+                      00412 ;   WREG=collision flag    
+0091                  00413 xor_pixel: ; ( x y -- )
+                      00414     disable_video
+0091   1500               M     bsf flags, F_MUTEX
+                      00415     pick 1
+0092   3F7F               M     moviw -1[SP]
+                      00416     push
+0093   001C               M     movwi ++SP
+                      00417     pick 1
+0094   3F7F               M     moviw -1[SP]
+                      00418     push        ; x y x y
+0095   001C               M     movwi ++SP
+0096   0804           00419     movfw FSR0L
+                      00420     insert 3
+0097   3FFD               M    movwi -3[SP]
+0098   0805           00421     movfw FSR0H
+                      00422     insert 2    ; FSR0L FSR0H x y 
+0099   3FFE               M    movwi -2[SP]
+009A   2???           00423     call set_video_ptr  ;FSR0L FSR0H 
+                      00424     push        ; FSR0L FSR0H bit
+009B   001C               M     movwi ++SP
+009C   3001           00425     movlw 0x1
+009D   1903           00426     skpnz
+009E   3???           00427     bra xorp01
+009F                  00428 xorp00:
 Message[305]: Using default destination of 1 (file).
-0095   3589           00410     lslf WREG
+009F   3589           00429     lslf WREG
 Message[305]: Using default destination of 1 (file).
-0096   0B81           00411     decfsz T
-0097   3???           00412     bra xorp00
-0098                  00413 xorp01:
-                      00414     drop        ; FSR0L FSR0H
-0098   317F               M    addfsr SP,-1
+00A0   0B81           00430     decfsz T
+00A1   3???           00431     bra xorp00
+00A2                  00432 xorp01:
 Message[305]: Using default destination of 1 (file).
-0099   0680           00415     xorwf INDF0 
-                      00416     pop         ; FSR0L
-009A   0017               M     moviw SP--
-009B   0085           00417     movwf FSR0H
-                      00418     pop         ; vide
-009C   0017               M     moviw SP--
-009D   0084           00419     movwf FSR0L
-                      00420     enable_video
-009E   1100               M     bcf flags, F_MUTEX
-009F   0008           00421     return
-                      00422 
-                      00423 ; draw horizontal line ( length  y x -- )
-                      00424 ; inputs:
-                      00425 ;   length of line
-                      00426 ;   {x,y} left coordinates       
-00A0                  00427 hline:
-                      00428     pick 2
-00A0   3F7E               M     moviw -2[SP]
-                      00429     push
-00A1   001C               M     movwi ++SP
-                      00430     zbranch hline_done
-                          M     pop
-00A2   0017               M     moviw SP--
-00A3   1903               M     skpnz
-00A4   3???               M     bra hline_done
-                      00431     dup
-00A5   0801               M     movfw T
-00A6   001C               M     movwi ++SP
-                      00432     pick 2
+00A2   0680           00433     xorwf INDF0
+00A3   0500           00434     andwf INDF0,W ; on screen bit value 0|1 for collision detection
+00A4   0081           00435     movwf T
+                      00436     pick 1  
+00A5   3F7F               M     moviw -1[SP]
+00A6   0085           00437     movwf FSR0H
+                      00438     pick 2
 00A7   3F7E               M     moviw -2[SP]
-                      00433     push
-00A8   001C               M     movwi ++SP
-00A9   2???           00434     call xor_pixel
-Message[305]: Using default destination of 1 (file).
-00AA   0A81           00435     incf T
-                      00436     dec_n 2
-00AB   3F7E               M     moviw -2[SP]
-Message[305]: Using default destination of 1 (file).
-00AC   0389               M     decf WREG
-00AD   3FFE               M     movwi -2[SP]
-00AE   3???           00437     bra hline
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 11
+00A8   0084           00439     movwf FSR0L
+                      00440     pop  ; collistion flag 0 -> no collision
+00A9   0017               M     moviw SP--
+                      00441     drop_n 2
+00AA   317E               M     addfsr SP,-2
+                      00442     push ; return collision flag
+00AB   001C               M     movwi ++SP
+                      00443     enable_video
+00AC   1100               M     bcf flags, F_MUTEX
+00AD   0008           00444     return
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 11
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-00AF                  00438 hline_done:    
-                      00439     drop_n 3
-00AF   317D               M     addfsr SP,-3
-00B0   0008           00440     return
-                      00441 
-                      00442 ;draw vertical line ( length x y -- )
-                      00443 ; inputs:
-                      00444 ;   length of line
-                      00445 ;   {x,y} top coordinate
-00B1                  00446 vline:  ; len y x
-                      00447     pick 2 
-00B1   3F7E               M     moviw -2[SP]
-00B2   1903           00448     skpnz
-00B3   3???           00449     bra vline_done
+                      00445 
+                      00446 ; draw row of pixels
+                      00447 ; draw up to 8 pixels.
+                      00448 ; stop when r==0    
+                      00449 ; input:
+                      00450 ;   {x,y} left coordinates
+                      00451 ;   r pixels to draw
+                      00452 ; output:
+                      00453 ;   f=collision flag, return modified value   
+00AE                  00454 xor_row: ; ( f r x y -- f )
+                      00455     pick 2 ; check if r==0
+00AE   3F7E               M     moviw -2[SP]
+00AF   1903           00456     skpnz
+00B0   3???           00457     bra xor_row_done ; r==0 done
 Message[305]: Using default destination of 1 (file).
-00B4   0389           00450     decf WREG
-                      00451     insert 2
-00B5   3FFE               M    movwi -2[SP]
-                      00452     pick 1      
-00B6   3F7F               M     moviw -1[SP]
-                      00453     push    ; len x y x
-00B7   001C               M     movwi ++SP
-                      00454     pick 1
-00B8   3F7F               M     moviw -1[SP]
-                      00455     push    ; len x y x y
-00B9   001C               M     movwi ++SP
-00BA   2???           00456     call xor_pixel
+00B1   3589           00458     lslf WREG
+                      00459     insert 2  ; save shifted r
+00B2   3FFE               M    movwi -2[SP]
+00B3   1C03           00460     skpc
+00B4   3???           00461     bra xor_row02 ; bit==0 no draw
+                      00462     over ; f r x y x 
+00B5   3F7F               M     moviw -1[SP]
+                          M     push
+00B6   001C               M     movwi ++SP
+                      00463     over ; f r x y x y
+00B7   3F7F               M     moviw -1[SP]
+                          M     push
+00B8   001C               M     movwi ++SP
+00B9   2???           00464     call xor_pixel ; f r x y fn
+                      00465     pick 4 ; pick flag
+00BA   3F7C               M     moviw -4[SP]
 Message[305]: Using default destination of 1 (file).
-00BB   0A81           00457     incf T
-00BC   3???           00458     bra vline
-00BD                  00459 vline_done:
-                      00460     drop_n 3
-00BD   317D               M     addfsr SP,-3
-00BE   0008           00461     return
-                      00462     
-                      00463 ; draw box ( height width top left )
-                      00464 ;box:
-                      00465 ;    pick 2
-                      00466 ;    push
-                      00467 ;    pick 2
-                      00468 ;    push
-                      00469 ;    pick 2
-                      00470 ;    push
-                      00471 ;    call hline
-                      00472 ;    inc_n 1
-                      00473 ;    dec_n 3 ; use height argument as line counter
-                      00474 ;    skpz
-                      00475 ;    bra box
-                      00476 ;    drop_n 4 ; clean stack frame
-                      00477 ;    return
-                      00478     
-                      00479 
-  0000000A            00480 WELL_WIDTH equ 10
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 12
+00BB   0481           00466     iorwf T
+                      00467     pop     
+00BC   0017               M     moviw SP--
+                      00468     insert 3 ; store modified flag
+00BD   3FFD               M    movwi -3[SP]
+00BE                  00469 xor_row02:
+                      00470     inc_n 1  ; x+=1
+00BE   3F7F               M     moviw -1[SP]
+Message[305]: Using default destination of 1 (file).
+00BF   0A89               M     incf WREG
+00C0   3FFF               M     movwi -1[SP]
+00C1   3???           00471     bra xor_row
+00C2                  00472 xor_row_done: ; f r x y
+                      00473     drop_n 3  ; only keep f
+00C2   317D               M     addfsr SP,-3
+00C3   0008           00474     return
+                      00475 
+                      00476 ; read flash memory word
+                      00477 ; input:
+                      00478 ;   lo is low byte of address
+                      00479 ;   hi is high byte of address
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 12
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-  00000016            00481 WELL_DEPTH equ 22 
-00BF                  00482 game_init:
-                      00483     lit 0   ; lit 0 to clear screen black
-00BF   3000               M    movlw 0
-00C0   001C               M    movwi ++SP 
-00C1   2???           00484     call fill_buffer ; clear screen white
-                      00485     lit WELL_DEPTH
-00C2   3016               M    movlw WELL_DEPTH
-00C3   001C               M    movwi ++SP 
-                      00486     lit 0
-00C4   3000               M    movlw 0
-00C5   001C               M    movwi ++SP 
-                      00487     lit 0
-00C6   3000               M    movlw 0
-00C7   001C               M    movwi ++SP 
-00C8   2???           00488      call vline
-                      00489     lit WELL_DEPTH
-00C9   3016               M    movlw WELL_DEPTH
-00CA   001C               M    movwi ++SP 
-                      00490     lit WELL_WIDTH+1
-00CB   300B               M    movlw WELL_WIDTH+1
-00CC   001C               M    movwi ++SP 
-                      00491     lit 0
-00CD   3000               M    movlw 0
-00CE   001C               M    movwi ++SP 
-00CF   2???           00492     call vline
-                      00493     lit WELL_WIDTH+2
-00D0   300C               M    movlw WELL_WIDTH+2
-00D1   001C               M    movwi ++SP 
-                      00494     lit WELL_DEPTH
-00D2   3016               M    movlw WELL_DEPTH
-00D3   001C               M    movwi ++SP 
-                      00495     lit 0
-00D4   3000               M    movlw 0
-00D5   001C               M    movwi ++SP 
-00D6   2???           00496     call hline
-                      00497 ;    lit WELL_DEPTH+1
-                      00498 ;    lit WELL_WIDTH+2
-                      00499 ;    lit 0
-                      00500 ;    lit 0
-                      00501 ;    call box
-                      00502 ;    ; draw game well
-                      00503 ;    lit WELL_DEPTH
-                      00504 ;    lit WELL_WIDTH
-                      00505 ;    lit 0
-                      00506 ;    lit 1
-                      00507 ;    call box
-                      00508     ; initialise variables
-00D7   0008           00509     return
-                      00510     
-00D8                  00511 tetris:
-                      00512     
-00D8   0008           00513     return
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 13
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-                      00514     
-00D9                  00515 init:
-                      00516     pstack_init
-00D9   0187               M     clrf FSR1H
-00DA   301F               M     movlw S0
-00DB   0086               M     movwf FSR1L
-00DC   0021           00517     banksel TRISA
+                      00480 ;   ofs offset in table (limited to 255 )    
+                      00481 ; output:
+                      00482 ;   PMDATH: PMDAL 
+00C4                  00483 get_flash_word: ; ( ofs lo hi -- )
+00C4   0023           00484     banksel PMADR
+                      00485     pop
+00C5   0017               M     moviw SP--
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00DD   110C           00518     bcf TRISA, SYNC_OUT
+00C6   0092           00486     movwf PMADRH
+                      00487     pop
+00C7   0017               M     moviw SP--
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00DE   108C           00519     bcf TRISA, VIDEO_OUT
-00DF   0022           00520     banksel VIDEO_LAT
-Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00E0   108C           00521     bcf VIDEO_LAT,VIDEO_OUT
-                      00522 ;configure EUSART in sychronsous mode
-                      00523 ;to use as pixel serializer
-00E1   0023           00524     banksel SPBRG
-00E2   3001           00525     movlw 1
-Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00E3   009B           00526     movwf SPBRGL
-Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00E4   019C           00527     clrf SPBRGH
-Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00E5   019A           00528     clrf TXREG
-00E6   30B0           00529     movlw (1<<SYNC)|(1<<CSRC)|(1<<TXEN)
-Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00E7   009E           00530     movwf TXSTA
-Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00E8   179D           00531     bsf RCSTA, SPEN
-00E9   30CF           00532     movlw ~((1<<CREN)|(1<<SREN))
+00C8   0091           00488     movwf PMADRL
+                      00489     pop
+00C9   0017               M     moviw SP--
 Message[305]: Using default destination of 1 (file).
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00EA   059D           00533     andwf RCSTA
-                      00534 ; configure pwm video sync for horizontal period
-00EB   003B           00535     banksel SYNC_PWMDCH
+00CA   0791           00490     addwf PMADRL
+00CB   0103           00491     clrw 
+Message[305]: Using default destination of 1 (file).
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00EC   01B1           00536     clrf SYNC_PWMPH
+00CC   3D92           00492     addwfc PMADRH
+00CD                  00493 read_flash:    
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00ED   01B2           00537     clrf SYNC_PWMPH+1
+00CD   1315           00494     bcf PMCON1,CFGS
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00EE   01BF           00538     clrf SYNC_PWMLDCON
-00EF   30F5           00539     movlw HORZ_PERIOD&0XFF
+00CE   1415           00495     bsf PMCON1, RD
+00CF   0000           00496     nop
+00D0   0000           00497     nop
+00D1   0008           00498     return
+                      00499 
+                      00500 ; increament pointer 
+                      00501 ; and read next flash word    
+00D2                  00502 next_flash_word:
+Message[305]: Using default destination of 1 (file).
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00F0   00B5           00540     movwf SYNC_PWMPRL
-00F1   3004           00541     movlw HORZ_PERIOD>>8
+00D2   0A91           00503     incf PMADRL
+00D3   1903           00504     skpnz
+Message[305]: Using default destination of 1 (file).
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00F2   00B6           00542     movwf SYNC_PWMPRH
+00D4   0A92           00505     incf PMADRH
+00D5   3???           00506     bra read_flash
+                      00507     
+                      00508 ;get row from PMDAT    
+00D6                  00509 get_row: ; ( n -- row )    
+00D6   0801           00510     movfw T
+00D7   1903           00511     skpnz
+00D8   3???           00512     bra row0
+Message[305]: Using default destination of 1 (file).
+00D9   0B89           00513     decfsz WREG
+00DA   3???           00514     bra row2
+00DB                  00515 row1:    
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00F3   01BE           00543     clrf SYNC_PWMCLKCON
-00F4   30D0           00544     movlw (3<<OE)|(1<<POL)
-Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00F5   00BB           00545     movwf SYNC_PWMCON
-00F6   305E           00546     movlw HORZ_PULSE&0xff
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 14
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 13
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+00DB   0813           00516     movfw PMDATL
+00DC   3???           00517     bra nibble
+00DD                  00518 row2:
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00F7   00B3           00547     movwf SYNC_PWMDCL
-00F8   3000           00548     movlw HORZ_PULSE>>8
+00DD   0E13           00519     swapf PMDATL,W
+00DE   3???           00520     bra nibble
+00DF                  00521 row0:    
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00F9   00B4           00549     movwf SYNC_PWMDCH
+00DF   0E14           00522     swapf PMDATH,W
+00E0                  00523 nibble:
+00E0   39F0           00524     andlw 0xf0
+00E1   0081           00525     movwf T
+00E2   0008           00526     return
+                      00527 
+                      00528 ; print 4 pixels row
+                      00529 ; inputs:
+                      00530 ;   x,y left coordinates
+                      00531 ;   f  collision flag
+                      00532 ;   r  row index {0-2}
+                      00533 ; advance y coordinate for next row    
+00E3                  00534 print_row: ; ( x y f r -- x y f )     
+00E3   2???           00535     call get_row ; x y f n 
+                      00536     pick 3 
+00E4   3F7D               M     moviw -3[SP]
+                      00537     push    ; x y f n x
+00E5   001C               M     movwi ++SP
+                      00538     pick 3
+00E6   3F7D               M     moviw -3[SP]
+                      00539     push      ; x y f n x y
+00E7   001C               M     movwi ++SP
+00E8   2???           00540     call xor_row ; x y f
+                      00541     inc_n 1
+00E9   3F7F               M     moviw -1[SP]
+Message[305]: Using default destination of 1 (file).
+00EA   0A89               M     incf WREG
+00EB   3FFF               M     movwi -1[SP]
+00EC   0008           00542     return
+                      00543     
+                      00544 ; draw character 
+                      00545 ; input:
+                      00546 ;   x,y left/top coordinates
+                      00547 ;   c   character to print    
+00ED                  00548 print_char: ; ( x y c -- )
+Message[305]: Using default destination of 1 (file).
+00ED   3581           00549     lslf T ; 2 words per digit
+                      00550     lit low(digits)
+00EE   30??               M    movlw low(digits)
+00EF   001C               M    movwi ++SP 
+                      00551     lit high(digits)
+00F0   30??               M    movlw high(digits)
+00F1   001C               M    movwi ++SP 
+00F2   2???           00552     call get_flash_word  ; x y
+                      00553     lit 0   ; x y f=0
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00F3   3000               M    movlw 0
+00F4   001C               M    movwi ++SP 
+                      00554     lit 0
+00F5   3000               M    movlw 0
+00F6   001C               M    movwi ++SP 
+00F7   2???           00555     call print_row
+                      00556     lit 1
+00F8   3001               M    movlw 1
+00F9   001C               M    movwi ++SP 
+00FA   2???           00557     call print_row
+                      00558     lit 2
+00FB   3002               M    movlw 2
+00FC   001C               M    movwi ++SP 
+00FD   2???           00559     call print_row   
+00FE   2???           00560     call next_flash_word
+                      00561     lit 0
+00FF   3000               M    movlw 0
+0100   001C               M    movwi ++SP 
+0101   2???           00562     call print_row 
+                      00563     lit 1 
+0102   3001               M    movlw 1
+0103   001C               M    movwi ++SP 
+0104   2???           00564     call print_row ; x y f r -- x y f
+                      00565     drop_n 3
+0105   317D               M     addfsr SP,-3
+0106   0008           00566     return
+                      00567 
+                      00568 ;print a text line store in flash
+                      00569 ; text terminated by 0xff
+                      00570 ; input: 
+                      00571 ;  x, y left coordinates
+                      00572 ;  idx  index of message    
+0107                  00573 print_label: ; ( x y idx -- )
+                      00574     lit 0    ; x y idx i
+0107   3000               M    movlw 0
+0108   001C               M    movwi ++SP 
+0109                  00575 prt_lbl_loop:
+                      00576     dup      ; x y idx i i
+0109   0801               M     movfw T
+010A   001C               M     movwi ++SP
+                      00577     pick 2   ; WREG=idx
+010B   3F7E               M     moviw -2[SP]
+010C   2???           00578     call labels ; x y idx i i -- x y idx i  
+010D   1B89           00579     btfsc WREG,7
+010E   3???           00580     bra prt_tbl_done
+                      00581     push ; character to print
+010F   001C               M     movwi ++SP
+                      00582     pick 3
+0110   3F7D               M     moviw -3[SP]
+                      00583     push    ; x y idx i c x 
+0111   001C               M     movwi ++SP
+                      00584     pick 3
+0112   3F7D               M     moviw -3[SP]
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00585     push    ; x y idx i c x y
+0113   001C               M     movwi ++SP
+Warning[207]: Found label after column 1. (rot)
+0114                  00586     rot     ; x y idx i x y c
+0114   2???           00587     call print_char ; -- x y idx i 
+Message[305]: Using default destination of 1 (file).
+0115   0A81           00588     incf T
+                      00589     pick 3    ; x
+0116   3F7D               M     moviw -3[SP]
+0117   3E04           00590     addlw 4   ; x+=4
+                      00591     insert 3  
+0118   3FFD               M    movwi -3[SP]
+0119   3???           00592     bra prt_lbl_loop
+011A                  00593 prt_tbl_done:
+                      00594     drop_n 4
+011A   317C               M     addfsr SP,-4
+011B   0008           00595     return
+                      00596     
+                      00597     
+                      00598 ; draw horizontal line ( length  y x -- )
+                      00599 ; inputs:
+                      00600 ;   length of line
+                      00601 ;   {x,y} left coordinates       
+011C                  00602 hline:
+                      00603     pick 2
+011C   3F7E               M     moviw -2[SP]
+011D   1903           00604     skpnz
+011E   3???           00605     bra hline_done
+Message[305]: Using default destination of 1 (file).
+011F   0389           00606     decf WREG
+                      00607     insert 2
+0120   3FFE               M    movwi -2[SP]
+                      00608     dup     ; len y x x
+0121   0801               M     movfw T
+0122   001C               M     movwi ++SP
+                      00609     pick 2
+0123   3F7E               M     moviw -2[SP]
+                      00610     push    ; len y x x y
+0124   001C               M     movwi ++SP
+0125   2???           00611     call xor_pixel
+                      00612     drop
+0126   317F               M    addfsr SP,-1
+Message[305]: Using default destination of 1 (file).
+0127   0A81           00613     incf T  ; len y x+1
+0128   3???           00614     bra hline
+0129                  00615 hline_done:    
+                      00616     drop_n 3
+0129   317D               M     addfsr SP,-3
+012A   0008           00617     return
+                      00618 
+                      00619 ;draw vertical line ( length x y -- )
+                      00620 ; inputs:
+                      00621 ;   length of line
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00622 ;   {x,y} top coordinate
+012B                  00623 vline:  ; len y x
+                      00624     pick 2 
+012B   3F7E               M     moviw -2[SP]
+012C   1903           00625     skpnz
+012D   3???           00626     bra vline_done
+Message[305]: Using default destination of 1 (file).
+012E   0389           00627     decf WREG
+                      00628     insert 2
+012F   3FFE               M    movwi -2[SP]
+                      00629     pick 1      
+0130   3F7F               M     moviw -1[SP]
+                      00630     push    ; len x y x
+0131   001C               M     movwi ++SP
+                      00631     pick 1
+0132   3F7F               M     moviw -1[SP]
+                      00632     push    ; len x y x y
+0133   001C               M     movwi ++SP
+0134   2???           00633     call xor_pixel
+                      00634     drop
+0135   317F               M    addfsr SP,-1
+Message[305]: Using default destination of 1 (file).
+0136   0A81           00635     incf T
+0137   3???           00636     bra vline
+0138                  00637 vline_done:
+                      00638     drop_n 3
+0138   317D               M     addfsr SP,-3
+0139   0008           00639     return
+                      00640     
+  0000000A            00641 WELL_WIDTH equ 10
+  00000016            00642 WELL_DEPTH equ 22 
+013A                  00643 game_init:
+                      00644     lit 0   ; lit 0 to clear screen black
+013A   3000               M    movlw 0
+013B   001C               M    movwi ++SP 
+013C   2???           00645     call fill_buffer ; clear screen white
+                      00646     lit WELL_DEPTH
+013D   3016               M    movlw WELL_DEPTH
+013E   001C               M    movwi ++SP 
+                      00647     lit 0
+013F   3000               M    movlw 0
+0140   001C               M    movwi ++SP 
+                      00648     lit 0
+0141   3000               M    movlw 0
+0142   001C               M    movwi ++SP 
+0143   2???           00649      call vline
+                      00650     lit WELL_DEPTH
+0144   3016               M    movlw WELL_DEPTH
+0145   001C               M    movwi ++SP 
+                      00651     lit WELL_WIDTH+1
+0146   300B               M    movlw WELL_WIDTH+1
+0147   001C               M    movwi ++SP 
+                      00652     lit 0
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 17
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0148   3000               M    movlw 0
+0149   001C               M    movwi ++SP 
+014A   2???           00653     call vline
+                      00654     lit WELL_WIDTH+2
+014B   300C               M    movlw WELL_WIDTH+2
+014C   001C               M    movwi ++SP 
+                      00655     lit WELL_DEPTH
+014D   3016               M    movlw WELL_DEPTH
+014E   001C               M    movwi ++SP 
+                      00656     lit 0
+014F   3000               M    movlw 0
+0150   001C               M    movwi ++SP 
+0151   2???           00657     call hline
+                      00658     lit WELL_WIDTH+3 ; x
+0152   300D               M    movlw WELL_WIDTH+3
+0153   001C               M    movwi ++SP 
+                      00659     lit 0            ; y
+0154   3000               M    movlw 0
+0155   001C               M    movwi ++SP 
+                      00660     lit LBL_SCORE            ; message index
+0156   3000               M    movlw LBL_SCORE
+0157   001C               M    movwi ++SP 
+0158   2???           00661     call print_label
+                      00662     lit WELL_WIDTH+3 ; x
+0159   300D               M    movlw WELL_WIDTH+3
+015A   001C               M    movwi ++SP 
+                      00663     lit 18           ; y
+015B   3012               M    movlw 18
+015C   001C               M    movwi ++SP 
+                      00664     lit LBL_LINES       ; message index
+015D   3001               M    movlw LBL_LINES
+015E   001C               M    movwi ++SP 
+015F   2???           00665     call print_label
+                      00666     
+                      00667 ; initialise variables
+0160   0008           00668     return
+                      00669     
+0161                  00670 tetris:
+                      00671     
+0161   0008           00672     return
+                      00673     
+0162                  00674 init:
+                      00675     pstack_init
+0162   0187               M     clrf FSR1H
+0163   301F               M     movlw S0
+0164   0086               M     movwf FSR1L
+0165   0021           00676     banksel TRISA
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00FA   17BF           00550     bsf SYNC_PWMLDCON,7
-                      00551    ;enable video interrupt on period match
+0166   110C           00677     bcf TRISA, SYNC_OUT
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00FB   103D           00552     bcf SYNC_PWMINTF,PRIF
+0167   108C           00678     bcf TRISA, VIDEO_OUT
+0168   0022           00679     banksel VIDEO_LAT
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00FC   143C           00553     bsf SYNC_PWMINTE,PRIE
-                      00554     ; enable peripheral interrupt
-00FD   0021           00555     banksel SYNC_PIE
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 18
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0169   108C           00680     bcf VIDEO_LAT,VIDEO_OUT
+                      00681 ;configure EUSART in sychronsous mode
+                      00682 ;to use as pixel serializer
+016A   0023           00683     banksel SPBRG
+016B   3001           00684     movlw 1
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-00FE   1713           00556     bsf SYNC_PIE,SYNC_IE
-                      00557     ;enable interrupts
-00FF   30C0           00558     movlw (1<<GIE)|(1<<PEIE)
-0100   008B           00559     movwf INTCON
-0101   01??           00560     clrf lcountL
-0102   01??           00561     clrf lcountH
-0103   01??           00562     clrf flags
-0104                  00563 main:
-0104   2???           00564     call game_init
-0105   2???           00565     call tetris
-0106   3???           00566     bra $
-0107   3???           00567     bra main
-                      00568     
-3FE7 1EFF             00569     end
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 15
+016C   009B           00685     movwf SPBRGL
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+016D   019C           00686     clrf SPBRGH
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+016E   019A           00687     clrf TXREG
+016F   30B0           00688     movlw (1<<SYNC)|(1<<CSRC)|(1<<TXEN)
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0170   009E           00689     movwf TXSTA
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0171   179D           00690     bsf RCSTA, SPEN
+0172   30CF           00691     movlw ~((1<<CREN)|(1<<SREN))
+Message[305]: Using default destination of 1 (file).
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0173   059D           00692     andwf RCSTA
+                      00693 ; configure pwm video sync for horizontal period
+0174   003B           00694     banksel SYNC_PWMDCH
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0175   01B1           00695     clrf SYNC_PWMPH
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0176   01B2           00696     clrf SYNC_PWMPH+1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0177   01BF           00697     clrf SYNC_PWMLDCON
+0178   30F5           00698     movlw HORZ_PERIOD&0XFF
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0179   00B5           00699     movwf SYNC_PWMPRL
+017A   3004           00700     movlw HORZ_PERIOD>>8
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+017B   00B6           00701     movwf SYNC_PWMPRH
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+017C   01BE           00702     clrf SYNC_PWMCLKCON
+017D   30D0           00703     movlw (3<<OE)|(1<<POL)
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+017E   00BB           00704     movwf SYNC_PWMCON
+017F   305E           00705     movlw HORZ_PULSE&0xff
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0180   00B3           00706     movwf SYNC_PWMDCL
+0181   3000           00707     movlw HORZ_PULSE>>8
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0182   00B4           00708     movwf SYNC_PWMDCH
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0183   17BF           00709     bsf SYNC_PWMLDCON,7
+                      00710    ;enable video interrupt on period match
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0184   103D           00711     bcf SYNC_PWMINTF,PRIF
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0185   143C           00712     bsf SYNC_PWMINTE,PRIE
+                      00713     ; enable peripheral interrupt
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 19
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0186   0021           00714     banksel SYNC_PIE
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0187   1713           00715     bsf SYNC_PIE,SYNC_IE
+                      00716     ;enable interrupts
+0188   30C0           00717     movlw (1<<GIE)|(1<<PEIE)
+0189   008B           00718     movwf INTCON
+018A   01??           00719     clrf lcountL
+018B   01??           00720     clrf lcountH
+018C   01??           00721     clrf flags
+018D                  00722 main:
+018D   2???           00723     call game_init
+018E   2???           00724     call tetris
+018F   3???           00725     bra $
+0190   3???           00726     bra main
+                      00727   
+                      00728 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00729 ;   data tables
+                      00730 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      00731 
+                      00732 ; **************** encoding ************************************************
+                      00733 ; enhanced PIC instructions are coded on 14 bits
+                      00734 ; these 14 bits can be read as data using flash memory
+                      00735 ; writing/reading mechanism, see datasheet chapter 10 for detail.
+                      00736 ; the 'dw' assembler directive encode data in those 14 bits contrary to 'dt'
+                      00737 ; directive which encode a single byte as a RETLW instruction.
+                      00738 ; So we get a 50% compression by encoding 3 nibbles/flash word. 
+                      00739 ; the encoding used in the following tables is as follow:    
+                      00740 ; bits 13:12  number of nibbles where 0 means there is more than 3 nibbles
+                      00741 ; in this data chunk so 1 or more other words follow this one.    
+                      00742 ; other 12 bits are sliced in 4 bits nibbles.
+                      00743 ;****************************************************************************
+                      00744 
+0191                  00745 digits: ; each digit is 5 rows
+0191   0EAA 2AE0      00746     dw 0x0EAA,0x2AE0 ; 0
+0193   04C4 24E0      00747     dw 0x04C4,0x24E0 ; 1
+0195   0E2E 28E0      00748     dw 0x0E2E,0x28E0 ; 2
+0197   0E2E 22E0      00749     dw 0x0E2E,0x22E0 ; 3
+0199   0AAE 2220      00750     dw 0x0AAE,0x2220 ; 4
+019B   0E8E 22E0      00751     dw 0x0E8E,0x22E0 ; 5
+019D   088E 2AE0      00752     dw 0x088E,0x2AE0 ; 6
+019F   0E22 2220      00753     dw 0x0E22,0x2220 ; 7
+01A1   0EAE 2AE0      00754     dw 0x0EAE,0x2AE0 ; 8
+01A3   0EAE 2220      00755     dw 0x0EAE,0x2220 ; 9
+                      00756 ; letters needed for 'SCORE' and 'LINES" labels
+01A5   3E88 28E0      00757     dw 0x3E88,0x28E0 ; C  code 10
+01A7   3E8E 29E0      00758     dw 0x3E8E,0x29E0 ; E  code 11
+01A9   3E44 24E0      00759     dw 0x3E44,0x24E0 ; I  code 12
+01AB   3888 28E0      00760     dw 0x3888,0x28E0 ; L  code 13
+01AD   38CA 2AA0      00761     dw 0x38CA,0x2AA0 ; N  code 14
+01AF   34AA 2A40      00762     dw 0x34AA,0x2A40 ; O  code 15
+01B1   38E8 2880      00763     dw 0x38E8,0x2880 ; R  code 16
+01B3   368C 22C0      00764     dw 0x368C,0x22C0 ; S  code 17
+01B5   3040 2400      00765     dw 0x3040,0x2400 ; :  code 18
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 20
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00766 ; annoying! I tetriminos need a special treatment 
+                      00767 ; because vertical I need 2 words for encoding.   
+01B7   0222 1200      00768 I0: dw 0x0222,0x1200 ; I R0  
+01B9   1F00 1000      00769     dw 0x1F00,0x1000 ; I R1  second word is filling for alignment
+01BB   0222 1200      00770     dw 0x0222,0x1200 ; I R2
+01BD   1F00 1000      00771     dw 0x1F00,0x1000 ; I R3  
+                      00772 
+                      00773 ; comments notation: Rn clockwise rotation n*90 degr.    
+                      00774 ; note that vertical I as 4 rows so it needs 2 words    
+01BF                  00775 tetrominos: 
+01BF   3445           00776     dw 0x3445 ; L R0
+01C0   2E80           00777     dw 0x2E80 ; L R1
+01C1   3622           00778     dw 0x3622 ; L R2
+01C2   22E0           00779     dw 0x22E0 ; L R3
+01C3   3226           00780     dw 0x3226 ; J R0
+01C4   28E0           00781     dw 0x28E0 ; J R1
+01C5   3644           00782     dw 0x3644 ; J R2
+01C6   2E20           00783     dw 0x2E20 ; J R3
+01C7   2660           00784     dw 0x2660 ; O R0 
+01C8   2660           00785     dw 0x2660 ; O R1
+01C9   2660           00786     dw 0x2660 ; O R2
+01CA   2660           00787     dw 0x2660 ; O R3
+01CB   2360           00788     dw 0x2360 ; S R0
+01CC   3462           00789     dw 0x3462 ; S R1
+01CD   2360           00790     dw 0x2360 ; S R2
+01CE   3462           00791     dw 0x3462 ; S R3
+01CF   2E40           00792     dw 0x2E40 ; T R0
+01D0   34C4           00793     dw 0x34c4 ; T R1
+01D1   24E0           00794     dw 0x24E0 ; T R2
+01D2   3464           00795     dw 0x3464 ; T R3
+01D3   2C60           00796     dw 0x2C60 ; Z R0
+01D4   3264           00797     dw 0x3264 ; Z R1
+01D5   2C60           00798     dw 0x2C60 ; Z R3
+01D6   3264           00799     dw 0x3264 ; Z R4
+                      00800 
+  00000000            00801 LBL_SCORE equ 0
+  00000001            00802 LBL_LINES equ 1 
+01D7                  00803 labels:
+01D7   000B           00804     brw
+01D8   3???           00805     bra score
+01D9   3???           00806     bra lines
+                      00807     
+01DA                  00808 score:
+                      00809     pop
+01DA   0017               M     moviw SP--
+01DB   000B           00810     brw
+01DC   3411 340A 340F 00811     dt 17,10,15,16,11,18,255
+       3410 340B 3412 
+       34FF 
+                      00812     
+01E3                  00813 lines:
+                      00814     pop
+01E3   0017               M     moviw SP--
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 21
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+01E4   000B           00815     brw
+01E5   340D 340C 340E 00816     dt 13,12,14,11,17,18,255
+       340B 3411 3412 
+       34FF 
+                      00817     
+3FE7 1EFF             00818     end
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 22
 
 
 SYMBOL TABLE
@@ -859,7 +1249,7 @@ C1NCH0                            00000000
 C1NCH1                            00000001
 C1NCH2                            00000002
 C1OE                              00000005
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 16
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 23
 
 
 SYMBOL TABLE
@@ -918,7 +1308,7 @@ DACR0                             00000000
 DACR1                             00000001
 DACR2                             00000002
 DACR3                             00000003
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 17
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 24
 
 
 SYMBOL TABLE
@@ -977,7 +1367,7 @@ GO_NOT_DONE                       00000001
 HFIOFL                            00000003
 HFIOFR                            00000004
 HFIOFS                            00000000
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 18
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 25
 
 
 SYMBOL TABLE
@@ -986,6 +1376,7 @@ SYMBOL TABLE
 HORZ_DLY                          00000050
 HORZ_PERIOD                       000004F5
 HORZ_PULSE                        0000005E
+I0                                000001B7
 INDF0                             00000000
 INDF1                             00000001
 INLVLA                            0000038C
@@ -1034,14 +1425,16 @@ LATA1                             00000001
 LATA2                             00000002
 LATA4                             00000004
 LATA5                             00000005
-LDA                               00000007
-LDS0                              00000000
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 19
+LBL_LINES                         00000001
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 26
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+LBL_SCORE                         00000000
+LDA                               00000007
+LDS0                              00000000
 LDS1                              00000001
 LDT                               00000006
 LFIOFR                            00000001
@@ -1092,15 +1485,15 @@ OSTS                              00000005
 OUT                               00000005
 P1SEL                             00000000
 P2SEL                             00000001
-PCL                               00000002
-PCLATH                            0000000A
-PCLATH_SHAD                       00000FE7
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 20
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 27
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+PCL                               00000002
+PCLATH                            0000000A
+PCLATH_SHAD                       00000FE7
 PCON                              00000096
 PEIE                              00000006
 PHIE                              00000002
@@ -1151,15 +1544,15 @@ PWM1DCH2                          00000002
 PWM1DCH3                          00000003
 PWM1DCH4                          00000004
 PWM1DCH5                          00000005
-PWM1DCH6                          00000006
-PWM1DCH7                          00000007
-PWM1DCIE                          00000001
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 21
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 28
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+PWM1DCH6                          00000006
+PWM1DCH7                          00000007
+PWM1DCIE                          00000001
 PWM1DCIF                          00000001
 PWM1DCL                           00000D93
 PWM1DCL0                          00000000
@@ -1210,15 +1603,15 @@ PWM1OFL5                          00000005
 PWM1OFL6                          00000006
 PWM1OFL7                          00000007
 PWM1OFM0                          00000005
-PWM1OFM1                          00000006
-PWM1OFMC                          00000004
-PWM1OFS0                          00000000
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 22
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 29
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+PWM1OFM1                          00000006
+PWM1OFMC                          00000004
+PWM1OFS0                          00000000
 PWM1OFS1                          00000001
 PWM1OUT                           00000005
 PWM1OUT_A                         00000000
@@ -1269,15 +1662,15 @@ PWM1PS0                           00000004
 PWM1PS1                           00000005
 PWM1PS2                           00000006
 PWM1TMR                           00000D99
-PWM1TMRH                          00000D9A
-PWM1TMRH0                         00000000
-PWM1TMRH1                         00000001
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 23
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 30
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+PWM1TMRH                          00000D9A
+PWM1TMRH0                         00000000
+PWM1TMRH1                         00000001
 PWM1TMRH2                         00000002
 PWM1TMRH3                         00000003
 PWM1TMRH4                         00000004
@@ -1328,15 +1721,15 @@ PWM2INTF                          00000DAD
 PWM2INTFLG                        00000DAD
 PWM2LD                            00000007
 PWM2LDA_A                         00000001
-PWM2LDCON                         00000DAF
-PWM2LDM                           00000006
-PWM2LDS0                          00000000
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 24
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 31
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+PWM2LDCON                         00000DAF
+PWM2LDM                           00000006
+PWM2LDS0                          00000000
 PWM2LDS1                          00000001
 PWM2MODE0                         00000002
 PWM2MODE1                         00000003
@@ -1387,15 +1780,15 @@ PWM2PHL0                          00000000
 PWM2PHL1                          00000001
 PWM2PHL2                          00000002
 PWM2PHL3                          00000003
-PWM2PHL4                          00000004
-PWM2PHL5                          00000005
-PWM2PHL6                          00000006
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 25
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 32
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+PWM2PHL4                          00000004
+PWM2PHL5                          00000005
+PWM2PHL6                          00000006
 PWM2PHL7                          00000007
 PWM2POL                           00000004
 PWM2PR                            00000DA5
@@ -1446,15 +1839,15 @@ PWM3CON                           00000DBB
 PWM3CS0                           00000000
 PWM3CS1                           00000001
 PWM3DC                            00000DB3
-PWM3DCH                           00000DB4
-PWM3DCH0                          00000000
-PWM3DCH1                          00000001
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 26
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 33
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+PWM3DCH                           00000DB4
+PWM3DCH0                          00000000
+PWM3DCH1                          00000001
 PWM3DCH2                          00000002
 PWM3DCH3                          00000003
 PWM3DCH4                          00000004
@@ -1505,15 +1898,15 @@ PWM3OFIF                          00000003
 PWM3OFL                           00000DB7
 PWM3OFL0                          00000000
 PWM3OFL1                          00000001
-PWM3OFL2                          00000002
-PWM3OFL3                          00000003
-PWM3OFL4                          00000004
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 27
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 34
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+PWM3OFL2                          00000002
+PWM3OFL3                          00000003
+PWM3OFL4                          00000004
 PWM3OFL5                          00000005
 PWM3OFL6                          00000006
 PWM3OFL7                          00000007
@@ -1564,15 +1957,15 @@ PWM3PRL1                          00000001
 PWM3PRL2                          00000002
 PWM3PRL3                          00000003
 PWM3PRL4                          00000004
-PWM3PRL5                          00000005
-PWM3PRL6                          00000006
-PWM3PRL7                          00000007
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 28
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 35
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+PWM3PRL5                          00000005
+PWM3PRL6                          00000006
+PWM3PRL7                          00000007
 PWM3PS0                           00000004
 PWM3PS1                           00000005
 PWM3PS2                           00000006
@@ -1623,15 +2016,15 @@ SLRA0                             00000000
 SLRA1                             00000001
 SLRA2                             00000002
 SLRA4                             00000004
-SLRA5                             00000005
-SLRCONA                           0000030C
-SP                                FSR1
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 29
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 36
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+SLRA5                             00000005
+SLRCONA                           0000030C
+SP                                FSR1
 SPBRG                             0000019B
 SPBRGH                            0000019C
 SPBRGL                            0000019B
@@ -1682,15 +2075,15 @@ T1GSS1                            00000001
 T1GTM                             00000005
 T1GVAL                            00000002
 T2CKPS0                           00000000
-T2CKPS1                           00000001
-T2CON                             0000001C
-T2OUTPS0                          00000003
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 30
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 37
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+T2CKPS1                           00000001
+T2CON                             0000001C
+T2OUTPS0                          00000003
 T2OUTPS1                          00000004
 T2OUTPS2                          00000005
 T2OUTPS3                          00000006
@@ -1741,15 +2134,15 @@ TUN4                              00000004
 TUN5                              00000005
 TX9                               00000006
 TX9D                              00000000
-TXCKSEL                           00000002
-TXEN                              00000005
-TXIE                              00000004
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 31
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 38
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+TXCKSEL                           00000002
+TXEN                              00000005
+TXIE                              00000004
 TXIF                              00000004
 TXREG                             0000019A
 TXSTA                             0000019E
@@ -1786,11 +2179,11 @@ XSIZE                             00000030
 YSIZE                             00000020
 Z                                 00000002
 Z_SHAD                            00000002
-_.org_1_0042                      00000042
-_.org_1_0044                      00000044
-_.org_1_005A                      0000005A
-_.org_1_0061                      00000061
-_.org_1_0106                      00000106
+_.org_1_0048                      00000048
+_.org_1_004A                      0000004A
+_.org_1_0060                      00000060
+_.org_1_0067                      00000067
+_.org_1_018F                      0000018F
 _BOREN_NSLEEP                     00003DFF
 _BOREN_OFF                        000039FF
 _BOREN_ON                         00003FFF
@@ -1800,15 +2193,15 @@ _BORV_HI                          00003BFF
 _BORV_LO                          00003FFF
 _CLKOUTEN_OFF                     00003FFF
 _CLKOUTEN_ON                      000037FF
-_CONFIG1                          00008007
-_CONFIG2                          00008008
-_CP_OFF                           00003FFF
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 32
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 39
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+_CONFIG1                          00008007
+_CONFIG2                          00008008
+_CP_OFF                           00003FFF
 _CP_ON                            00003F7F
 _DEVID1                           00008006
 _FOSC_ECH                         00003FFF
@@ -1845,72 +2238,102 @@ __MPLAB_DEBUGGER_SIMULATOR        1
 accaH                             00000006
 accaL                             00000005
 add                               
+addpmadr                          
 case                              
 dec_n                             
+digits                            00000191
 disable_video                     
 drop                              
 drop_n                            
 dup                               
 enable_video                      
 fetch                             
-fill_buffer                       00000065
-fill_loop                         0000006F
+fill_buffer                       0000006F
+fill_loop                         00000079
 flags                             00000002
-game_init                         000000BF
-gt_255                            00000022
-hline                             000000A0
-hline_done                        000000AF
-inc_n                             
-init                              000000D9
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-4-2016  11:00:04         PAGE 33
+game_init                         0000013A
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 40
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+get_flash_word                    000000C4
+get_row                           000000D6
+gt_255                            00000022
+hline                             0000011C
+hline_done                        00000129
+inc_n                             
+init                              00000162
 insert                            
 isr                               00000004
 isr01                             00000014
 isr02                             00000020
 isr_exit                          00000038
+labels                            000001D7
 lcountH                           00000001
 lcountL                           00000000
+ldpmadr                           
+lines                             000001E3
 lit                               
 lt_256                            0000002D
-main                              00000104
+main                              0000018D
 movtw                             
 movwt                             
 mult6                             0000003C
+next_flash_word                   000000D2
+nibble                            000000E0
 over                              
 pick                              
-pixels_loop                       00000055
+pixels_loop                       0000005B
 pop                               
+print_char                        000000ED
+print_label                       00000107
+print_row                         000000E3
+prt_lbl_loop                      00000109
+prt_tbl_done                      0000011A
 pstack_init                       
 push                              
 q                                 00000010
 r                                 00000000
 rcount                            00000003
+read_flash                        000000CD
 reserve                           
-set_video_ptr                     00000075
+rot                               00000114
+row0                              000000DF
+row1                              000000DB
+row2                              000000DD
+score                             000001DA
+set_video_ptr                     0000007F
 store                             
 sub                               
 swap                              
 tbranch                           
 tcyDelay                          
 temp                              00000004
-tetris                            000000D8
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/NTS   12-5-2016  17:07:50         PAGE 41
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+tetris                            00000161
+tetrominos                        000001BF
 video_serialize                   00000041
-vline                             000000B1
-vline_done                        000000BD
+vline                             0000012B
+vline_done                        00000138
 vsync_end                         0000000C
 vsync_start                       00000018
-xor_pixel                         00000087
-xorp00                            00000095
-xorp01                            00000098
+xor_pixel                         00000091
+xor_row                           000000AE
+xor_row02                         000000BE
+xor_row_done                      000000C2
+xorp00                            0000009F
+xorp01                            000000A2
 zbranch                           
 
 Errors   :     0
-Warnings :     0 reported,     0 suppressed
-Messages :    59 reported,     0 suppressed
+Warnings :     1 reported,     0 suppressed
+Messages :    81 reported,     0 suppressed
 
 
