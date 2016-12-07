@@ -59,15 +59,24 @@ BTN_LT equ 2
 BTN_RT equ 3
 BTN_A equ 4
 BTN_B equ 5
-; read threshold level for each button 
-VDD equ 3
-B_THR equ VDD*5/6-4
-A_THR equ VDD*4/5-4
-DN_THR equ VDD*3/4-4 
-LT_THR equ VDD*2/3-4
-UP_THR equ VDD*1/2-4
-RT_THR equ 0
+; threshold level for each button
+; lower_btn_thr >= BTN_? < btn_thr
+; exemple: BTN_UP if RT_THR<=Vadc<UP_THR  
+VDD equ 1024
+DN_THR equ 216 ;(VDD*(6/7+5/6)/2)>>2
+LT_THR equ 209 ; (VDD*(5/6+4/5)/2)>>2
+UP_THR equ 198 ;(VDD*(4/5+3/4)/2)>>2
+RT_THR equ 181 ;(VDD*(3/4+2/3)/2)>>2
+B_THR  equ 149 ; (VDD*(2/3+1/2)/2)>>2
+A_THR  equ 64 ;(VDD/4)>>2
  
+try_button macro btn, label 
+    movlw btn
+    subwf ADRESH,W
+    skpnc
+    bra label
+    endm
+    
 ;boolean flags 
 F_VSYNC equ 0 ; vertical sync active
 F_EVEN equ 1  ; even field
@@ -137,7 +146,7 @@ wait_timer macro ; wait timer expiration
     endm
     
 pause macro value ; suspend execution (busy loop)
-    start_timer
+    start_timer value
     wait_timer
     endm
     
@@ -268,9 +277,11 @@ rot macro ; ( n1 n2 n3 -- n2 n3 n1 )
     endm
  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    udata 0x20
-; parameter stack area    
-_stack res 0x20
+; parameter stack section    
+dstack udata 0x20
+_stack res 32
+; game variables section 
+game_var udata 0x40 
 ; tetris game state
 tetrim res 1 ; active tretriminos 
 angle res 1 ; tetriminos rotatation angle in multiple of 90degr. {0:3}
@@ -280,6 +291,16 @@ scoreL res 1 ; game score  16 bits
 scoreH res 1 
 dropped res 1 ; dropped lines
 
+; These 3 sections are used for video pixels buffering
+; with indirect access using FSR0
+; to form a contiguous address space. 
+vb_b0    udata 0x50
+video_buffer_b0 res 32
+vb_b1    udata 0xA0
+video_buffer_b2 res 80
+vb_b2    udata 0x120
+video_buffer_b3 res 80
+ 
  
     udata_shr
 ;scan lines counter 16 bits
@@ -302,6 +323,8 @@ accbL res 1
 accbH res 1
 ; game pad buttons state
 buttons res 1
+; flash reader next nibble {0-3}
+nibble res 1
  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 rst: 
@@ -315,27 +338,28 @@ rst:
 isr:
     banksel SYNC_PWMINTF
     bcf SYNC_PWMINTF,PRIF
-    btfss flags, F_VSYNC
-    bra isr01
+    btfsc lcountH,0
+    bra gt_255 ; lcount > 255
     movfw lcountL
+    skpnz
+    bra vsync_start
     xorlw 3
-    skpz
+    skpnz
+    bra vsync_end
+lt_256: ; lcount < 256
+    btfsc flags, F_MUTEX
     bra isr_exit
-vsync_end:
-    banksel SYNC_PWMDCL
-    movlw HORZ_PULSE&0xff
-    movwf SYNC_PWMDCL
-    movlw HORZ_PULSE>>8
-    movwf SYNC_PWMDCH
-    bsf SYNC_PWMLDCON,7
-    bcf flags, F_VSYNC
-    bra isr_exit
-isr01:    
     movfw lcountL
-    xorwf lcountH,W
-    skpz
-    bra isr02
-vsync_start:
+    sublw FIRST_VIDEO-1
+    skpnc
+    bra isr_exit
+    movfw lcountL
+    sublw LAST_VIDEO
+    skpc
+    bra isr_exit
+    call video_serialize
+    bra isr_exit    
+vsync_start: ; scanline 0 start vertical sync pulse
     banksel SYNC_PWMDCL
     movlw (HORZ_PERIOD-HORZ_PULSE)&0xff
     movwf SYNC_PWMDCL
@@ -344,9 +368,15 @@ vsync_start:
     bsf SYNC_PWMLDCON,7
     bsf flags, F_VSYNC
     bra isr_exit
-isr02:
-    btfss lcountH,0
-    bra lt_256
+vsync_end: ; scanline 3 end vertical sync pulse
+    banksel SYNC_PWMDCL
+    movlw HORZ_PULSE&0xff
+    movwf SYNC_PWMDCL
+    movlw HORZ_PULSE>>8
+    movwf SYNC_PWMDCH
+    bsf SYNC_PWMLDCON,7
+    bcf flags, F_VSYNC
+    bra isr_exit
 gt_255: ; lcount>255
     movlw LAST_LINE&0xff
     btfss flags,F_EVEN
@@ -357,8 +387,8 @@ gt_255: ; lcount>255
     clrf lcountL
     clrf lcountH
     movlw 1<<F_EVEN
-    xorwf flags
-    bra isr_exit
+    xorwf flags,F
+    retfie
 ; round robin task scheduler
 ; each task execute once every 1/60th sec.
 ; condition:    
@@ -371,13 +401,13 @@ tasks:
     bra isr_exit
 task1:   
 ; decrement game timer    
-    movf gtimer,F ; 42Tcy
+    movf gtimer,F ; 
     skpnz
     bra isr_exit
-    decf gtimer,F ; 44Tcy
+    decf gtimer,F ; 
     skpnz
     bcf flags, F_GTMR
-    bra isr_exit ; 46Tcy=5.75µSec
+    bra isr_exit ;
 task2:
 ; rotate lfsr
     lsrf randH
@@ -385,19 +415,7 @@ task2:
     skpnc
     movlw LFSR_TAPS
     xorwf randH
-    bra isr_exit ; 53Tcy
-lt_256:
-    btfsc flags, F_MUTEX
-    bra isr_exit
-    movfw lcountL
-    sublw FIRST_VIDEO-1
-    skpnc
-    bra isr_exit
-    movfw lcountL
-    sublw LAST_VIDEO
-    skpc
-    bra isr_exit
-    call video_serialize
+    bra isr_exit 
 isr_exit:
     incf lcountL
     skpnz
@@ -415,19 +433,45 @@ mult6:
 
 ;read game pad
 ; store value in
-; buttons    
+; buttons
+; a button is accepted if
+; the Vadc value is below its threshold
 read_pad:
     banksel ADCON0
     bsf ADCON0,ADON
     bsf ADCON0,GO
-    btfsc ADCON0,NDONE
+    btfsc ADCON0,NOT_DONE
     bra $-1
     bcf ADCON0,ADON
-    movlw B_THR
-    subwf ADRESH,W
-    skpc
-    
+; try each button from lower to upper
+try_all:
+    clrf buttons
+try_a:    
+    try_button A_THR, try_b
+    bsf buttons,BTN_A
     return
+try_b:
+    try_button B_THR, try_rt
+    bsf buttons,BTN_B
+    return
+try_rt:
+    try_button RT_THR, try_up
+    bsf buttons,BTN_RT
+    return
+try_up:
+    try_button UP_THR, try_lt
+    bsf buttons,BTN_UP
+    return
+try_lt:
+    try_button LT_THR, try_dn
+    bsf buttons,BTN_LT
+    return
+try_dn:
+    try_button DN_THR, no_button
+    bsf buttons,BTN_DN
+no_button:
+    return
+    
     
 ; serialise video pixels to scan line
 ; due to timing constrain use specialized 
@@ -479,22 +523,20 @@ pixels_loop:
 
 ; fill_buffer
 ; fill screen buffer with WREG value    
-fill_buffer: 
-    reserve 1
-    push
+fill_buffer: ; ( c -- )
     disable_video
     movlw high(VIDEO_BUFFER)
     movwf FSR0H
     movlw low(VIDEO_BUFFER)
     movwf FSR0L
     movlw BUFFER_SIZE
-    insert 1
-    pop
+    push    ; c size
+    pick 1
 fill_loop:    
     movwi FSR0++
     decfsz T
     bra fill_loop
-    drop
+    drop_n 2
     enable_video
     return
 
@@ -530,7 +572,7 @@ set_video_ptr:  ; ( x y -- )
 ;   {x,y} coordinates
 ; output:
 ;   WREG=collision flag    
-xor_pixel: ; ( x y -- )
+xor_pixel: ; ( x y -- f )
     disable_video
     pick 1
     push
@@ -569,6 +611,7 @@ xorp01:
 ; input:
 ;   {x,y} left coordinates
 ;   r pixels to draw
+;   f collision flag to be modified    
 ; output:
 ;   f=collision flag, return modified value   
 xor_row: ; ( f r x y -- f )
@@ -599,7 +642,8 @@ xor_row_done: ; f r x y
 ;   hi is high byte of address
 ;   ofs offset in table (limited to 255 )    
 ; output:
-;   PMDATH: PMDAL 
+;   PMDATH: PMDAL
+;reset <nibble> variable    
 get_flash_word: ; ( ofs lo hi -- )
     banksel PMADR
     pop
@@ -615,6 +659,7 @@ read_flash:
     bsf PMCON1, RD
     nop
     nop
+    clrf nibble
     return
 
 ; increament pointer 
@@ -625,24 +670,32 @@ next_flash_word:
     incf PMADRH
     bra read_flash
     
-;get row from PMDAT    
-get_row: ; ( n -- row )    
-    movfw T
+;get nibble from PMDAT
+; output:
+;   stack nibble in bits 7:4
+; increment nibble variable    
+get_nibble: ; ( -- nibble )
+    movlw 3
+    xorwf nibble,W
+    skpnz ; if set all nibbles of this word read
+    call next_flash_word
+    movfw nibble
     skpnz
     bra row0
     decfsz WREG
     bra row2
 row1:    
     movfw PMDATL
-    bra nibble
+    bra nibble_mask
 row2:
     swapf PMDATL,W
-    bra nibble
+    bra nibble_mask
 row0:    
     swapf PMDATH,W
-nibble:
+nibble_mask:
     andlw 0xf0
-    movwf T
+    push
+    incf nibble,F ; advance nibble pointer
     return
 
 ; print 4 pixels row
@@ -651,14 +704,14 @@ nibble:
 ;   f  collision flag
 ;   r  row index {0-2}
 ; advance y coordinate for next row    
-print_row: ; ( x y f r -- x y f )     
-    call get_row ; x y f n 
+print_row: ; ( x y f -- x y f )     
+    call get_nibble ; -- x y f n 
     pick 3 
     push    ; x y f n x
     pick 3
     push      ; x y f n x y
-    call xor_row ; x y f
-    inc_n 1
+    call xor_row ; -- x y f
+    inc_n 1 ; y+=1
     return
     
 ; draw character 
@@ -668,23 +721,57 @@ print_row: ; ( x y f r -- x y f )
 print_char: ; ( x y c -- )
     lslf T ; 2 words per digit
     lit low(digits)
-    lit high(digits)
+    lit high(digits) ; x y ofs adrL adrH
     call get_flash_word  ; x y
     lit 0   ; x y f=0
-    lit 0
     call print_row
-    lit 1
     call print_row
-    lit 2
-    call print_row   
-    call next_flash_word
-    lit 0
     call print_row 
-    lit 1 
-    call print_row ; x y f r -- x y f
-    drop_n 3
+    call print_row 
+    call print_row 
+    drop_n 3  ; ( x y f -- )
     return
 
+; print a tetriminos
+; input:
+;   f collision flag
+;   x,y  left/top coordinate
+;   t tetriminos identifier
+; output:
+;   collision flag,  0 if no collision    
+print_tetrim: ; ( x y t  -- f )
+    movlw 24
+    subwf T,W
+    skpnc
+    bra ti ; I tetrominos
+    movlw low(tetriminos)
+    push
+    movlw high(tetriminos)
+    push
+    bra prt01
+ti: ; special treatment for I tetriminos
+    movwf T
+    lslf T,F
+    movlw low(I0)
+    push
+    movlw high(I0)
+    push
+prt01:    
+    call get_flash_word
+    lit 0
+    call print_row ; x y f -- x y+1 f
+    call print_row
+    call print_row
+    banksel PMDAT
+    movlw 0x30
+    andwf PMDATH,W
+    skpnz
+    call print_row
+    movfw T
+    insert 2
+    drop_n 2  ; -- f
+    return
+    
 ;print a text line store in flash
 ; text terminated by 0xff
 ; input: 
@@ -697,7 +784,7 @@ prt_lbl_loop:
     pick 2   ; WREG=idx
     call labels ; x y idx i i -- x y idx i  
     btfsc WREG,7
-    bra prt_tbl_done
+    bra prt_lbl_done
     push ; x y idx i c
     pick 4
     push    ; x y idx i c x 
@@ -710,7 +797,7 @@ prt_lbl_loop:
     addlw 4   ; x+=4
     insert 3  
     bra prt_lbl_loop
-prt_tbl_done:
+prt_lbl_done:
     drop_n 4
     return
     
@@ -762,7 +849,7 @@ WELL_WIDTH equ 10
 WELL_DEPTH equ 22 
 game_init:
     lit 0   ; lit 0 to clear screen black
-    call fill_buffer ; clear screen white
+    call fill_buffer ; clear screen black
     lit WELL_DEPTH
     lit 0
     lit 0
@@ -783,11 +870,11 @@ game_init:
     lit 12	     ; y
     lit LBL_LINES       ; message index
     call print_label
-    lit WELL_WIDTH+3 ; x
+    lit WELL_WIDTH+11 ; x
     lit 6	     ; y
     lit LBL_ZEROS       ; message index
     call print_label
-    lit WELL_WIDTH+3 ; x
+    lit WELL_WIDTH+11 ; x
     lit 18	     ; y
     lit LBL_ZEROS       ; message index
     call print_label
@@ -807,7 +894,29 @@ game_init:
     return
     
 tetris:
-    
+; test print_tetrim
+    lit 0 ; tetrimino id
+test_loop:    
+    lit 4 ; x
+    lit 0 ; y
+    pick 2
+    push    ; -- t x y t 
+    call print_tetrim
+    drop ; flag
+    pause  60
+    lit 4 ; x
+    lit 0 ; y
+    pick 2
+    push
+    call print_tetrim
+    drop ; flag
+    incf T
+    movlw 28
+    subwf T,W
+    skpc
+    bra test_loop
+    clrf T
+    bra test_loop
     return
     
 init:
@@ -916,17 +1025,11 @@ digits: ; each digit is 5 rows
     dw 0x38EA,0x2880 ; R  code 16
     dw 0x368C,0x22C0 ; S  code 17
     dw 0x3040,0x2400 ; :  code 18
-; annoying! I tetriminos need a special treatment 
-; because vertical I need 2 words for encoding.   
-I0: dw 0x0222,0x1200 ; I R0  
-    dw 0x1F00,0x1000 ; I R1  second word is filling for alignment
-    dw 0x0222,0x1200 ; I R2
-    dw 0x1F00,0x1000 ; I R3  
 
 ; comments notation: Rn clockwise rotation n*90 degr.    
 ; note that vertical I as 4 rows so it needs 2 words    
-tetrominos: 
-    dw 0x3445 ; L R0
+tetriminos: 
+    dw 0x3446 ; L R0
     dw 0x2E80 ; L R1
     dw 0x3622 ; L R2
     dw 0x22E0 ; L R3
@@ -950,6 +1053,12 @@ tetrominos:
     dw 0x3264 ; Z R1
     dw 0x2C60 ; Z R3
     dw 0x3264 ; Z R4
+; annoying! I tetriminos need a special treatment 
+; because vertical I need 2 words for encoding.   
+I0: dw 0x0222,0x1200 ; I R0  
+    dw 0x1F00,0x1000 ; I R1  second word is filling for alignment
+    dw 0x0222,0x1200 ; I R2
+    dw 0x1F00,0x1000 ; I R3  
 
 LBL_SCORE equ 0
 LBL_LINES equ 1
@@ -974,7 +1083,7 @@ txt_lines:
 txt_zeros:
     pop
     brw
-    dt 0,0,0,0,0,0,0,0,255
+    dt 0,0,0,0,0,0,255
     
     end
 
