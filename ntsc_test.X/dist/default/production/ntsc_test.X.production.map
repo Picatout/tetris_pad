@@ -1,12 +1,12 @@
 MPLINK 5.08, LINKER
-Linker Map File - Created Tue Dec  6 20:51:46 2016
+Linker Map File - Created Wed Dec  7 12:06:35 2016
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
                 ---------  ---------  ---------  ---------  ---------
                    .org_0       code   0x000000    program   0x000008
-                   .org_1       code   0x000004    program   0x000520
-                   .cinit    romdata   0x000294    program   0x000004
+                   .org_1       code   0x000004    program   0x000540
+                   .cinit    romdata   0x0002a4    program   0x000004
 .config_8007_BUILD/DEFAULT/PRODUCTION/NTSC_TE       code   0x008007    program   0x000002
 .config_8008_BUILD/DEFAULT/PRODUCTION/NTSC_TE       code   0x008008    program   0x000002
                    dstack      udata   0x000020       data   0x000020
@@ -21,84 +21,86 @@ Linker Map File - Created Tue Dec  6 20:51:46 2016
                               Program Memory Usage 
                                Start         End      
                            ---------   ---------      
-                            0x000000    0x000295      
+                            0x000000    0x0002a5      
                             0x008007    0x008008      
-            664 out of 2055 program addresses used, program memory utilization is 32%
+            680 out of 2055 program addresses used, program memory utilization is 33%
 
 
 
                               Symbols - Sorted by Name
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-                       I0   0x00026d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             _.org_1_0059   0x000059    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             _.org_1_0087   0x000087    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             _.org_1_0089   0x000089    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             _.org_1_009F   0x00009f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             _.org_1_00A6   0x0000a6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             _.org_1_01E6   0x0001e6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             _.org_1_022D   0x00022d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                   digits   0x00022f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-              fill_buffer   0x0000ae    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                fill_loop   0x0000b6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                game_init   0x000198    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-           get_flash_word   0x000101    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-               get_nibble   0x000114    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                       I0   0x00027d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             _.org_1_0069   0x000069    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             _.org_1_0097   0x000097    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             _.org_1_0099   0x000099    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             _.org_1_00AF   0x0000af    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             _.org_1_00B6   0x0000b6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             _.org_1_01F6   0x0001f6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             _.org_1_023D   0x00023d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                   digits   0x00023f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                    div10   0x000050    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+               div10_loop   0x000054    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+              fill_buffer   0x0000be    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                fill_loop   0x0000c6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                game_init   0x0001a8    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+           get_flash_word   0x000111    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+               get_nibble   0x000124    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
                    gt_255   0x00002a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                    hline   0x00017a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-               hline_done   0x000187    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                     init   0x0001f7    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                    hline   0x00018a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+               hline_done   0x000197    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                     init   0x000207    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
                       isr   0x000004    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
                  isr_exit   0x00004c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                   labels   0x000275    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                   labels   0x000285    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
                    lt_256   0x00000e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                     main   0x00022b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                    mult6   0x000050    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-          next_flash_word   0x000110    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-              nibble_mask   0x000122    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                no_button   0x00007f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-              pixels_loop   0x00009a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-               print_char   0x000130    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-              print_label   0x00015d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                print_row   0x000126    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             print_tetrim   0x00013f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                    prt01   0x00014e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             prt_lbl_done   0x000178    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             prt_lbl_loop   0x00015f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-               read_flash   0x00010a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                 read_pad   0x000055    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                     row0   0x000121    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                     row1   0x00011d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                     row2   0x00011f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-            set_video_ptr   0x0000bc    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                     main   0x00023b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                    mult6   0x000060    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+          next_flash_word   0x000120    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+              nibble_mask   0x000132    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                no_button   0x00008f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+              pixels_loop   0x0000aa    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+               print_char   0x000140    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+              print_label   0x00016d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                print_row   0x000136    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             print_tetrim   0x00014f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                    prt01   0x00015e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             prt_lbl_done   0x000188    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             prt_lbl_loop   0x00016f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+               read_flash   0x00011a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                 read_pad   0x000065    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                     row0   0x000131    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                     row1   0x00012d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                     row2   0x00012f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+            set_video_ptr   0x0000cc    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
                     task1   0x00003f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
                     task2   0x000046    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
                     tasks   0x000035    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                test_loop   0x0001da    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-               tetriminos   0x000255    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                   tetris   0x0001d8    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                       ti   0x000148    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                    try_a   0x00005c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                  try_all   0x00005b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                    try_b   0x000062    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                   try_dn   0x00007a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                   try_lt   0x000074    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                   try_rt   0x000068    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                   try_up   0x00006e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                txt_lines   0x000282    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                txt_score   0x000279    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                txt_zeros   0x00028b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-          video_serialize   0x000080    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                    vline   0x000189    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-               vline_done   0x000196    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                test_loop   0x0001ea    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+               tetriminos   0x000265    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                   tetris   0x0001e8    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                       ti   0x000158    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                    try_a   0x00006c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                  try_all   0x00006b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                    try_b   0x000072    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                   try_dn   0x00008a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                   try_lt   0x000084    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                   try_rt   0x000078    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                   try_up   0x00007e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                txt_lines   0x000292    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                txt_score   0x000289    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                txt_zeros   0x00029b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+          video_serialize   0x000090    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                    vline   0x000199    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+               vline_done   0x0001a6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
                 vsync_end   0x000022    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
               vsync_start   0x00001a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                xor_pixel   0x0000ce    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                  xor_row   0x0000eb    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                xor_row02   0x0000fb    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             xor_row_done   0x0000ff    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                   xorp00   0x0000dc    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                   xorp01   0x0000df    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                xor_pixel   0x0000de    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                  xor_row   0x0000fb    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                xor_row02   0x00010b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             xor_row_done   0x00010f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                   xorp00   0x0000ec    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                   xorp01   0x0000ef    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
                    _stack   0x000020       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
                     accaH   0x000078       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
                     accaL   0x000077       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
@@ -139,66 +141,68 @@ Linker Map File - Created Tue Dec  6 20:51:46 2016
                     task1   0x00003f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
                     task2   0x000046    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
                  isr_exit   0x00004c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                    mult6   0x000050    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                 read_pad   0x000055    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             _.org_1_0059   0x000059    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                  try_all   0x00005b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                    try_a   0x00005c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                    try_b   0x000062    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                   try_rt   0x000068    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                   try_up   0x00006e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                   try_lt   0x000074    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                   try_dn   0x00007a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                no_button   0x00007f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-          video_serialize   0x000080    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             _.org_1_0087   0x000087    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             _.org_1_0089   0x000089    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-              pixels_loop   0x00009a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             _.org_1_009F   0x00009f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             _.org_1_00A6   0x0000a6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-              fill_buffer   0x0000ae    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                fill_loop   0x0000b6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-            set_video_ptr   0x0000bc    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                xor_pixel   0x0000ce    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                   xorp00   0x0000dc    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                   xorp01   0x0000df    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                  xor_row   0x0000eb    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                xor_row02   0x0000fb    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             xor_row_done   0x0000ff    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-           get_flash_word   0x000101    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-               read_flash   0x00010a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-          next_flash_word   0x000110    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-               get_nibble   0x000114    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                     row1   0x00011d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                     row2   0x00011f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                     row0   0x000121    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-              nibble_mask   0x000122    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                print_row   0x000126    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-               print_char   0x000130    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             print_tetrim   0x00013f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                       ti   0x000148    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                    prt01   0x00014e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-              print_label   0x00015d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             prt_lbl_loop   0x00015f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             prt_lbl_done   0x000178    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                    hline   0x00017a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-               hline_done   0x000187    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                    vline   0x000189    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-               vline_done   0x000196    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                game_init   0x000198    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                   tetris   0x0001d8    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                test_loop   0x0001da    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             _.org_1_01E6   0x0001e6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                     init   0x0001f7    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                     main   0x00022b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-             _.org_1_022D   0x00022d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                   digits   0x00022f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-               tetriminos   0x000255    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                       I0   0x00026d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                   labels   0x000275    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                txt_score   0x000279    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                txt_lines   0x000282    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
-                txt_zeros   0x00028b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                    div10   0x000050    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+               div10_loop   0x000054    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                    mult6   0x000060    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                 read_pad   0x000065    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             _.org_1_0069   0x000069    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                  try_all   0x00006b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                    try_a   0x00006c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                    try_b   0x000072    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                   try_rt   0x000078    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                   try_up   0x00007e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                   try_lt   0x000084    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                   try_dn   0x00008a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                no_button   0x00008f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+          video_serialize   0x000090    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             _.org_1_0097   0x000097    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             _.org_1_0099   0x000099    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+              pixels_loop   0x0000aa    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             _.org_1_00AF   0x0000af    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             _.org_1_00B6   0x0000b6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+              fill_buffer   0x0000be    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                fill_loop   0x0000c6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+            set_video_ptr   0x0000cc    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                xor_pixel   0x0000de    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                   xorp00   0x0000ec    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                   xorp01   0x0000ef    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                  xor_row   0x0000fb    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                xor_row02   0x00010b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             xor_row_done   0x00010f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+           get_flash_word   0x000111    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+               read_flash   0x00011a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+          next_flash_word   0x000120    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+               get_nibble   0x000124    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                     row1   0x00012d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                     row2   0x00012f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                     row0   0x000131    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+              nibble_mask   0x000132    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                print_row   0x000136    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+               print_char   0x000140    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             print_tetrim   0x00014f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                       ti   0x000158    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                    prt01   0x00015e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+              print_label   0x00016d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             prt_lbl_loop   0x00016f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             prt_lbl_done   0x000188    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                    hline   0x00018a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+               hline_done   0x000197    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                    vline   0x000199    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+               vline_done   0x0001a6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                game_init   0x0001a8    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                   tetris   0x0001e8    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                test_loop   0x0001ea    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             _.org_1_01F6   0x0001f6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                     init   0x000207    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                     main   0x00023b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+             _.org_1_023D   0x00023d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                   digits   0x00023f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+               tetriminos   0x000265    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                       I0   0x00027d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                   labels   0x000285    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                txt_score   0x000289    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                txt_lines   0x000292    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
+                txt_zeros   0x00029b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
                    _stack   0x000020       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
                    tetrim   0x000040       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm
                     angle   0x000041       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/ntsc_test.asm

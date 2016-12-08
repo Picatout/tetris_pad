@@ -315,7 +315,7 @@ randL res 1
 randH res 1 
 ; loop counter
 rcount res 1
-; arithmetic accumulator A 16 bits
+; arithmetic accumulator A 24 bits
 accaL res 1
 accaH res 1
 ; arithmetic accumulator B 16 bits
@@ -422,6 +422,33 @@ isr_exit:
     incf lcountH
     retfie
 
+;divsion by 10    
+;needed to convert binary to BCD
+; input:
+;   acca dividend  16 bits
+; output:
+;   acca: quotient
+;   accbL: remainder    
+div10:
+    disable_video
+    movlw 17
+    movwf rcount
+    clrf accbL
+div10_loop:
+    movlw 10
+    subwf accbL,W
+    skpnc
+    movwf accbL
+    rlf accaL
+    rlf accaH
+    rlf accbL
+    decfsz rcount
+    bra div10_loop
+    lsrf accbL
+    enable_video
+    return
+    
+    
 ; WREG*6  because BPL=6
 ; WREG*6=WREG*4+WREG*2    
 mult6: 
