@@ -17,12 +17,12 @@ YSIZE equ 32  ; vertical pixels
 BPL equ XSIZE/8 ; bytes per line 
 BUFFER_SIZE equ  YSIZE*BPL  ; video buffer size
 VIDEO_BUFFER equ 0x2000+(3*80-BUFFER_SIZE) ; buffer address
-VERT_DLY equ 40
+VERT_DLY equ 50
 FIRST_VIDEO equ VERT_DLY+20  ; first video output line
 LAST_VIDEO equ FIRST_VIDEO+4*YSIZE-1  ; last video output line
 PIXEL_TXREG equ TXREG
 TX_PIR equ PIR1
-HORZ_DLY equ 16*5  ; there is 5 TCY/µsec
+HORZ_DLY equ 10*5  ; there is 5 TCY/µsec
  
 VIDEO_OUT equ RA1
 VIDEO_LAT equ LATA
@@ -452,10 +452,10 @@ div10_loop:
 ; WREG*6  because BPL=6
 ; WREG*6=WREG*4+WREG*2    
 mult6: 
-    movwf accaL
-    lslf accaL    ; accaL=2*WREG
-    lslf accaL,W  ; WREG=4*WREG
-    addwf accaL,W ; WREG=6*WREG
+    movwf accbH
+    lslf accbH    ; accbH=2*WREG
+    lslf accbH,W  ; WREG=4*WREG
+    addwf accbH,W ; WREG=6*WREG
     return
 
 ;read game pad
@@ -466,6 +466,7 @@ mult6:
 read_pad:
     banksel ADCON0
     bsf ADCON0,ADON
+    tcyDelay 8*4 ; délais d'acquisition 4µsec
     bsf ADCON0,GO
     btfsc ADCON0,NOT_DONE
     bra $-1
@@ -567,12 +568,13 @@ fill_loop:
     enable_video
     return
 
+    
 ;set video pointer at 
 ; byte that contain pixel {x,y}
 ; output:
-;   WREG = pixel offset, 0 left, 7 right  
+;   T = pixel offset, 0 left, 7 right  
 ;   Z=0 if offset==0    
-set_video_ptr:  ; ( x y -- )
+set_video_ptr:  ; ( x y -- f )
     movlw high(VIDEO_BUFFER)
     movwf FSR0H
     movlw low(VIDEO_BUFFER)
@@ -590,45 +592,61 @@ set_video_ptr:  ; ( x y -- )
     addwf FSR0L
     clrw
     addwfc FSR0H
-    pop            
-    andlw 7
+    movlw 7
+    andwf T,F
     return
 
-;inverse le pixel    
+XOR_OP equ 0
+CLR_OP equ 1
+;operation on pixel    
 ; inputs:
 ;   {x,y} coordinates
+;   op operation XOR_OP|CLR_OP 
 ; output:
-;   WREG=collision flag    
-xor_pixel: ; ( x y -- f )
+;   WREG=collision flag, 0 if collision    
+bitop: ; ( x y op -- f )
     disable_video
-    pick 1
-    push
-    pick 1
-    push	; x y x y
+    pick 2
+    push	; x y op x
+    pick 2
+    push	; x y op x y
+; preserve FSR0    
     movfw FSR0L
-    insert 3
+    insert 4
     movfw FSR0H
-    insert 2	; FSR0L FSR0H x y 
-    call set_video_ptr  ;FSR0L FSR0H 
-    push	; FSR0L FSR0H bit
+    insert 3	; -- FSR0L FSR0H op x y 
+    call set_video_ptr  ; -- FSR0L FSR0H op bit
     movlw 0x1
-    skpnz
-    bra xorp01
-xorp00:
+    skpnz ; bit Z modified before leaving set_video_ptr
+    bra bitop01 ; least significant bit
+bitop00:
     lslf WREG
     decfsz T
-    bra xorp00
-xorp01:
-    xorwf INDF0
-    andwf INDF0,W ; on screen bit value 0|1 for collision detection
-    movwf T
-    pick 1  
+    bra bitop00
+bitop01: 
+    ; WREG= bit mask
+    movwf T    ; -- FSR0L FSR0H op mask
+    pick 1  ; WREG= op
+    skpnz
+    bra xor_bit  ; 
+clear_bit:
+    comf T,W
+    andwf INDF0,F
+    bra bitop02
+xor_bit:
+    movfw T   ; -- FSR0L FSR0H op mask
+    xorwf INDF0,F
+    andwf INDF0,W ; on screen bit value = 0 if collision
+    movwf T  ; -- FSR0L FSR0H op f
+bitop02:    
+; restore FSR0    
+    pick 2  
     movwf FSR0H
-    pick 2
+    pick 3
     movwf FSR0L
-    pop  ; collistion flag 0 -> no collision
-    drop_n 2
-    push ; return collision flag
+    pop  ; collision flag
+    drop_n 3 ; drop parameters frame
+    push ; store collision flag
     enable_video
     return
 
@@ -651,10 +669,11 @@ xor_row: ; ( f r x y -- f )
     bra xor_row02 ; bit==0 no draw
     over ; f r x y x 
     over ; f r x y x y
-    call xor_pixel ; f r x y fn
+    lit XOR_OP ; f r x y x y op
+    call bitop ; f r x y f
     pick 4 ; pick flag
     iorwf T
-    pop	    
+    pop	     ; f r x y
     insert 3 ; store modified flag
 xor_row02:
     inc_n 1  ; x+=1
@@ -827,7 +846,41 @@ prt_lbl_loop:
 prt_lbl_done:
     drop_n 4
     return
-    
+
+;print an integer
+;from right to left ( least first)
+; input:    
+;   x,y  coordinate right end
+;   number to print in acca    
+;   accbL contain digit after div10 call    
+print_int: ; ( x y -- )
+    movfw accaH
+    iorwf accaL,W
+    skpnz
+    bra print_last
+    over
+    over    ; x y x y
+    call div10
+    movfw accbL ; remainder of division
+    push   ; x y x y d
+    call print_char ; -- x y 
+    pick 1
+    push
+    movlw 4
+    subwf T
+    pop
+    insert 1
+    bra print_int
+print_last:
+    pick 1
+    xorlw 43
+    skpz
+    bra no_zero
+    push
+    bra print_char
+no_zero:
+    drop_n 2
+    return
     
 ; draw horizontal line ( length  y x -- )
 ; inputs:
@@ -842,7 +895,8 @@ hline:
     dup	    ; len y x x
     pick 2
     push    ; len y x x y
-    call xor_pixel
+    lit XOR_OP
+    call bitop
     drop
     incf T  ; len y x+1
     bra hline
@@ -864,7 +918,8 @@ vline:  ; len y x
     push    ; len x y x
     pick 1
     push    ; len x y x y
-    call xor_pixel
+    lit XOR_OP
+    call bitop
     drop
     incf T
     bra vline
@@ -875,8 +930,10 @@ vline_done:
 WELL_WIDTH equ 10
 WELL_DEPTH equ 22 
 game_init:
-    lit 0   ; lit 0 to clear screen black
-    call fill_buffer ; clear screen black
+;clear screen    
+    lit 0  
+    call fill_buffer
+; draw game well    
     lit WELL_DEPTH
     lit 0
     lit 0
@@ -889,23 +946,16 @@ game_init:
     lit WELL_DEPTH
     lit 0
     call hline
+; print "SCORE" label    
     lit WELL_WIDTH+3 ; x
     lit 0	     ; y
-    lit LBL_SCORE	     ; message index
+    lit LBL_SCORE	  
     call print_label
+; print "LINES" label    
     lit WELL_WIDTH+3 ; x
     lit 12	     ; y
-    lit LBL_LINES       ; message index
+    lit LBL_LINES
     call print_label
-    lit WELL_WIDTH+11 ; x
-    lit 6	     ; y
-    lit LBL_ZEROS       ; message index
-    call print_label
-    lit WELL_WIDTH+11 ; x
-    lit 18	     ; y
-    lit LBL_ZEROS       ; message index
-    call print_label
-    
 ; variables initialization
     banksel 0
     movlw 2
@@ -921,29 +971,44 @@ game_init:
     return
     
 tetris:
-; test print_tetrim
-    lit 0 ; tetrimino id
-test_loop:    
-    lit 4 ; x
-    lit 0 ; y
-    pick 2
-    push    ; -- t x y t 
-    call print_tetrim
-    drop ; flag
-    pause  60
-    lit 4 ; x
-    lit 0 ; y
-    pick 2
-    push
-    call print_tetrim
-    drop ; flag
-    incf T
-    movlw 28
-    subwf T,W
-    skpc
-    bra test_loop
-    clrf T
-    bra test_loop
+; print score
+    banksel scoreL
+    movfw scoreL
+    movwf accaL
+    movfw scoreH
+    movwf accaH
+    lit 43
+    lit 6
+    call print_int
+;print dropped line
+    banksel dropped
+    movfw dropped
+    movwf accaL
+    clrf accaH
+    lit 43
+    lit 18
+    call print_int
+;print start prompt
+    lit 0
+    lit 24
+    lit LBL_PRESS
+    call print_label
+; wait button A press
+; to start game    
+wait_start:    
+    call read_pad
+    banksel buttons
+    btfss buttons,BTN_A
+    bra wait_start
+; delete prompt
+    lit 0
+    lit 24
+    lit LBL_PRESS
+    call print_label
+; game start
+game_loop:
+    
+    bra game_loop
     return
     
 init:
@@ -954,6 +1019,8 @@ init:
     movwf ADCON0
     movlw (2<<ADCS0)
     movwf ADCON1
+    banksel WPUA
+    bcf WPUA, PAD_PIN
 ;;;;;;;;;;;;;;;;;;;;;    
     banksel TRISA
     bcf TRISA, SYNC_OUT
@@ -963,7 +1030,7 @@ init:
 ;configure EUSART in sychronsous mode
 ;to use as pixel serializer
     banksel SPBRG
-    movlw 1
+    movlw 2
     movwf SPBRGL
     clrf SPBRGH
     clrf TXREG
@@ -1011,7 +1078,6 @@ init:
 main:
     call game_init
     call tetris
-    bra $
     bra main
   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1043,15 +1109,18 @@ digits: ; each digit is 5 rows
     dw 0x0EAE,0x2AE0 ; 8
     dw 0x0EAE,0x2220 ; 9
 ; letters needed for 'SCORE' and 'LINES" labels
-    dw 0x3688,0x2860 ; C  code 10
-    dw 0x3E8E,0x28E0 ; E  code 11
-    dw 0x3E44,0x24E0 ; I  code 12
-    dw 0x3888,0x28E0 ; L  code 13
-    dw 0x38CA,0x2AA0 ; N  code 14
-    dw 0x34AA,0x2A40 ; O  code 15
-    dw 0x38EA,0x2880 ; R  code 16
-    dw 0x368C,0x22C0 ; S  code 17
-    dw 0x3040,0x2400 ; :  code 18
+    dw 0x3EAE,0x2AA0 ; A  code 10
+    dw 0x3688,0x2860 ; C  code 11
+    dw 0x3E8E,0x28E0 ; E  code 12
+    dw 0x3E44,0x24E0 ; I  code 13
+    dw 0x3888,0x28E0 ; L  code 14
+    dw 0x38CA,0x2AA0 ; N  code 15
+    dw 0x34AA,0x2A40 ; O  code 16
+    dw 0x3EAE,0x2880 ; P  code 17
+    dw 0x38EA,0x2880 ; R  code 18
+    dw 0x368C,0x22C0 ; S  code 19
+    dw 0x3040,0x2400 ; :  code 20
+    dw 0x2000,0x2000 ; space code 21
 
 ; comments notation: Rn clockwise rotation n*90 degr.    
 ; note that vertical I as 4 rows so it needs 2 words    
@@ -1089,28 +1158,28 @@ I0: dw 0x0222,0x1200 ; I R0
 
 LBL_SCORE equ 0
 LBL_LINES equ 1
-LBL_ZEROS equ 2
+LBL_PRESS equ 2
  
 labels:
     brw
     bra txt_score
     bra txt_lines
-    bra txt_zeros
+    bra txt_press
     
-txt_score:
+txt_score: ; "SCORE"
     pop
     brw
-    dt 17,10,15,16,11,18,255
+    dt 19,11,16,18,12,20,255
     
-txt_lines:
+txt_lines: ; "LINES"
     pop
     brw
-    dt 13,12,14,11,17,18,255
+    dt 14,13,15,12,19,20,255
 
-txt_zeros:
+txt_press: ; "PRESS A"
     pop
     brw
-    dt 0,0,0,0,0,0,255
+    dt 17,18,12,19,19,21,10,255
     
     end
 
