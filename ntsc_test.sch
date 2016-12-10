@@ -483,7 +483,7 @@ Wire Wire Line
 Wire Wire Line
 	7200 2500 6600 2500
 Wire Wire Line
-	6550 2200 7200 2200
+	6550 2200 7600 2200
 Connection ~ 6600 2200
 Connection ~ 7000 2500
 Wire Wire Line
@@ -621,4 +621,32 @@ Wire Wire Line
 Wire Wire Line
 	5950 3550 5650 3550
 Connection ~ 5650 3550
+$Comp
+L LED D1
+U 1 1 584B6425
+P 7600 2750
+F 0 "D1" H 7600 2850 50  0000 C CNN
+F 1 "LED" H 7600 2650 50  0000 C CNN
+F 2 "" H 7600 2750 50  0000 C CNN
+F 3 "" H 7600 2750 50  0000 C CNN
+	1    7600 2750
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R11
+U 1 1 584B656C
+P 7600 2350
+F 0 "R11" V 7680 2350 50  0000 C CNN
+F 1 "330" V 7600 2350 50  0000 C CNN
+F 2 "" V 7530 2350 50  0000 C CNN
+F 3 "" H 7600 2350 50  0000 C CNN
+	1    7600 2350
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7600 2500 7600 2550
+Wire Wire Line
+	7600 2950 7600 3000
+Connection ~ 7600 3000
+Connection ~ 7200 2200
 $EndSCHEMATC

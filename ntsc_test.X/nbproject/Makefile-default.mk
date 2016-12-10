@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=ntsc_test.asm
+SOURCEFILES_QUOTED_IF_SPACED=tetris.asm
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/ntsc_test.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/ntsc_test.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/tetris.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/tetris.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/ntsc_test.o
+OBJECTFILES=${OBJECTDIR}/tetris.o
 
 # Source Files
-SOURCEFILES=ntsc_test.asm
+SOURCEFILES=tetris.asm
 
 
 CFLAGS=
@@ -88,22 +88,22 @@ MP_LINKER_DEBUG_OPTION=
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: assemble
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/ntsc_test.o: ntsc_test.asm  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/tetris.o: tetris.asm  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/ntsc_test.o.d 
-	@${RM} ${OBJECTDIR}/ntsc_test.o 
-	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/ntsc_test.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -d__DEBUG -d__MPLAB_DEBUGGER_PK3=1 -q -p$(MP_PROCESSOR_OPTION) -u  -l\\\"${OBJECTDIR}/ntsc_test.lst\\\" -e\\\"${OBJECTDIR}/ntsc_test.err\\\" $(ASM_OPTIONS)    -o\\\"${OBJECTDIR}/ntsc_test.o\\\" \\\"ntsc_test.asm\\\" 
-	@${DEP_GEN} -d "${OBJECTDIR}/ntsc_test.o"
-	@${FIXDEPS} "${OBJECTDIR}/ntsc_test.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
+	@${RM} ${OBJECTDIR}/tetris.o.d 
+	@${RM} ${OBJECTDIR}/tetris.o 
+	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/tetris.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -d__DEBUG -d__MPLAB_DEBUGGER_PK3=1 -q -p$(MP_PROCESSOR_OPTION) -u  -l\\\"${OBJECTDIR}/tetris.lst\\\" -e\\\"${OBJECTDIR}/tetris.err\\\" $(ASM_OPTIONS)    -o\\\"${OBJECTDIR}/tetris.o\\\" \\\"tetris.asm\\\" 
+	@${DEP_GEN} -d "${OBJECTDIR}/tetris.o"
+	@${FIXDEPS} "${OBJECTDIR}/tetris.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
 	
 else
-${OBJECTDIR}/ntsc_test.o: ntsc_test.asm  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/tetris.o: tetris.asm  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/ntsc_test.o.d 
-	@${RM} ${OBJECTDIR}/ntsc_test.o 
-	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/ntsc_test.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -q -p$(MP_PROCESSOR_OPTION) -u  -l\\\"${OBJECTDIR}/ntsc_test.lst\\\" -e\\\"${OBJECTDIR}/ntsc_test.err\\\" $(ASM_OPTIONS)    -o\\\"${OBJECTDIR}/ntsc_test.o\\\" \\\"ntsc_test.asm\\\" 
-	@${DEP_GEN} -d "${OBJECTDIR}/ntsc_test.o"
-	@${FIXDEPS} "${OBJECTDIR}/ntsc_test.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
+	@${RM} ${OBJECTDIR}/tetris.o.d 
+	@${RM} ${OBJECTDIR}/tetris.o 
+	@${FIXDEPS} dummy.d -e "${OBJECTDIR}/tetris.err" $(SILENT) -c ${MP_AS} $(MP_EXTRA_AS_PRE) -q -p$(MP_PROCESSOR_OPTION) -u  -l\\\"${OBJECTDIR}/tetris.lst\\\" -e\\\"${OBJECTDIR}/tetris.err\\\" $(ASM_OPTIONS)    -o\\\"${OBJECTDIR}/tetris.o\\\" \\\"tetris.asm\\\" 
+	@${DEP_GEN} -d "${OBJECTDIR}/tetris.o"
+	@${FIXDEPS} "${OBJECTDIR}/tetris.o.d" $(SILENT) -rsi ${MP_AS_DIR} -c18 
 	
 endif
 

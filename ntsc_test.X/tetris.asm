@@ -49,6 +49,8 @@ HORZ_PERIOD equ FOSC/15748-1 ; 15748 hertz
 HORZ_PULSE equ 4700/TC ; 4.7µsec 
 LAST_LINE equ 262
 
+LED_PIN equ RA0
+
 ; game pad resource
 ; use ADC 
 PAD_PIN equ ANSA4
@@ -281,6 +283,7 @@ rot macro ; ( n1 n2 n3 -- n2 n3 n1 )
 dstack udata 0x20
 _stack res 32
 ; game variables section 
+GAME_VAR equ 0 ; variables bank
 game_var udata 0x40 
 ; tetris game state
 tetrim res 1 ; active tretriminos 
@@ -573,8 +576,10 @@ fill_loop:
 ; byte that contain pixel {x,y}
 ; output:
 ;   T = pixel offset, 0 left, 7 right  
-;   Z=0 if offset==0    
-set_video_ptr:  ; ( x y -- f )
+;   Z=0 if offset==0 
+; NOTE: EUSART output least significant bit first
+;       so bit 0 appear left on screen.    
+set_video_ptr:  ; ( x y -- b )
     movlw high(VIDEO_BUFFER)
     movwf FSR0H
     movlw low(VIDEO_BUFFER)
@@ -596,6 +601,27 @@ set_video_ptr:  ; ( x y -- f )
     andwf T,F
     return
 
+; return state of pixel
+; input:
+;   x,y coordinates of pixel
+; output:
+;   T=0|2^n  where n{0:7}
+;   Z reflect content of T    
+get_pixel: ; ( x y -- 0|2^n ) n{0:7)
+    call set_video_ptr ; x y -- shift_counter
+    movlw 1
+    skpnz   ; Z modified by set_video_ptr
+    bra gpx01
+gpx00:
+    lslf WREG
+    decfsz T
+    bra gpx00
+gpx01:
+    andwf INDF0,W
+    movwf T  ; 
+    return
+    
+    
 XOR_OP equ 0
 CLR_OP equ 1
 ;operation on pixel    
@@ -603,7 +629,8 @@ CLR_OP equ 1
 ;   {x,y} coordinates
 ;   op operation XOR_OP|CLR_OP 
 ; output:
-;   WREG=collision flag, 0 if collision    
+;   WREG=collision flag, 0 if collision 
+; >> no bank dependency << 
 bitop: ; ( x y op -- f )
     disable_video
     pick 2
@@ -650,35 +677,35 @@ bitop02:
     enable_video
     return
 
-; draw row of pixels
-; draw up to 8 pixels.
-; stop when r==0    
+; draw row of 4 pixels
+; stop when n==0    
 ; input:
 ;   {x,y} left coordinates
-;   r pixels to draw
+;   n pixels to draw
 ;   f collision flag to be modified    
 ; output:
 ;   f=collision flag, return modified value   
-xor_row: ; ( f r x y -- f )
-    pick 2 ; check if r==0
+; >> no bank dependency << 
+xor_row: ; ( f n x y -- f )
+    pick 2 ; check if n==0
     skpnz
-    bra xor_row_done ; r==0 done
+    bra xor_row_done ; n==0 done
     lslf WREG
-    insert 2  ; save shifted r
+    insert 2  ; save shifted n
     skpc
     bra xor_row02 ; bit==0 no draw
-    over ; f r x y x 
-    over ; f r x y x y
-    lit XOR_OP ; f r x y x y op
-    call bitop ; f r x y f
+    over ; f n x y x 
+    over ; f n x y x y
+    lit XOR_OP ; f n x y x y op
+    call bitop ; -- f n x y f
     pick 4 ; pick flag
     iorwf T
-    pop	     ; f r x y
+    pop	     ; -- f n x y
     insert 3 ; store modified flag
 xor_row02:
     inc_n 1  ; x+=1
     bra xor_row
-xor_row_done: ; f r x y
+xor_row_done: ; f n x y
     drop_n 3  ; only keep f
     return
 
@@ -689,7 +716,8 @@ xor_row_done: ; f r x y
 ;   ofs offset in table (limited to 255 )    
 ; output:
 ;   PMDATH: PMDAL
-;reset <nibble> variable    
+;reset <nibble> variable 
+; >> modify BSR <<    
 get_flash_word: ; ( ofs lo hi -- )
     banksel PMADR
     pop
@@ -710,7 +738,9 @@ read_flash:
 
 ; increament pointer 
 ; and read next flash word    
+; >> modify BSR <<    
 next_flash_word:
+    banksel PMADR
     incf PMADRL
     skpnz
     incf PMADRH
@@ -720,11 +750,13 @@ next_flash_word:
 ; output:
 ;   stack nibble in bits 7:4
 ; increment nibble variable    
+; >> modify BSR <<    
 get_nibble: ; ( -- nibble )
     movlw 3
     xorwf nibble,W
     skpnz ; if set all nibbles of this word read
     call next_flash_word
+    banksel PMDAT
     movfw nibble
     skpnz
     bra row0
@@ -748,8 +780,8 @@ nibble_mask:
 ; inputs:
 ;   x,y left coordinates
 ;   f  collision flag
-;   r  row index {0-2}
-; advance y coordinate for next row    
+; output:    
+;   advance y coordinate for next row    
 print_row: ; ( x y f -- x y f )     
     call get_nibble ; -- x y f n 
     pick 3 
@@ -778,33 +810,47 @@ print_char: ; ( x y c -- )
     drop_n 3  ; ( x y f -- )
     return
 
-; print a tetriminos
+; print current tetriminos
 ; input:
-;   f collision flag
-;   x,y  left/top coordinate
-;   t tetriminos identifier
+;   arguments in game variables   
+;   titrim: tetriminos id
+;   angle: rotation angle    
+;   tx,ty  left/top coordinates
 ; output:
 ;   collision flag,  0 if no collision    
-print_tetrim: ; ( x y t  -- f )
+; >> modify BSR <<    
+print_tetrim: ; (  -- f )
+    banksel GAME_VAR
+    lslf tetrim,W
+    lslf WREG
+    push
     movlw 24
     subwf T,W
     skpnc
     bra ti ; I tetrominos
+    movfw angle
+    addwf T,F
     movlw low(tetriminos)
-    push
+    push    ; ofs addrL
     movlw high(tetriminos)
-    push
+    push    ; ofs addrL addrH
     bra prt01
 ti: ; special treatment for I tetriminos
-    movwf T
-    lslf T,F
-    movlw low(I0)
-    push
+    clrf T
+    lslf angle,W
+    addwf T,F
+    movlw low(I0) 
+    push     ; ofs addrL
     movlw high(I0)
-    push
+    push     ; ofs addrL addrH
 prt01:    
-    call get_flash_word
-    lit 0
+    call get_flash_word  ; --
+    banksel tx
+    movfw tx
+    push    ; -- x
+    movfw ty
+    push    ; -- x y 
+    lit 0   ; -- x y f
     call print_row ; x y f -- x y+1 f
     call print_row
     call print_row
@@ -814,8 +860,8 @@ prt01:
     skpnz
     call print_row
     movfw T
-    insert 2
-    drop_n 2  ; -- f
+    drop_n 3
+    push  ; -- f
     return
     
 ;print a text line store in flash
@@ -958,7 +1004,7 @@ game_init:
     call print_label
 ; variables initialization
     banksel 0
-    movlw 2
+    movlw 4
     movwf tx
     clrf ty
     clrf tetrim
@@ -969,7 +1015,57 @@ game_init:
     clrf buttons
     bsf flags,F_GSTOP
     return
+
+ROW_EMPTY equ 0     
+ROW_FULL equ 10 ; 10 bits in row
+; check the state of well row
+; input:
+;   s number of bits set initialized at 0 by caller    
+;   r row number: 0 top, 22 bottom  
+; output:    
+;   s={0:10}  number of bits set
+query_row: ; ( s=0 r -- s=0:10 )
+    lit 10 ; s r x   ; check x from  10 to 1
+qr00:
+    dup   ; s r x x
+    pick 2 
+    push  ; s r x x y
+    call get_pixel ; -- s r x n
+    skpnz   ; Z modified by get_pixel
+    bra qr01
+    inc_n 3
+qr01:    
+    drop     ; -- s r x 
+    decfsz T
+    bra qr00
+    drop_n 2 ; -- s
+    return
+ 
+; generate a new tetriminos
+; input:
+;   none
+; output:
+;   Z flag set if collision
+new_tminos:
+    banksel GAME_VAR
+    movlw 7
+    andwf randL,W
+    xorlw 7
+    skpz
+    xorlw 7
+    movwf tetrim
+    movlw 3
+    andwf randH,W
+    movwf angle
+    movlw 4
+    movwf tx
+    clrf ty
+    return
+ 
     
+;;;;;;;;;;;;;;;;;;;;;;;;;
+;   game logic
+;;;;;;;;;;;;;;;;;;;;;;;;;    
 tetris:
 ; print score
     banksel scoreL
@@ -995,11 +1091,11 @@ tetris:
     call print_label
 ; wait button A press
 ; to start game    
-wait_start:    
+wait_start: 
     call read_pad
-    banksel buttons
     btfss buttons,BTN_A
     bra wait_start
+    bcf flags, F_GSTOP
 ; delete prompt
     lit 0
     lit 24
@@ -1007,8 +1103,63 @@ wait_start:
     call print_label
 ; game start
 game_loop:
+; generate new tetriminos
+; if collision at this stage
+; game is over
+    call new_tminos ; Z return collision status
+fall_loop:
+    call print_tetrim
+    pop
+    skpnz
+    bra game_over
+    pause 10
+    call print_tetrim
+    pop
+; read pad
+    call read_pad
+    banksel GAME_VAR
+    movfw buttons
+    case 1<<BTN_A, hard_drop
+    case 1<<BTN_B, soft_drop
+    case 1<<BTN_UP, rot_right
+    case 1<<BTN_DN, rot_left
+    case 1<<BTN_RT, move_right
+    case 1<<BTN_LT, move_left
+    bra new_position
+hard_drop:
+    bra new_position
+soft_drop:
+    bra new_position
+rot_left:
+    decf angle,F
+    movlw 3
+    andwf angle,F
+    bra new_position
+rot_right:
+    incf angle,F
+    movlw 3
+    andwf angle,F
+    bra new_position
+move_left:
+    movlw 1
+    xorwf tx,W
+    skpz
+    decf tx,F
+    bra new_position
+move_right:
+    movlw 10
+    xorwf tx,W
+    skpz
+    incf tx,F
+; apply move and rotation
+new_position:    
+; check full row and clean
+; adjust score 
+    bra fall_loop
+game_over:
+    call print_tetrim
+    pop
     
-    bra game_loop
     return
     
 init:
@@ -1023,10 +1174,11 @@ init:
     bcf WPUA, PAD_PIN
 ;;;;;;;;;;;;;;;;;;;;;    
     banksel TRISA
-    bcf TRISA, SYNC_OUT
-    bcf TRISA, VIDEO_OUT
+    movlw ~((1<<SYNC_OUT)|(1<<VIDEO_OUT)|(1<<LED_PIN))
+    andwf TRISA,F
     banksel VIDEO_LAT
     bcf VIDEO_LAT,VIDEO_OUT
+    bcf LATA,LED_PIN
 ;configure EUSART in sychronsous mode
 ;to use as pixel serializer
     banksel SPBRG
@@ -1118,43 +1270,43 @@ digits: ; each digit is 5 rows
     dw 0x34AA,0x2A40 ; O  code 16
     dw 0x3EAE,0x2880 ; P  code 17
     dw 0x38EA,0x2880 ; R  code 18
-    dw 0x368C,0x22C0 ; S  code 19
+    dw 0x3684,0x22C0 ; S  code 19
     dw 0x3040,0x2400 ; :  code 20
     dw 0x2000,0x2000 ; space code 21
 
 ; comments notation: Rn clockwise rotation n*90 degr.    
 ; note that vertical I as 4 rows so it needs 2 words    
 tetriminos: 
-    dw 0x3446 ; L R0
-    dw 0x2E80 ; L R1
-    dw 0x3622 ; L R2
-    dw 0x22E0 ; L R3
-    dw 0x3226 ; J R0
-    dw 0x28E0 ; J R1
+    dw 0x388C ; L R0
+    dw 0x30E8 ; L R1
+    dw 0x3C44 ; L R2
+    dw 0x32E0 ; L R3
+    dw 0x344C ; J R0
+    dw 0x38E0 ; J R1
     dw 0x3644 ; J R2
-    dw 0x2E20 ; J R3
-    dw 0x2660 ; O R0 
-    dw 0x2660 ; O R1
-    dw 0x2660 ; O R2
-    dw 0x2660 ; O R3
-    dw 0x2360 ; S R0
+    dw 0x30E2 ; J R3
+    dw 0x3CC0 ; O R0 
+    dw 0x3CC0 ; O R2 
+    dw 0x3CC0 ; O R2 
+    dw 0x3CC0 ; O R3 
+    dw 0x36C0 ; S R0
     dw 0x3462 ; S R1
-    dw 0x2360 ; S R2
+    dw 0x36C0 ; S R2
     dw 0x3462 ; S R3
-    dw 0x2E40 ; T R0
-    dw 0x34c4 ; T R1
-    dw 0x24E0 ; T R2
-    dw 0x3464 ; T R3
-    dw 0x2C60 ; Z R0
-    dw 0x3264 ; Z R1
-    dw 0x2C60 ; Z R3
-    dw 0x3264 ; Z R4
+    dw 0x3E40 ; T R0
+    dw 0x3262 ; T R1
+    dw 0x304E ; T R2
+    dw 0x38C8 ; T R3
+    dw 0x3C60 ; Z R0
+    dw 0x34C8 ; Z R1
+    dw 0x3C60 ; Z R3
+    dw 0x34C8 ; Z R4
 ; annoying! I tetriminos need a special treatment 
 ; because vertical I need 2 words for encoding.   
-I0: dw 0x0222,0x1200 ; I R0  
-    dw 0x1F00,0x1000 ; I R1  second word is filling for alignment
+I0: dw 0x0444,0x1400 ; I R0  
+    dw 0x300F,0x1000 ; I R1  second word is filling for alignment
     dw 0x0222,0x1200 ; I R2
-    dw 0x1F00,0x1000 ; I R3  
+    dw 0x10F0,0x1000 ; I R3  
 
 LBL_SCORE equ 0
 LBL_LINES equ 1
