@@ -1,18 +1,18 @@
 MPLINK 5.08, LINKER
-Linker Map File - Created Fri Dec  9 19:54:48 2016
+Linker Map File - Created Sat Dec 10 12:21:53 2016
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
                 ---------  ---------  ---------  ---------  ---------
                    .org_0       code   0x000000    program   0x000008
-                   .org_1       code   0x000004    program   0x000686
-                   .cinit    romdata   0x000347    program   0x000004
+                   .org_1       code   0x000004    program   0x000714
+                   .cinit    romdata   0x00038e    program   0x000004
 .config_8007_BUILD/DEFAULT/DEBUG/TETRIS.O       code   0x008007    program   0x000002
 .config_8008_BUILD/DEFAULT/DEBUG/TETRIS.O       code   0x008008    program   0x000002
                    dstack      udata   0x000020       data   0x000020
                  game_var      udata   0x000040       data   0x000007
                     vb_b0      udata   0x000050       data   0x000020
-               .udata_shr      udata   0x000070       data   0x00000d
+               .udata_shr      udata   0x000070       data   0x00000e
                     vb_b1      udata   0x0000a0       data   0x000050
                     vb_b2      udata   0x000120       data   0x000050
 
@@ -21,131 +21,139 @@ Linker Map File - Created Fri Dec  9 19:54:48 2016
                               Program Memory Usage 
                                Start         End      
                            ---------   ---------      
-                            0x000000    0x000348      
+                            0x000000    0x00038f      
                             0x008007    0x008008      
-            843 out of 2055 program addresses used, program memory utilization is 41%
+            914 out of 2055 program addresses used, program memory utilization is 44%
 
 
 
                               Symbols - Sorted by Name
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-                       I0   0x00031f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             _.org_1_0067   0x000067    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             _.org_1_0069   0x000069    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             _.org_1_006B   0x00006b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             _.org_1_006E   0x00006e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             _.org_1_009C   0x00009c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             _.org_1_009E   0x00009e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             _.org_1_00B4   0x0000b4    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             _.org_1_00BB   0x0000bb    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             _.org_1_026D   0x00026d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    bitop   0x0000ed    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                  bitop00   0x0000fa    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                  bitop01   0x0000fd    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                  bitop02   0x000108    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                clear_bit   0x000101    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                   digits   0x0002db    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    div10   0x000050    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               div10_loop   0x000054    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                fall_loop   0x000265    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-              fill_buffer   0x0000c3    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                fill_loop   0x0000cb    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                game_init   0x0001ed    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                game_loop   0x000264    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                game_over   0x00029f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-           get_flash_word   0x000129    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               get_nibble   0x00013d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                get_pixel   0x0000e3    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    gpx00   0x0000e7    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    gpx01   0x0000ea    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                       I0   0x00035f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_0074   0x000074    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_0076   0x000076    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_0078   0x000078    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_007B   0x00007b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_00BF   0x0000bf    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_00C1   0x0000c1    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_00D7   0x0000d7    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_00DE   0x0000de    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_028F   0x00028f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_0308   0x000308    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_030F   0x00030f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_0316   0x000316    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    bitop   0x000110    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                  bitop00   0x00011d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                  bitop01   0x000120    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                  bitop02   0x00012b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                clear_bit   0x000124    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                   digits   0x00031b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    div10   0x00005d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               div10_loop   0x000061    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                fall_loop   0x000287    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+              fill_buffer   0x0000e6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                fill_loop   0x0000ee    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                game_init   0x000210    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                game_loop   0x000286    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                game_over   0x0002c2    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+           get_flash_word   0x00014c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               get_nibble   0x000160    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                get_pixel   0x000106    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    gpx00   0x00010a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    gpx01   0x00010d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                    gt_255   0x00002a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                hard_drop   0x00028b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    hline   0x0001cb    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               hline_done   0x0001da    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                     init   0x0002a2    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                hard_drop   0x0002ae    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    hline   0x0001ee    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               hline_done   0x0001fd    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                     init   0x0002c5    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                       isr   0x000004    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                 isr_exit   0x00004c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                   labels   0x000327    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                 isr_exit   0x000059    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                   labels   0x000367    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                    lt_256   0x00000e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                     main   0x0002d8    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                move_left   0x000295    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               move_right   0x00029a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    mult6   0x000060    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             new_position   0x00029e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               new_tminos   0x000230    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-          next_flash_word   0x000138    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-              nibble_mask   0x00014c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                no_button   0x000094    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                  no_zero   0x0001c9    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-              pixels_loop   0x0000af    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               print_char   0x00015a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                print_int   0x0001b0    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-              print_label   0x000193    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               print_last   0x0001c3    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                print_row   0x000150    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             print_tetrim   0x000169    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    prt01   0x00017f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             prt_lbl_done   0x0001ae    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             prt_lbl_loop   0x000195    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                     qr00   0x000221    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                     qr01   0x00022b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                query_row   0x00021f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               read_flash   0x000132    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                 read_pad   0x000065    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                 rot_left   0x00028d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                rot_right   0x000291    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                     row0   0x00014b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                     row1   0x000147    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                     row2   0x000149    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-            set_video_ptr   0x0000d1    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                soft_drop   0x00028c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    task1   0x00003f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    task2   0x000046    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                     main   0x000301    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                move_left   0x0002b8    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               move_right   0x0002bd    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    mult6   0x00006d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             new_position   0x0002c1    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               new_tminos   0x000253    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+          next_flash_word   0x00015b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+              nibble_mask   0x00016f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                no_button   0x0000a1    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                  no_zero   0x0001ec    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+              pixels_loop   0x0000d2    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               print_char   0x00017d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                print_int   0x0001d3    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+              print_label   0x0001b6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               print_last   0x0001e6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                print_row   0x000173    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             print_tetrim   0x00018c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    prt01   0x0001a2    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             prt_lbl_done   0x0001d1    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             prt_lbl_loop   0x0001b8    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                     qr00   0x000244    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                     qr01   0x00024e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                query_row   0x000242    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               read_flash   0x000155    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                 read_pad   0x000072    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                 rot_left   0x0002b0    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                rot_right   0x0002b4    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                     row0   0x00016e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                     row1   0x00016a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                     row2   0x00016c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+            set_video_ptr   0x0000f4    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                soft_drop   0x0002af    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    task0   0x000043    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    task1   0x00004c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    task2   0x000053    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                     tasks   0x000035    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               tetriminos   0x000307    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                   tetris   0x00023e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                       ti   0x000178    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    try_a   0x000071    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                  try_all   0x000070    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    try_b   0x000077    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                   try_dn   0x00008f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                   try_lt   0x000089    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                   try_rt   0x00007d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                   try_up   0x000083    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                txt_lines   0x000334    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                txt_press   0x00033d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                txt_score   0x00032b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-          video_serialize   0x000095    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    vline   0x0001dc    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               vline_done   0x0001eb    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               tetriminos   0x000347    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                   tetris   0x000261    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                       ti   0x00019b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                     tone   0x0000a2    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                  tone_pr   0x000387    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                tone_test   0x000302    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    try_a   0x00007e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                  try_all   0x00007d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    try_b   0x000084    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                   try_dn   0x00009c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                   try_lt   0x000096    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                   try_rt   0x00008a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                   try_up   0x000090    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                txt_lines   0x000374    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                txt_press   0x00037d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                txt_score   0x00036b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+          video_serialize   0x0000b8    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    vline   0x0001ff    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               vline_done   0x00020e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                 vsync_end   0x000022    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
               vsync_start   0x00001a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               wait_start   0x000258    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                  xor_bit   0x000104    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                  xor_row   0x000111    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                xor_row02   0x000123    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             xor_row_done   0x000127    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               wait_start   0x00027b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                  xor_bit   0x000127    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                  xor_row   0x000134    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                xor_row02   0x000146    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             xor_row_done   0x00014a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                    _stack   0x000020       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    accaH   0x000078       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    accaL   0x000077       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    accbH   0x00007a       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    accbL   0x000079       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    accaH   0x000079       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    accaL   0x000078       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    accbH   0x00007b       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    accbL   0x00007a       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                     angle   0x000041       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                  buttons   0x00007b       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                  buttons   0x00007c       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                   dropped   0x000046       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                     flags   0x000072       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                    gtimer   0x000073       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                   lcountH   0x000071       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                   lcountL   0x000070       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                   nibble   0x00007c       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    randH   0x000075       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    randL   0x000074       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                   rcount   0x000076       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                      rst   0x00007d       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                   nibble   0x00007d       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    randH   0x000076       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    randL   0x000075       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                   rcount   0x000077       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                      rst   0x00007e       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                    scoreH   0x000045       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                    scoreL   0x000044       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                    tetrim   0x000040       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                 tone_tmr   0x000074       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                        tx   0x000042       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                        ty   0x000043       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
           video_buffer_b0   0x000050       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
@@ -163,96 +171,103 @@ Linker Map File - Created Fri Dec  9 19:54:48 2016
                 vsync_end   0x000022    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                    gt_255   0x00002a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                     tasks   0x000035    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    task1   0x00003f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    task2   0x000046    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                 isr_exit   0x00004c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    div10   0x000050    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               div10_loop   0x000054    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    mult6   0x000060    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                 read_pad   0x000065    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             _.org_1_0067   0x000067    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             _.org_1_0069   0x000069    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             _.org_1_006B   0x00006b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             _.org_1_006E   0x00006e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                  try_all   0x000070    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    try_a   0x000071    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    try_b   0x000077    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                   try_rt   0x00007d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                   try_up   0x000083    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                   try_lt   0x000089    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                   try_dn   0x00008f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                no_button   0x000094    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-          video_serialize   0x000095    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             _.org_1_009C   0x00009c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             _.org_1_009E   0x00009e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-              pixels_loop   0x0000af    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             _.org_1_00B4   0x0000b4    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             _.org_1_00BB   0x0000bb    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-              fill_buffer   0x0000c3    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                fill_loop   0x0000cb    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-            set_video_ptr   0x0000d1    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                get_pixel   0x0000e3    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    gpx00   0x0000e7    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    gpx01   0x0000ea    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    bitop   0x0000ed    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                  bitop00   0x0000fa    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                  bitop01   0x0000fd    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                clear_bit   0x000101    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                  xor_bit   0x000104    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                  bitop02   0x000108    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                  xor_row   0x000111    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                xor_row02   0x000123    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             xor_row_done   0x000127    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-           get_flash_word   0x000129    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               read_flash   0x000132    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-          next_flash_word   0x000138    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               get_nibble   0x00013d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                     row1   0x000147    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                     row2   0x000149    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                     row0   0x00014b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-              nibble_mask   0x00014c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                print_row   0x000150    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               print_char   0x00015a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             print_tetrim   0x000169    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                       ti   0x000178    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    prt01   0x00017f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-              print_label   0x000193    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             prt_lbl_loop   0x000195    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             prt_lbl_done   0x0001ae    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                print_int   0x0001b0    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               print_last   0x0001c3    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                  no_zero   0x0001c9    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    hline   0x0001cb    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               hline_done   0x0001da    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    vline   0x0001dc    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               vline_done   0x0001eb    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                game_init   0x0001ed    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                query_row   0x00021f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                     qr00   0x000221    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                     qr01   0x00022b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               new_tminos   0x000230    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                   tetris   0x00023e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               wait_start   0x000258    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                game_loop   0x000264    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                fall_loop   0x000265    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             _.org_1_026D   0x00026d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                hard_drop   0x00028b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                soft_drop   0x00028c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                 rot_left   0x00028d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                rot_right   0x000291    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                move_left   0x000295    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               move_right   0x00029a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-             new_position   0x00029e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                game_over   0x00029f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                     init   0x0002a2    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                     main   0x0002d8    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                   digits   0x0002db    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-               tetriminos   0x000307    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                       I0   0x00031f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                   labels   0x000327    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                txt_score   0x00032b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                txt_lines   0x000334    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                txt_press   0x00033d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    task0   0x000043    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    task1   0x00004c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    task2   0x000053    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                 isr_exit   0x000059    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    div10   0x00005d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               div10_loop   0x000061    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    mult6   0x00006d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                 read_pad   0x000072    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_0074   0x000074    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_0076   0x000076    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_0078   0x000078    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_007B   0x00007b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                  try_all   0x00007d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    try_a   0x00007e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    try_b   0x000084    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                   try_rt   0x00008a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                   try_up   0x000090    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                   try_lt   0x000096    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                   try_dn   0x00009c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                no_button   0x0000a1    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                     tone   0x0000a2    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+          video_serialize   0x0000b8    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_00BF   0x0000bf    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_00C1   0x0000c1    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+              pixels_loop   0x0000d2    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_00D7   0x0000d7    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_00DE   0x0000de    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+              fill_buffer   0x0000e6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                fill_loop   0x0000ee    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+            set_video_ptr   0x0000f4    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                get_pixel   0x000106    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    gpx00   0x00010a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    gpx01   0x00010d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    bitop   0x000110    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                  bitop00   0x00011d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                  bitop01   0x000120    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                clear_bit   0x000124    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                  xor_bit   0x000127    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                  bitop02   0x00012b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                  xor_row   0x000134    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                xor_row02   0x000146    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             xor_row_done   0x00014a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+           get_flash_word   0x00014c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               read_flash   0x000155    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+          next_flash_word   0x00015b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               get_nibble   0x000160    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                     row1   0x00016a    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                     row2   0x00016c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                     row0   0x00016e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+              nibble_mask   0x00016f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                print_row   0x000173    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               print_char   0x00017d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             print_tetrim   0x00018c    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                       ti   0x00019b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    prt01   0x0001a2    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+              print_label   0x0001b6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             prt_lbl_loop   0x0001b8    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             prt_lbl_done   0x0001d1    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                print_int   0x0001d3    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               print_last   0x0001e6    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                  no_zero   0x0001ec    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    hline   0x0001ee    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               hline_done   0x0001fd    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    vline   0x0001ff    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               vline_done   0x00020e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                game_init   0x000210    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                query_row   0x000242    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                     qr00   0x000244    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                     qr01   0x00024e    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               new_tminos   0x000253    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                   tetris   0x000261    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               wait_start   0x00027b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                game_loop   0x000286    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                fall_loop   0x000287    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_028F   0x00028f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                hard_drop   0x0002ae    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                soft_drop   0x0002af    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                 rot_left   0x0002b0    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                rot_right   0x0002b4    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                move_left   0x0002b8    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               move_right   0x0002bd    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             new_position   0x0002c1    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                game_over   0x0002c2    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                     init   0x0002c5    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                     main   0x000301    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                tone_test   0x000302    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_0308   0x000308    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_030F   0x00030f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+             _.org_1_0316   0x000316    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                   digits   0x00031b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+               tetriminos   0x000347    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                       I0   0x00035f    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                   labels   0x000367    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                txt_score   0x00036b    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                txt_lines   0x000374    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                txt_press   0x00037d    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                  tone_pr   0x000387    program     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                    _stack   0x000020       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                    tetrim   0x000040       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                     angle   0x000041       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
@@ -266,16 +281,17 @@ Linker Map File - Created Fri Dec  9 19:54:48 2016
                   lcountH   0x000071       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                     flags   0x000072       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
                    gtimer   0x000073       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    randL   0x000074       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    randH   0x000075       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                   rcount   0x000076       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    accaL   0x000077       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    accaH   0x000078       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    accbL   0x000079       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                    accbH   0x00007a       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                  buttons   0x00007b       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                   nibble   0x00007c       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
-                      rst   0x00007d       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                 tone_tmr   0x000074       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    randL   0x000075       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    randH   0x000076       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                   rcount   0x000077       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    accaL   0x000078       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    accaH   0x000079       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    accbL   0x00007a       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                    accbH   0x00007b       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                  buttons   0x00007c       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                   nibble   0x00007d       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
+                      rst   0x00007e       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
           video_buffer_b2   0x0000a0       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
           video_buffer_b3   0x000120       data     static /home/jacques/MPLABXProjects/ntsc_test/ntsc_test.X/tetris.asm
 

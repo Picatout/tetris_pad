@@ -50,7 +50,17 @@ HORZ_PULSE equ 4700/TC ; 4.7µsec
 LAST_LINE equ 262
 
 LED_PIN equ RA0
-
+ 
+AUDIO_PIN equ RA4
+AUDIO_PWMDCL equ PWM2DCL
+AUDIO_PWMDCH equ PWM2DCH
+AUDIO_PWMPRL equ PWM2PRL
+AUDIO_PWMPRH equ PWM2PRH
+AUDIO_PWMTMR equ PWM2TMR
+AUDIO_PWMCLKCON equ PWM2CLKCON
+AUDIO_PWMLDCON equ PWM2LDCON
+AUDIO_PWMCON equ PWM2CON
+ 
 ; game pad resource
 ; use ADC 
 PAD_PIN equ ANSA4
@@ -150,6 +160,11 @@ wait_timer macro ; wait timer expiration
 pause macro value ; suspend execution (busy loop)
     start_timer value
     wait_timer
+    endm
+ 
+wait_sound macro ; wait sound end
+    btfsc flags,F_SND
+    bra $-1
     endm
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -313,6 +328,8 @@ lcountH res 1
 flags res 1
 ; game timer
 gtimer res 1 
+; sound timer
+tone_tmr res 1 
 ; lfsr PRNG register
 randL res 1 
 randH res 1 
@@ -368,7 +385,7 @@ vsync_start: ; scanline 0 start vertical sync pulse
     movwf SYNC_PWMDCL
     movlw (HORZ_PERIOD-HORZ_PULSE)>>8
     movwf SYNC_PWMDCH
-    bsf SYNC_PWMLDCON,7
+    bsf SYNC_PWMLDCON,LDA
     bsf flags, F_VSYNC
     bra isr_exit
 vsync_end: ; scanline 3 end vertical sync pulse
@@ -377,7 +394,7 @@ vsync_end: ; scanline 3 end vertical sync pulse
     movwf SYNC_PWMDCL
     movlw HORZ_PULSE>>8
     movwf SYNC_PWMDCH
-    bsf SYNC_PWMLDCON,7
+    bsf SYNC_PWMLDCON,LDA
     bcf flags, F_VSYNC
     bra isr_exit
 gt_255: ; lcount>255
@@ -399,16 +416,30 @@ gt_255: ; lcount>255
 ;   horizontal period.
 tasks:
     movfw lcountL
+    case 0, task0
     case 1, task1
     case 2, task2
+    bra isr_exit
+task0:
+; sound timer    
+    movfw tone_tmr
+    skpnz
+    bra isr_exit
+    decfsz tone_tmr,F
+    bra isr_exit
+    bcf flags,F_SND
+    banksel AUDIO_PWMCON
+    bcf AUDIO_PWMCON,EN
+    banksel TRISA
+    bsf TRISA,AUDIO_PIN
     bra isr_exit
 task1:   
 ; decrement game timer    
     movf gtimer,F ; 
     skpnz
     bra isr_exit
-    decf gtimer,F ; 
-    skpnz
+    decfsz gtimer,F ; 
+    bra isr_exit ;
     bcf flags, F_GTMR
     bra isr_exit ;
 task2:
@@ -467,6 +498,9 @@ mult6:
 ; a button is accepted if
 ; the Vadc value is below its threshold
 read_pad:
+    clrf buttons
+    btfsc flags, F_SND
+    return ; can't read while tone playing
     banksel ADCON0
     bsf ADCON0,ADON
     tcyDelay 8*4 ; délais d'acquisition 4µsec
@@ -475,13 +509,11 @@ read_pad:
     bra $-1
     bcf ADCON0,ADON
 ; try each button from lower to upper
-try_all:
-    clrf buttons
-try_a:    
+try_a:
     try_button A_THR, try_b
     bsf buttons,BTN_A
     return
-try_b:
+try_b:    
     try_button B_THR, try_rt
     bsf buttons,BTN_B
     return
@@ -501,6 +533,35 @@ try_dn:
     try_button DN_THR, no_button
     bsf buttons,BTN_DN
 no_button:
+    return
+    
+; play a tone
+; input:
+;   t   duration in multiple of 1/60 sec.
+;   n   note number
+tone: ; ( t n -- )
+    banksel AUDIO_PWMPRL
+    lslf T
+    movfw T
+    call tone_pr
+    movwf AUDIO_PWMPRL
+    lsrf WREG
+    movwf AUDIO_PWMDCL
+    incf T,W
+    call tone_pr
+    movwf AUDIO_PWMPRH
+    lsrf WREG
+    movwf AUDIO_PWMDCH
+    skpnc
+    bsf AUDIO_PWMDCL,7
+    pop
+    pop
+    movwf tone_tmr
+    bsf AUDIO_PWMCON,EN
+    bsf AUDIO_PWMLDCON,LDA
+    bsf flags,F_SND
+    banksel TRISA
+    bcf TRISA,AUDIO_PIN
     return
     
     
@@ -1062,6 +1123,35 @@ new_tminos:
     clrf ty
     return
  
+; wait player start signal
+; button B pressed    
+wait_start:
+    clrw
+    call korobeiniki
+    push
+    lit 0
+koro:
+    incf T
+    movfw T
+    call korobeiniki
+    push
+    inc_n 1
+    pick 1
+    call korobeiniki
+    push
+    call tone
+    wait_sound
+    call read_pad
+    btfsc buttons, BTN_A
+    bra wait_end
+    dec_n 1
+    skpz
+    bra koro
+    pause 60
+    bra wait_start
+wait_end:    
+    drop_n 2
+    return
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;   game logic
@@ -1091,10 +1181,7 @@ tetris:
     call print_label
 ; wait button A press
 ; to start game    
-wait_start: 
-    call read_pad
-    btfss buttons,BTN_A
-    bra wait_start
+    call wait_start 
     bcf flags, F_GSTOP
 ; delete prompt
     lit 0
@@ -1179,6 +1266,16 @@ init:
     banksel VIDEO_LAT
     bcf VIDEO_LAT,VIDEO_OUT
     bcf LATA,LED_PIN
+; audio pwm initialization
+    banksel PWM2PH
+    clrf PWM2PHL
+    clrf PWM2PHH
+    clrf PWM2OFL
+    clrf PWM2OFH
+    bsf AUDIO_PWMCON,OE
+    banksel APFCON
+    bsf APFCON,P2SEL
+   
 ;configure EUSART in sychronsous mode
 ;to use as pixel serializer
     banksel SPBRG
@@ -1207,7 +1304,7 @@ init:
     movwf SYNC_PWMDCL
     movlw HORZ_PULSE>>8
     movwf SYNC_PWMDCH
-    bsf SYNC_PWMLDCON,7
+    bsf SYNC_PWMLDCON,LDA
    ;enable video interrupt on period match
     bcf SYNC_PWMINTF,PRIF
     bsf SYNC_PWMINTE,PRIE
@@ -1333,6 +1430,80 @@ txt_press: ; "PRESS A"
     brw
     dt 17,18,12,19,19,21,10,255
     
+
+tone_pr:
+    brw
+    dt 0x02, 0xed   ; 330   (MI4)   0
+    dt 0xb5, 0xdf   ; 349   (FA4)   1
+    dt 0x28, 0xd3   ; 370   (FA4#)  2
+    dt 0x4c, 0xc7   ; 392   (SOL4)  3
+    dt 0x1e, 0xbc   ; 415   (SOL4#) 4
+    dt 0x8f, 0xb1   ; 440   (LA4)   5
+    dt 0x98, 0xa7   ; 466   (LA4#)  6
+    dt 0x30, 0x9e   ; 494   (SI4)   7
+    dt 0x4f, 0x95   ; 523hz (DO5)   8
+    dt 0xed, 0x8c   ; 554   (DO5#)  9
+    dt 0x04, 0x85   ; 587   (RÉ5)   10
+    dt 0x8d, 0x7d   ; 622   (RÉ5#)  11
+    dt 0x81, 0x76   ; 659   (MI5)   12
+    dt 0xda, 0x6f   ; 698   (FA5)   13
+    dt 0x93, 0x69   ; 740   (FA5#)  14
+    dt 0xa6, 0x63   ; 784   (SOL5)  15
+    dt 0x0f, 0x5e   ; 831   (SOL5#) 16
+    dt 0xc7, 0x58   ; 880   (LA5)   17
+    dt 0xcc, 0x53   ; 932   (LA5#)  18
+    dt 0x18, 0x4f   ; 988   (SI5)   19
+    dt 0x82, 0x42   ; 1046hz (do6)  20
+    dt 0, 0	    ; silence	    21
+    
+korobeiniki: ;folklore russe
+    ;nombre de notes
+    brw
+    dt 34
+    ; duré, note
+    dt 45, 0 
+    dt 15, 4
+    dt 30, 7
+    dt 15, 3
+    dt 15, 0
+    
+    dt 45, 5
+    dt 15, 9
+    dt 30, 12
+    dt 15, 10
+    dt 15, 8
+    
+    dt 45, 7
+    dt 15, 8
+    dt 30, 10
+    dt 30, 12
+    
+    dt 30, 8
+    dt 30, 5
+    dt 60, 5
+    
+    dt 45, 13
+    dt 15, 15
+    dt 30, 17
+    dt 15, 15
+    dt 15, 13
+    
+    dt 45, 12
+    dt 15, 13
+    dt 30, 12
+    dt 15, 10
+    dt 15, 8
+    
+    dt 45, 7
+    dt 15, 8
+    dt 30, 10
+    dt 30, 12
+    
+    dt 30, 8
+    dt 30, 5
+    dt 60, 5
+    
+    
     end
 
-
+    
