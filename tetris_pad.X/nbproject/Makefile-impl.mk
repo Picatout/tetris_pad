@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=ntsc_test.X
+PROJECTNAME=tetris_pad.X
 
 # Active Configuration
 DEFAULTCONF=default

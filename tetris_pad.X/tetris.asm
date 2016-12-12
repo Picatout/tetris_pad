@@ -50,6 +50,7 @@ HORZ_PULSE equ 4700/TC ; 4.7µsec
 LAST_LINE equ 262
 
 LED_PIN equ RA0
+ADC_PIN equ RA4
  
 AUDIO_PIN equ RA4
 AUDIO_PWMDCL equ PWM2DCL
@@ -430,8 +431,6 @@ task0:
     bcf flags,F_SND
     banksel AUDIO_PWMCON
     bcf AUDIO_PWMCON,EN
-    banksel TRISA
-    bsf TRISA,AUDIO_PIN
     bra isr_exit
 task1:   
 ; decrement game timer    
@@ -501,6 +500,8 @@ read_pad:
     clrf buttons
     btfsc flags, F_SND
     return ; can't read while tone playing
+    banksel TRISA
+    bsf TRISA,ADC_PIN
     banksel ADCON0
     bsf ADCON0,ADON
     tcyDelay 8*4 ; délais d'acquisition 4µsec
@@ -512,27 +513,29 @@ read_pad:
 try_a:
     try_button A_THR, try_b
     bsf buttons,BTN_A
-    return
+    bra read_exit
 try_b:    
     try_button B_THR, try_rt
     bsf buttons,BTN_B
-    return
+    bra read_exit
 try_rt:
     try_button RT_THR, try_up
     bsf buttons,BTN_RT
-    return
+    bra read_exit
 try_up:
     try_button UP_THR, try_lt
     bsf buttons,BTN_UP
-    return
+    bra read_exit
 try_lt:
     try_button LT_THR, try_dn
     bsf buttons,BTN_LT
-    return
+    bra read_exit
 try_dn:
-    try_button DN_THR, no_button
+    try_button DN_THR, read_exit
     bsf buttons,BTN_DN
-no_button:
+read_exit:
+    banksel TRISA
+    bcf TRISA,ADC_PIN
     return
     
 ; play a tone
@@ -540,6 +543,8 @@ no_button:
 ;   t   duration in multiple of 1/60 sec.
 ;   n   note number
 tone: ; ( t n -- )
+    banksel TRISA
+    bcf TRISA,AUDIO_PIN
     banksel AUDIO_PWMPRL
     lslf T
     movfw T
@@ -560,8 +565,6 @@ tone: ; ( t n -- )
     bsf AUDIO_PWMCON,EN
     bsf AUDIO_PWMLDCON,LDA
     bsf flags,F_SND
-    banksel TRISA
-    bcf TRISA,AUDIO_PIN
     return
     
     
@@ -683,8 +686,8 @@ gpx01:
     return
     
     
-XOR_OP equ 0
-CLR_OP equ 1
+CLR_OP equ 0
+XOR_OP equ 1
 ;operation on pixel    
 ; inputs:
 ;   {x,y} coordinates
@@ -715,16 +718,17 @@ bitop01:
     ; WREG= bit mask
     movwf T    ; -- FSR0L FSR0H op mask
     pick 1  ; WREG= op
-    skpnz
+    skpz
     bra xor_bit  ; 
 clear_bit:
     comf T,W
     andwf INDF0,F
-    bra bitop02
+    bra bitop02 ; -- FSR0L FSR0H op mask
 xor_bit:
     movfw T   ; -- FSR0L FSR0H op mask
     xorwf INDF0,F
-    andwf INDF0,W ; on screen bit value = 0 if collision
+    andwf INDF0,W
+    xorwf T,W ; on screen bit value, 0 if no collision
     movwf T  ; -- FSR0L FSR0H op f
 bitop02:    
 ; restore FSR0    
@@ -748,13 +752,29 @@ bitop02:
 ;   f=collision flag, return modified value   
 ; >> no bank dependency << 
 xor_row: ; ( f n x y -- f )
+; bounds check y
+    btfsc T,7
+    bra xor_row_done ; y<0
+    movlw YSIZE
+    subwf T,W
+    skpnc
+    bra xor_row_done ; y>=YSIZE
+xor_row01:    
     pick 2 ; check if n==0
     skpnz
-    bra xor_row_done ; n==0 done
+    bra xor_row_done ; row empty nothing to do
     lslf WREG
     insert 2  ; save shifted n
     skpc
     bra xor_row02 ; bit==0 no draw
+; bounds check x{0:43}    
+    pick 1
+    btfsc WREG,7 
+    bra xor_row02 ; x<0 don't print
+    sublw XSIZE-1
+    skpc
+    bra xor_row_done ; x>=XSIZE
+; check for empty row
     over ; f n x y x 
     over ; f n x y x y
     lit XOR_OP ; f n x y x y op
@@ -765,7 +785,7 @@ xor_row: ; ( f n x y -- f )
     insert 3 ; store modified flag
 xor_row02:
     inc_n 1  ; x+=1
-    bra xor_row
+    bra xor_row01
 xor_row_done: ; f n x y
     drop_n 3  ; only keep f
     return
@@ -1197,7 +1217,7 @@ game_loop:
 fall_loop:
     call print_tetrim
     pop
-    skpnz
+    skpz
     bra game_over
     pause 10
     call print_tetrim
@@ -1228,9 +1248,6 @@ rot_right:
     andwf angle,F
     bra new_position
 move_left:
-    movlw 1
-    xorwf tx,W
-    skpz
     decf tx,F
     bra new_position
 move_right:
@@ -1267,6 +1284,7 @@ init:
     bcf VIDEO_LAT,VIDEO_OUT
     bcf LATA,LED_PIN
 ; audio pwm initialization
+    bcf LATA,AUDIO_PIN
     banksel PWM2PH
     clrf PWM2PHL
     clrf PWM2PHH

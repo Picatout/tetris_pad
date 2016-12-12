@@ -1,0 +1,33 @@
+2016-12-11
+===========
+modified schematic
+renamed project
+rework on read_pad
+rework on xor_row
+
+2016-12-10
+============
+modified schematic
+added audio
+added tone
+added korobeiniki
+added wait_start
+
+2016-12-0-09
+============
+added query_row
+added new_tminos
+added game logic
+modified schematic
+
+2016-12-08
+===========
+added print_int
+modified mult6
+work on game logic
+repacled xor_pixel by bitop now there is 2 operations xor bit or clear bit
+
+2016-12-07
+===========
+added div10
+

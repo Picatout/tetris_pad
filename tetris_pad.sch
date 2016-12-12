@@ -29,7 +29,7 @@ LIBS:atmel
 LIBS:contrib
 LIBS:valves
 LIBS:Personal_KiCAD
-LIBS:ntsc_test-cache
+LIBS:tetris_pad-cache
 EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
@@ -687,17 +687,6 @@ Wire Wire Line
 	7900 4500 7900 4550
 Wire Wire Line
 	7800 4200 8000 4200
-$Comp
-L R R13
-U 1 1 584C5448
-P 7650 4200
-F 0 "R13" V 7730 4200 50  0000 C CNN
-F 1 "10k" V 7650 4200 50  0000 C CNN
-F 2 "" V 7580 4200 50  0000 C CNN
-F 3 "" H 7650 4200 50  0000 C CNN
-	1    7650 4200
-	0    1    1    0   
-$EndComp
 Connection ~ 7900 4200
 Text Label 7500 4200 2    60   ~ 0
 AUDIO
@@ -718,4 +707,15 @@ F 3 "" H 4200 4050 50  0000 C CNN
 $EndComp
 Wire Wire Line
 	4050 4050 3500 4050
+$Comp
+L R R13
+U 1 1 584D7E45
+P 7650 4200
+F 0 "R13" V 7730 4200 50  0000 C CNN
+F 1 "100K" V 7650 4200 50  0000 C CNN
+F 2 "" V 7580 4200 50  0000 C CNN
+F 3 "" H 7650 4200 50  0000 C CNN
+	1    7650 4200
+	0    1    1    0   
+$EndComp
 $EndSCHEMATC
