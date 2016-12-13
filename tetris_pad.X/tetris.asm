@@ -417,9 +417,14 @@ gt_255: ; lcount>255
 ;   horizontal period.
 tasks:
     movfw lcountL
-    case 0, task0
-    case 1, task1
-    case 2, task2
+    skpnz
+    bra task0
+    decf WREG
+    skpnz 
+    bra task1
+    decf WREG
+    skpnz
+    bra task2
     bra isr_exit
 task0:
 ; sound timer    
@@ -568,16 +573,14 @@ tone: ; ( t n -- )
     return
     
     
-; serialise video pixels to scan line
-; due to timing constrain use specialized 
-; division and multiplication    
+; serialise video pixels to output
 video_serialize: 
+    tcyDelay HORZ_DLY
     movfw FSR0L
     push
     movfw FSR0H
     push
-    lit 0 ; ( x )
-    tcyDelay HORZ_DLY
+    lit 0 ;  x 
     movlw VIDEO_BUFFER&0xff
     movwf FSR0L
     movlw VIDEO_BUFFER>>8
@@ -586,12 +589,12 @@ video_serialize:
     subwf lcountL,W
     lsrf WREG
     lsrf WREG
-    call mult6
+    call mult6  ; 6 byte per line
     addwf FSR0L
     clrw
     addwfc FSR0H
-    movlw XSIZE/8
-    movwf rcount
+    movlw XSIZE/8 ; 8 pixels per byte
+    movwf rcount  ;
     banksel RCSTA
     bsf RCSTA,SPEN
 pixels_loop:    
@@ -637,7 +640,8 @@ fill_loop:
 
     
 ;set video pointer at 
-; byte that contain pixel {x,y}
+; input:
+;   x,y coordinates of pixel in video_buffer    
 ; output:
 ;   T = pixel offset, 0 left, 7 right  
 ;   Z=0 if offset==0 
@@ -670,24 +674,18 @@ set_video_ptr:  ; ( x y -- b )
 ;   x,y coordinates of pixel
 ; output:
 ;   T=0|2^n  where n{0:7}
-;   Z reflect content of T    
+;   Z=1 when T==0    
 get_pixel: ; ( x y -- 0|2^n ) n{0:7)
-    call set_video_ptr ; x y -- shift_counter
-    movlw 1
-    skpnz   ; Z modified by set_video_ptr
-    bra gpx01
-gpx00:
-    lslf WREG
-    decfsz T
-    bra gpx00
-gpx01:
-    andwf INDF0,W
-    movwf T  ; 
+    lit TEST_OP
+    call bitop
+    movfw T  ; 
     return
     
     
-CLR_OP equ 0
-XOR_OP equ 1
+CLR_OP equ 0 ; put pixel to 0
+XOR_OP equ 1 ; invert pixel
+TEST_OP	 equ 2  ; test bit value  return its value as flag
+SET_OP equ 3 ; put pixel to 1 	 
 ;operation on pixel    
 ; inputs:
 ;   {x,y} coordinates
@@ -717,14 +715,30 @@ bitop00:
 bitop01: 
     ; WREG= bit mask
     movwf T    ; -- FSR0L FSR0H op mask
+;operation selector    
     pick 1  ; WREG= op
-    skpz
-    bra xor_bit  ; 
-clear_bit:
+    skpnz
+    bra clear_bit
+    decf WREG
+    skpnz
+    bra xor_bit  ;
+    decf WREG
+    skpnz
+    bra test_bit
+; set bit  SET_OP
+    movfw T
+    iorwf INDF0,F
+    bra bitop02
+test_bit:  ; TEST_OP
+    movfw T
+    andwf INDF0,W
+    movwf T	; FSR0L FSR0H op bit
+    bra bitop02
+clear_bit:  ; CLR_OP
     comf T,W
     andwf INDF0,F
     bra bitop02 ; -- FSR0L FSR0H op mask
-xor_bit:
+xor_bit: ; XOR_OP
     movfw T   ; -- FSR0L FSR0H op mask
     xorwf INDF0,F
     andwf INDF0,W
@@ -1097,6 +1111,38 @@ game_init:
     bsf flags,F_GSTOP
     return
 
+; slide well row down
+; input:
+;   b  bottom row to slide
+;   t  target row
+; output:
+;   none
+slide_down: ; ( b t -- )
+    reserve 1
+row_loop: ; y{b:1}
+    movlw 10
+    movwf T ; -- b t x
+col_loop:  ; x{10:1}
+    dup	  ; -- b t x x
+    pick 3
+    push  ; -- b t x x y
+    call get_pixel
+    skpnz
+    lit CLR_OP
+    skpz
+    lit SET_OP
+    call bitop ; b t x x y op -- b t x f
+    drop   ; no need for f
+    decfsz T
+    bra col_loop
+    dec_n 1  ; dec t
+    dec_n 2  ; dec b
+    skpz 
+    bra row_loop
+    drop_n 3
+    return
+    
+    
 ROW_EMPTY equ 0     
 ROW_FULL equ 10 ; 10 bits in row
 ; check the state of well row
@@ -1122,11 +1168,23 @@ qr01:
     drop_n 2 ; -- s
     return
  
+; collision test
+; check if current tetriminos
+; is in collision position
+; input:
+;   none
+; output:
+;   WREG, Z
+coll_test:
+    
+    return
+    
+    
 ; generate a new tetriminos
 ; input:
 ;   none
 ; output:
-;   Z flag set if collision
+;   none
 new_tminos:
     banksel GAME_VAR
     movlw 7
@@ -1144,7 +1202,7 @@ new_tminos:
     return
  
 ; wait player start signal
-; button B pressed    
+; button A pressed    
 wait_start:
     clrw
     call korobeiniki
@@ -1213,8 +1271,9 @@ game_loop:
 ; generate new tetriminos
 ; if collision at this stage
 ; game is over
-    call new_tminos ; Z return collision status
-fall_loop:
+    call new_tminos 
+fall_loop: ; tetriminos fall in the well
+    call coll_test ; collision test
     call print_tetrim
     pop
     skpz
@@ -1376,17 +1435,17 @@ digits: ; each digit is 5 rows
     dw 0x0EAE,0x2AE0 ; 8
     dw 0x0EAE,0x2220 ; 9
 ; letters needed for 'SCORE' and 'LINES" labels
-    dw 0x3EAE,0x2AA0 ; A  code 10
-    dw 0x3688,0x2860 ; C  code 11
-    dw 0x3E8E,0x28E0 ; E  code 12
-    dw 0x3E44,0x24E0 ; I  code 13
-    dw 0x3888,0x28E0 ; L  code 14
-    dw 0x38CA,0x2AA0 ; N  code 15
-    dw 0x34AA,0x2A40 ; O  code 16
-    dw 0x3EAE,0x2880 ; P  code 17
-    dw 0x38EA,0x2880 ; R  code 18
-    dw 0x3684,0x22C0 ; S  code 19
-    dw 0x3040,0x2400 ; :  code 20
+    dw 0x0EAE,0x2AA0 ; A  code 10
+    dw 0x0688,0x2860 ; C  code 11
+    dw 0x0E8E,0x28E0 ; E  code 12
+    dw 0x0E44,0x24E0 ; I  code 13
+    dw 0x0888,0x28E0 ; L  code 14
+    dw 0x08CA,0x2AA0 ; N  code 15
+    dw 0x04AA,0x2A40 ; O  code 16
+    dw 0x0EAE,0x2880 ; P  code 17
+    dw 0x08EA,0x2880 ; R  code 18
+    dw 0x0684,0x22C0 ; S  code 19
+    dw 0x0040,0x2400 ; :  code 20
     dw 0x2000,0x2000 ; space code 21
 
 ; comments notation: Rn clockwise rotation n*90 degr.    

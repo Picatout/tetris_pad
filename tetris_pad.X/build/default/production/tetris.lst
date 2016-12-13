@@ -1,4 +1,4 @@
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE  1
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -57,7 +57,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
   00000006            00041 SYNC_IE equ PWM3IE  ; interrupt enable bit
   00000006            00042 SYNC_IF equ PWM3IF  ; interrupt flag bit
   00000093            00043 SYNC_PIE equ PIE3 ; interrupt enable SFR
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE  2
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -116,7 +116,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
   00000000            00094 F_VSYNC equ 0 ; vertical sync active
   00000001            00095 F_EVEN equ 1  ; even field
   00000002            00096 F_MUTEX equ 2 ; video routine lock out
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE  3
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -175,7 +175,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00147     addwfc PMADRH
                       00148     endm
                       00149     
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE  4
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE  4
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -234,7 +234,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00200     addfsr SP,-n
                       00201     endm
                       00202     
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE  5
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE  5
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -293,7 +293,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00253    
                       00254 sub macro  ; substract WREG from T result on T
                       00255    subwf T,F
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE  6
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE  6
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -352,7 +352,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0041                  00306 angle res 1 ; tetriminos rotatation angle in multiple of 90degr. {0:3}
 0042                  00307 tx  res 1 ; x coordinate
 0043                  00308 ty  res 1 ; y coordinate
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE  7
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE  7
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -411,7 +411,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0004                  00359 isr:
 0004   003B           00360     banksel SYNC_PWMINTF
 0005   103D           00361     bcf SYNC_PWMINTF,PRIF
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE  8
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE  8
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -470,7 +470,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0034   0009           00412     retfie
                       00413 ; round robin task scheduler
                       00414 ; each task execute once every 1/60th sec.
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE  9
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE  9
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -481,1611 +481,1683 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00417 ;   horizontal period.
 0035                  00418 tasks:
 0035   08??           00419     movfw lcountL
-                      00420     case 0, task0
-0036   3A00               M     xorlw 0
-0037   1903               M     skpnz
-0038   3???               M     bra task0
-0039   3A00               M     xorlw 0
-                      00421     case 1, task1
-003A   3A01               M     xorlw 1
-003B   1903               M     skpnz
-003C   3???               M     bra task1
-003D   3A01               M     xorlw 1
-                      00422     case 2, task2
-003E   3A02               M     xorlw 2
-003F   1903               M     skpnz
-0040   3???               M     bra task2
-0041   3A02               M     xorlw 2
-0042   3???           00423     bra isr_exit
-0043                  00424 task0:
-                      00425 ; sound timer    
-0043   08??           00426     movfw tone_tmr
-0044   1903           00427     skpnz
-0045   3???           00428     bra isr_exit
-0046   0B??           00429     decfsz tone_tmr,F
-0047   3???           00430     bra isr_exit
-0048   1280           00431     bcf flags,F_SND
-0049   003B           00432     banksel AUDIO_PWMCON
-004A   13AB           00433     bcf AUDIO_PWMCON,EN
-004B   3???           00434     bra isr_exit
-004C                  00435 task1:   
-                      00436 ; decrement game timer    
-004C   08??           00437     movf gtimer,F ; 
-004D   1903           00438     skpnz
-004E   3???           00439     bra isr_exit
-004F   0B??           00440     decfsz gtimer,F ; 
-0050   3???           00441     bra isr_exit ;
-0051   1180           00442     bcf flags, F_GTMR
-0052   3???           00443     bra isr_exit ;
-0053                  00444 task2:
-                      00445 ; rotate lfsr
-0053   36??           00446     lsrf randH
-0054   0C??           00447     rrf randL
-0055   1803           00448     skpnc
-0056   30B4           00449     movlw LFSR_TAPS
-0057   06??           00450     xorwf randH
-0058   3???           00451     bra isr_exit 
-0059                  00452 isr_exit:
-0059   0A??           00453     incf lcountL
-005A   1903           00454     skpnz
-005B   0A??           00455     incf lcountH
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 10
+0036   1903           00420     skpnz
+0037   3???           00421     bra task0
+0038   0389           00422     decf WREG
+0039   1903           00423     skpnz 
+003A   3???           00424     bra task1
+003B   0389           00425     decf WREG
+003C   1903           00426     skpnz
+003D   3???           00427     bra task2
+003E   3???           00428     bra isr_exit
+003F                  00429 task0:
+                      00430 ; sound timer    
+003F   08??           00431     movfw tone_tmr
+0040   1903           00432     skpnz
+0041   3???           00433     bra isr_exit
+0042   0B??           00434     decfsz tone_tmr,F
+0043   3???           00435     bra isr_exit
+0044   1280           00436     bcf flags,F_SND
+0045   003B           00437     banksel AUDIO_PWMCON
+0046   13AB           00438     bcf AUDIO_PWMCON,EN
+0047   3???           00439     bra isr_exit
+0048                  00440 task1:   
+                      00441 ; decrement game timer    
+0048   08??           00442     movf gtimer,F ; 
+0049   1903           00443     skpnz
+004A   3???           00444     bra isr_exit
+004B   0B??           00445     decfsz gtimer,F ; 
+004C   3???           00446     bra isr_exit ;
+004D   1180           00447     bcf flags, F_GTMR
+004E   3???           00448     bra isr_exit ;
+004F                  00449 task2:
+                      00450 ; rotate lfsr
+004F   36??           00451     lsrf randH
+0050   0C??           00452     rrf randL
+0051   1803           00453     skpnc
+0052   30B4           00454     movlw LFSR_TAPS
+0053   06??           00455     xorwf randH
+0054   3???           00456     bra isr_exit 
+0055                  00457 isr_exit:
+0055   0A??           00458     incf lcountL
+0056   1903           00459     skpnz
+0057   0A??           00460     incf lcountH
+0058   0009           00461     retfie
+                      00462 
+                      00463 ;divsion by 10    
+                      00464 ;needed to convert binary to BCD
+                      00465 ; input:
+                      00466 ;   acca dividend  16 bits
+                      00467 ; output:
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 10
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-005C   0009           00456     retfie
-                      00457 
-                      00458 ;divsion by 10    
-                      00459 ;needed to convert binary to BCD
-                      00460 ; input:
-                      00461 ;   acca dividend  16 bits
-                      00462 ; output:
-                      00463 ;   acca: quotient
-                      00464 ;   accbL: remainder    
-005D                  00465 div10:
-                      00466     disable_video
-005D   1500               M     bsf flags, F_MUTEX
-005E   3011           00467     movlw 17
-005F   00??           00468     movwf rcount
-0060   01??           00469     clrf accbL
-0061                  00470 div10_loop:
-0061   300A           00471     movlw 10
-0062   02??           00472     subwf accbL,W
-0063   1803           00473     skpnc
-0064   00??           00474     movwf accbL
-0065   0D??           00475     rlf accaL
-0066   0D??           00476     rlf accaH
-0067   0D??           00477     rlf accbL
-0068   0B??           00478     decfsz rcount
-0069   3???           00479     bra div10_loop
-006A   36??           00480     lsrf accbL
-                      00481     enable_video
-006B   1100               M     bcf flags, F_MUTEX
-006C   0008           00482     return
-                      00483     
-                      00484     
-                      00485 ; WREG*6  because BPL=6
-                      00486 ; WREG*6=WREG*4+WREG*2    
-006D                  00487 mult6: 
-006D   00??           00488     movwf accbH
-006E   35??           00489     lslf accbH    ; accbH=2*WREG
-006F   35??           00490     lslf accbH,W  ; WREG=4*WREG
-0070   07??           00491     addwf accbH,W ; WREG=6*WREG
-0071   0008           00492     return
-                      00493 
-                      00494 ;read game pad
-                      00495 ; store value in
-                      00496 ; buttons
-                      00497 ; a button is accepted if
-                      00498 ; the Vadc value is below its threshold
-0072                  00499 read_pad:
-0072   01??           00500     clrf buttons
-0073   1A80           00501     btfsc flags, F_SND
-0074   0008           00502     return ; can't read while tone playing
-0075   0021           00503     banksel TRISA
-0076   160C           00504     bsf TRISA,ADC_PIN
-0077   0021           00505     banksel ADCON0
-0078   141D           00506     bsf ADCON0,ADON
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 11
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-                      00507     tcyDelay 8*4 ; délais d'acquisition 4µsec
+                      00468 ;   acca: quotient
+                      00469 ;   accbL: remainder    
+0059                  00470 div10:
+                      00471     disable_video
+0059   1500               M     bsf flags, F_MUTEX
+005A   3011           00472     movlw 17
+005B   00??           00473     movwf rcount
+005C   01??           00474     clrf accbL
+005D                  00475 div10_loop:
+005D   300A           00476     movlw 10
+005E   02??           00477     subwf accbL,W
+005F   1803           00478     skpnc
+0060   00??           00479     movwf accbL
+0061   0D??           00480     rlf accaL
+0062   0D??           00481     rlf accaH
+0063   0D??           00482     rlf accbL
+0064   0B??           00483     decfsz rcount
+0065   3???           00484     bra div10_loop
+0066   36??           00485     lsrf accbL
+                      00486     enable_video
+0067   1100               M     bcf flags, F_MUTEX
+0068   0008           00487     return
+                      00488     
+                      00489     
+                      00490 ; WREG*6  because BPL=6
+                      00491 ; WREG*6=WREG*4+WREG*2    
+0069                  00492 mult6: 
+0069   00??           00493     movwf accbH
+006A   35??           00494     lslf accbH    ; accbH=2*WREG
+006B   35??           00495     lslf accbH,W  ; WREG=4*WREG
+006C   07??           00496     addwf accbH,W ; WREG=6*WREG
+006D   0008           00497     return
+                      00498 
+                      00499 ;read game pad
+                      00500 ; store value in
+                      00501 ; buttons
+                      00502 ; a button is accepted if
+                      00503 ; the Vadc value is below its threshold
+006E                  00504 read_pad:
+006E   01??           00505     clrf buttons
+006F   1A80           00506     btfsc flags, F_SND
+0070   0008           00507     return ; can't read while tone playing
+0071   0021           00508     banksel TRISA
+0072   160C           00509     bsf TRISA,ADC_PIN
+0073   0021           00510     banksel ADCON0
+0074   141D           00511     bsf ADCON0,ADON
+                      00512     tcyDelay 8*4 ; délais d'acquisition 4µsec
   0002                    M     variable r=8*4%5
   0006                    M     variable q=8*4/5
                           M     while r>1
-0079   3???               M     bra $+1
+0075   3???               M     bra $+1
   00000000                M r-=2
                           M     endw
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
                           M     if r==1
                           M     nop
                           M     endif
                           M     if q
-007A   3006               M     movlw q
-007B   3???               M     bra $+1
-007C   0B89               M     decfsz WREG
-007D   3???               M     bra $-2
+0076   3006               M     movlw q
+0077   3???               M     bra $+1
+0078   0B89               M     decfsz WREG
+0079   3???               M     bra $-2
                           M     endif
-007E   149D           00508     bsf ADCON0,GO
-007F   189D           00509     btfsc ADCON0,NOT_DONE
-0080   3???           00510     bra $-1
-0081   101D           00511     bcf ADCON0,ADON
-                      00512 ; try each button from lower to upper
-0082                  00513 try_a:
-                      00514     try_button A_THR, try_b
-0082   3040               M     movlw A_THR
-0083   021C               M     subwf ADRESH,W
-0084   1803               M     skpnc
-0085   3???               M     bra try_b
-0086   1600           00515     bsf buttons,BTN_A
-0087   3???           00516     bra read_exit
-0088                  00517 try_b:    
-                      00518     try_button B_THR, try_rt
-0088   3095               M     movlw B_THR
-0089   021C               M     subwf ADRESH,W
-008A   1803               M     skpnc
-008B   3???               M     bra try_rt
-008C   1680           00519     bsf buttons,BTN_B
-008D   3???           00520     bra read_exit
-008E                  00521 try_rt:
-                      00522     try_button RT_THR, try_up
-008E   30B5               M     movlw RT_THR
-008F   021C               M     subwf ADRESH,W
-0090   1803               M     skpnc
-0091   3???               M     bra try_up
-0092   1580           00523     bsf buttons,BTN_RT
-0093   3???           00524     bra read_exit
-0094                  00525 try_up:
-                      00526     try_button UP_THR, try_lt
-0094   30C6               M     movlw UP_THR
-0095   021C               M     subwf ADRESH,W
-0096   1803               M     skpnc
-0097   3???               M     bra try_lt
-0098   1400           00527     bsf buttons,BTN_UP
-0099   3???           00528     bra read_exit
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 12
+007A   149D           00513     bsf ADCON0,GO
+007B   189D           00514     btfsc ADCON0,NOT_DONE
+007C   3???           00515     bra $-1
+007D   101D           00516     bcf ADCON0,ADON
+                      00517 ; try each button from lower to upper
+007E                  00518 try_a:
+                      00519     try_button A_THR, try_b
+007E   3040               M     movlw A_THR
+007F   021C               M     subwf ADRESH,W
+0080   1803               M     skpnc
+0081   3???               M     bra try_b
+0082   1600           00520     bsf buttons,BTN_A
+0083   3???           00521     bra read_exit
+0084                  00522 try_b:    
+                      00523     try_button B_THR, try_rt
+0084   3095               M     movlw B_THR
+0085   021C               M     subwf ADRESH,W
+0086   1803               M     skpnc
+0087   3???               M     bra try_rt
+0088   1680           00524     bsf buttons,BTN_B
+0089   3???           00525     bra read_exit
+008A                  00526 try_rt:
+                      00527     try_button RT_THR, try_up
+008A   30B5               M     movlw RT_THR
+008B   021C               M     subwf ADRESH,W
+008C   1803               M     skpnc
+008D   3???               M     bra try_up
+008E   1580           00528     bsf buttons,BTN_RT
+008F   3???           00529     bra read_exit
+0090                  00530 try_up:
+                      00531     try_button UP_THR, try_lt
+0090   30C6               M     movlw UP_THR
+0091   021C               M     subwf ADRESH,W
+0092   1803               M     skpnc
+0093   3???               M     bra try_lt
+0094   1400           00532     bsf buttons,BTN_UP
+0095   3???           00533     bra read_exit
+0096                  00534 try_lt:
+                      00535     try_button LT_THR, try_dn
+0096   30D1               M     movlw LT_THR
+0097   021C               M     subwf ADRESH,W
+0098   1803               M     skpnc
+0099   3???               M     bra try_dn
+009A   1500           00536     bsf buttons,BTN_LT
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 12
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-009A                  00529 try_lt:
-                      00530     try_button LT_THR, try_dn
-009A   30D1               M     movlw LT_THR
-009B   021C               M     subwf ADRESH,W
-009C   1803               M     skpnc
-009D   3???               M     bra try_dn
-009E   1500           00531     bsf buttons,BTN_LT
-009F   3???           00532     bra read_exit
-00A0                  00533 try_dn:
-                      00534     try_button DN_THR, read_exit
-00A0   30D8               M     movlw DN_THR
-00A1   021C               M     subwf ADRESH,W
-00A2   1803               M     skpnc
-00A3   3???               M     bra read_exit
-00A4   1480           00535     bsf buttons,BTN_DN
-00A5                  00536 read_exit:
-00A5   0021           00537     banksel TRISA
-00A6   120C           00538     bcf TRISA,ADC_PIN
-00A7   0008           00539     return
-                      00540     
-                      00541 ; play a tone
-                      00542 ; input:
-                      00543 ;   t   duration in multiple of 1/60 sec.
-                      00544 ;   n   note number
-00A8                  00545 tone: ; ( t n -- )
-00A8   0021           00546     banksel TRISA
-00A9   120C           00547     bcf TRISA,AUDIO_PIN
-00AA   003B           00548     banksel AUDIO_PWMPRL
-00AB   3581           00549     lslf T
-00AC   0801           00550     movfw T
-00AD   2???           00551     call tone_pr
-00AE   00A5           00552     movwf AUDIO_PWMPRL
-00AF   3689           00553     lsrf WREG
-00B0   00A3           00554     movwf AUDIO_PWMDCL
-00B1   0A01           00555     incf T,W
-00B2   2???           00556     call tone_pr
-00B3   00A6           00557     movwf AUDIO_PWMPRH
-00B4   3689           00558     lsrf WREG
-00B5   00A4           00559     movwf AUDIO_PWMDCH
-00B6   1803           00560     skpnc
-00B7   17A3           00561     bsf AUDIO_PWMDCL,7
-                      00562     pop
-00B8   0017               M     moviw SP--
-                      00563     pop
-00B9   0017               M     moviw SP--
-00BA   00??           00564     movwf tone_tmr
-00BB   17AB           00565     bsf AUDIO_PWMCON,EN
-00BC   17AF           00566     bsf AUDIO_PWMLDCON,LDA
-00BD   1680           00567     bsf flags,F_SND
-00BE   0008           00568     return
-                      00569     
-                      00570     
-                      00571 ; serialise video pixels to scan line
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 13
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-                      00572 ; due to timing constrain use specialized 
-                      00573 ; division and multiplication    
-00BF                  00574 video_serialize: 
-00BF   0804           00575     movfw FSR0L
-                      00576     push
-00C0   001C               M     movwi ++SP
-00C1   0805           00577     movfw FSR0H
-                      00578     push
-00C2   001C               M     movwi ++SP
-                      00579     lit 0 ; ( x )
-00C3   3000               M    movlw 0
-00C4   001C               M    movwi ++SP 
-                      00580     tcyDelay HORZ_DLY
+009B   3???           00537     bra read_exit
+009C                  00538 try_dn:
+                      00539     try_button DN_THR, read_exit
+009C   30D8               M     movlw DN_THR
+009D   021C               M     subwf ADRESH,W
+009E   1803               M     skpnc
+009F   3???               M     bra read_exit
+00A0   1480           00540     bsf buttons,BTN_DN
+00A1                  00541 read_exit:
+00A1   0021           00542     banksel TRISA
+00A2   120C           00543     bcf TRISA,ADC_PIN
+00A3   0008           00544     return
+                      00545     
+                      00546 ; play a tone
+                      00547 ; input:
+                      00548 ;   t   duration in multiple of 1/60 sec.
+                      00549 ;   n   note number
+00A4                  00550 tone: ; ( t n -- )
+00A4   0021           00551     banksel TRISA
+00A5   120C           00552     bcf TRISA,AUDIO_PIN
+00A6   003B           00553     banksel AUDIO_PWMPRL
+00A7   3581           00554     lslf T
+00A8   0801           00555     movfw T
+00A9   2???           00556     call tone_pr
+00AA   00A5           00557     movwf AUDIO_PWMPRL
+00AB   3689           00558     lsrf WREG
+00AC   00A3           00559     movwf AUDIO_PWMDCL
+00AD   0A01           00560     incf T,W
+00AE   2???           00561     call tone_pr
+00AF   00A6           00562     movwf AUDIO_PWMPRH
+00B0   3689           00563     lsrf WREG
+00B1   00A4           00564     movwf AUDIO_PWMDCH
+00B2   1803           00565     skpnc
+00B3   17A3           00566     bsf AUDIO_PWMDCL,7
+                      00567     pop
+00B4   0017               M     moviw SP--
+                      00568     pop
+00B5   0017               M     moviw SP--
+00B6   00??           00569     movwf tone_tmr
+00B7   17AB           00570     bsf AUDIO_PWMCON,EN
+00B8   17AF           00571     bsf AUDIO_PWMLDCON,LDA
+00B9   1680           00572     bsf flags,F_SND
+00BA   0008           00573     return
+                      00574     
+                      00575     
+                      00576 ; serialise video pixels to output
+00BB                  00577 video_serialize: 
+                      00578     tcyDelay HORZ_DLY
   0000                    M     variable r=HORZ_DLY%5
   000A                    M     variable q=HORZ_DLY/5
                           M     while r>1
                           M     bra $+1
                           M r-=2
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
                           M     endw
                           M     if r==1
                           M     nop
                           M     endif
                           M     if q
-00C5   300A               M     movlw q
-00C6   3???               M     bra $+1
-00C7   0B89               M     decfsz WREG
-00C8   3???               M     bra $-2
+00BB   300A               M     movlw q
+00BC   3???               M     bra $+1
+00BD   0B89               M     decfsz WREG
+00BE   3???               M     bra $-2
                           M     endif
-00C9   3030           00581     movlw VIDEO_BUFFER&0xff
-00CA   0084           00582     movwf FSR0L
-00CB   3020           00583     movlw VIDEO_BUFFER>>8
-00CC   0085           00584     movwf FSR0H
-00CD   3046           00585     movlw FIRST_VIDEO
-00CE   02??           00586     subwf lcountL,W
-00CF   3689           00587     lsrf WREG
-00D0   3689           00588     lsrf WREG
-00D1   2???           00589     call mult6
-00D2   0784           00590     addwf FSR0L
-00D3   0103           00591     clrw
-00D4   3D85           00592     addwfc FSR0H
-00D5   3006           00593     movlw XSIZE/8
-00D6   00??           00594     movwf rcount
-00D7   0023           00595     banksel RCSTA
-00D8   179D           00596     bsf RCSTA,SPEN
-00D9                  00597 pixels_loop:    
-00D9   0012           00598     moviw FSR0++
-00DA   0023           00599     banksel PIXEL_TXREG
-00DB   009A           00600     movwf PIXEL_TXREG
-00DC   0020           00601     banksel TX_PIR
-00DD   1E11           00602     btfss TX_PIR,TXIF
-00DE   3???           00603     bra $-1
-00DF   0B??           00604     decfsz rcount
-00E0   3???           00605     bra pixels_loop
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 14
+00BF   0804           00579     movfw FSR0L
+                      00580     push
+00C0   001C               M     movwi ++SP
+00C1   0805           00581     movfw FSR0H
+                      00582     push
+00C2   001C               M     movwi ++SP
+                      00583     lit 0 ;  x 
+00C3   3000               M    movlw 0
+00C4   001C               M    movwi ++SP 
+00C5   3030           00584     movlw VIDEO_BUFFER&0xff
+00C6   0084           00585     movwf FSR0L
+00C7   3020           00586     movlw VIDEO_BUFFER>>8
+00C8   0085           00587     movwf FSR0H
+00C9   3046           00588     movlw FIRST_VIDEO
+00CA   02??           00589     subwf lcountL,W
+00CB   3689           00590     lsrf WREG
+00CC   3689           00591     lsrf WREG
+00CD   2???           00592     call mult6  ; 6 byte per line
+00CE   0784           00593     addwf FSR0L
+00CF   0103           00594     clrw
+00D0   3D85           00595     addwfc FSR0H
+00D1   3006           00596     movlw XSIZE/8 ; 8 pixels per byte
+00D2   00??           00597     movwf rcount  ;
+00D3   0023           00598     banksel RCSTA
+00D4   179D           00599     bsf RCSTA,SPEN
+00D5                  00600 pixels_loop:    
+00D5   0012           00601     moviw FSR0++
+00D6   0023           00602     banksel PIXEL_TXREG
+00D7   009A           00603     movwf PIXEL_TXREG
+00D8   0020           00604     banksel TX_PIR
+00D9   1E11           00605     btfss TX_PIR,TXIF
+00DA   3???           00606     bra $-1
+00DB   0B??           00607     decfsz rcount
+00DC   3???           00608     bra pixels_loop
+00DD   0023           00609     banksel PIXEL_TXREG
+00DE   019A           00610     clrf PIXEL_TXREG
+00DF   0020           00611     banksel TX_PIR
+00E0   1E11           00612     btfss TX_PIR,TXIF
+00E1   3???           00613     bra $-1
+00E2   0023           00614     banksel RCSTA
+00E3   139D           00615     bcf RCSTA, SPEN
+                      00616     pop
+00E4   0017               M     moviw SP--
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 14
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-00E1   0023           00606     banksel PIXEL_TXREG
-00E2   019A           00607     clrf PIXEL_TXREG
-00E3   0020           00608     banksel TX_PIR
-00E4   1E11           00609     btfss TX_PIR,TXIF
-00E5   3???           00610     bra $-1
-00E6   0023           00611     banksel RCSTA
-00E7   139D           00612     bcf RCSTA, SPEN
-                      00613     pop
-00E8   0017               M     moviw SP--
-00E9   0085           00614     movwf FSR0H
-                      00615     pop
-00EA   0017               M     moviw SP--
-00EB   0084           00616     movwf FSR0L
-00EC   0008           00617     return
-                      00618 
-                      00619 ; fill_buffer
-                      00620 ; fill screen buffer with WREG value    
-00ED                  00621 fill_buffer: ; ( c -- )
-                      00622     disable_video
-00ED   1500               M     bsf flags, F_MUTEX
-00EE   3020           00623     movlw high(VIDEO_BUFFER)
-00EF   0085           00624     movwf FSR0H
-00F0   3030           00625     movlw low(VIDEO_BUFFER)
-00F1   0084           00626     movwf FSR0L
-00F2   30C0           00627     movlw BUFFER_SIZE
-                      00628     push    ; c size
-00F3   001C               M     movwi ++SP
-                      00629     pick 1
-00F4   3F7F               M     moviw -1[SP]
-00F5                  00630 fill_loop:    
-00F5   001A           00631     movwi FSR0++
-00F6   0B81           00632     decfsz T
-00F7   3???           00633     bra fill_loop
-                      00634     drop_n 2
-00F8   317E               M     addfsr SP,-2
-                      00635     enable_video
-00F9   1100               M     bcf flags, F_MUTEX
-00FA   0008           00636     return
-                      00637 
-                      00638     
-                      00639 ;set video pointer at 
-                      00640 ; byte that contain pixel {x,y}
-                      00641 ; output:
-                      00642 ;   T = pixel offset, 0 left, 7 right  
-                      00643 ;   Z=0 if offset==0 
-                      00644 ; NOTE: EUSART output least significant bit first
-                      00645 ;       so bit 0 appear left on screen.    
-00FB                  00646 set_video_ptr:  ; ( x y -- b )
-00FB   3020           00647     movlw high(VIDEO_BUFFER)
-00FC   0085           00648     movwf FSR0H
-00FD   3030           00649     movlw low(VIDEO_BUFFER)
-00FE   0084           00650     movwf FSR0L
-                      00651 ; buffer_addr+y*BPL
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 15
+00E5   0085           00617     movwf FSR0H
+                      00618     pop
+00E6   0017               M     moviw SP--
+00E7   0084           00619     movwf FSR0L
+00E8   0008           00620     return
+                      00621 
+                      00622 ; fill_buffer
+                      00623 ; fill screen buffer with WREG value    
+00E9                  00624 fill_buffer: ; ( c -- )
+                      00625     disable_video
+00E9   1500               M     bsf flags, F_MUTEX
+00EA   3020           00626     movlw high(VIDEO_BUFFER)
+00EB   0085           00627     movwf FSR0H
+00EC   3030           00628     movlw low(VIDEO_BUFFER)
+00ED   0084           00629     movwf FSR0L
+00EE   30C0           00630     movlw BUFFER_SIZE
+                      00631     push    ; c size
+00EF   001C               M     movwi ++SP
+                      00632     pick 1
+00F0   3F7F               M     moviw -1[SP]
+00F1                  00633 fill_loop:    
+00F1   001A           00634     movwi FSR0++
+00F2   0B81           00635     decfsz T
+00F3   3???           00636     bra fill_loop
+                      00637     drop_n 2
+00F4   317E               M     addfsr SP,-2
+                      00638     enable_video
+00F5   1100               M     bcf flags, F_MUTEX
+00F6   0008           00639     return
+                      00640 
+                      00641     
+                      00642 ;set video pointer at 
+                      00643 ; input:
+                      00644 ;   x,y coordinates of pixel in video_buffer    
+                      00645 ; output:
+                      00646 ;   T = pixel offset, 0 left, 7 right  
+                      00647 ;   Z=0 if offset==0 
+                      00648 ; NOTE: EUSART output least significant bit first
+                      00649 ;       so bit 0 appear left on screen.    
+00F7                  00650 set_video_ptr:  ; ( x y -- b )
+00F7   3020           00651     movlw high(VIDEO_BUFFER)
+00F8   0085           00652     movwf FSR0H
+00F9   3030           00653     movlw low(VIDEO_BUFFER)
+00FA   0084           00654     movwf FSR0L
+                      00655 ; buffer_addr+y*BPL
+                      00656     pop         ; ( x y -- x )
+00FB   0017               M     moviw SP--
+00FC   2???           00657     call mult6
+00FD   0784           00658     addwf FSR0L
+00FE   0103           00659     clrw
+00FF   3D85           00660     addwfc FSR0H
+                      00661 ; buffer_addr+x/8
+0100   3601           00662     lsrf T,W   
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 15
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00652     pop         ; ( x y -- x )
-00FF   0017               M     moviw SP--
-0100   2???           00653     call mult6
-0101   0784           00654     addwf FSR0L
-0102   0103           00655     clrw
-0103   3D85           00656     addwfc FSR0H
-                      00657 ; buffer_addr+x/8
-0104   3601           00658     lsrf T,W   
-0105   3689           00659     lsrf WREG
-0106   3689           00660     lsrf WREG
-0107   0784           00661     addwf FSR0L
-0108   0103           00662     clrw
-0109   3D85           00663     addwfc FSR0H
-010A   3007           00664     movlw 7
-010B   0581           00665     andwf T,F
-010C   0008           00666     return
-                      00667 
-                      00668 ; return state of pixel
-                      00669 ; input:
-                      00670 ;   x,y coordinates of pixel
-                      00671 ; output:
-                      00672 ;   T=0|2^n  where n{0:7}
-                      00673 ;   Z reflect content of T    
-010D                  00674 get_pixel: ; ( x y -- 0|2^n ) n{0:7)
-010D   2???           00675     call set_video_ptr ; x y -- shift_counter
-010E   3001           00676     movlw 1
-010F   1903           00677     skpnz   ; Z modified by set_video_ptr
-0110   3???           00678     bra gpx01
-0111                  00679 gpx00:
-0111   3589           00680     lslf WREG
-0112   0B81           00681     decfsz T
-0113   3???           00682     bra gpx00
-0114                  00683 gpx01:
-0114   0500           00684     andwf INDF0,W
-0115   0081           00685     movwf T  ; 
-0116   0008           00686     return
-                      00687     
-                      00688     
-  00000000            00689 CLR_OP equ 0
-  00000001            00690 XOR_OP equ 1
-                      00691 ;operation on pixel    
-                      00692 ; inputs:
-                      00693 ;   {x,y} coordinates
-                      00694 ;   op operation XOR_OP|CLR_OP 
-                      00695 ; output:
-                      00696 ;   WREG=collision flag, 0 if collision 
-                      00697 ; >> no bank dependency << 
-0117                  00698 bitop: ; ( x y op -- f )
-                      00699     disable_video
-0117   1500               M     bsf flags, F_MUTEX
+0101   3689           00663     lsrf WREG
+0102   3689           00664     lsrf WREG
+0103   0784           00665     addwf FSR0L
+0104   0103           00666     clrw
+0105   3D85           00667     addwfc FSR0H
+0106   3007           00668     movlw 7
+0107   0581           00669     andwf T,F
+0108   0008           00670     return
+                      00671 
+                      00672 ; return state of pixel
+                      00673 ; input:
+                      00674 ;   x,y coordinates of pixel
+                      00675 ; output:
+                      00676 ;   T=0|2^n  where n{0:7}
+                      00677 ;   Z=1 when T==0    
+0109                  00678 get_pixel: ; ( x y -- 0|2^n ) n{0:7)
+                      00679     lit TEST_OP
+0109   3002               M    movlw TEST_OP
+010A   001C               M    movwi ++SP 
+010B   2???           00680     call bitop
+010C   0801           00681     movfw T  ; 
+010D   0008           00682     return
+                      00683     
+                      00684     
+  00000000            00685 CLR_OP equ 0 ; put pixel to 0
+  00000001            00686 XOR_OP equ 1 ; invert pixel
+  00000002            00687 TEST_OP  equ 2  ; test bit value  return its value as flag
+  00000003            00688 SET_OP equ 3 ; put pixel to 1    
+                      00689 ;operation on pixel    
+                      00690 ; inputs:
+                      00691 ;   {x,y} coordinates
+                      00692 ;   op operation XOR_OP|CLR_OP 
+                      00693 ; output:
+                      00694 ;   WREG=collision flag, 0 if collision 
+                      00695 ; >> no bank dependency << 
+010E                  00696 bitop: ; ( x y op -- f )
+                      00697     disable_video
+010E   1500               M     bsf flags, F_MUTEX
+                      00698     pick 2
+010F   3F7E               M     moviw -2[SP]
+                      00699     push        ; x y op x
+0110   001C               M     movwi ++SP
                       00700     pick 2
-0118   3F7E               M     moviw -2[SP]
-                      00701     push        ; x y op x
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 16
+0111   3F7E               M     moviw -2[SP]
+                      00701     push        ; x y op x y
+0112   001C               M     movwi ++SP
+                      00702 ; preserve FSR0    
+0113   0804           00703     movfw FSR0L
+                      00704     insert 4
+0114   3FFC               M    movwi -4[SP]
+0115   0805           00705     movfw FSR0H
+                      00706     insert 3    ; -- FSR0L FSR0H op x y 
+0116   3FFD               M    movwi -3[SP]
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 16
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0119   001C               M     movwi ++SP
-                      00702     pick 2
-011A   3F7E               M     moviw -2[SP]
-                      00703     push        ; x y op x y
-011B   001C               M     movwi ++SP
-                      00704 ; preserve FSR0    
-011C   0804           00705     movfw FSR0L
-                      00706     insert 4
-011D   3FFC               M    movwi -4[SP]
-011E   0805           00707     movfw FSR0H
-                      00708     insert 3    ; -- FSR0L FSR0H op x y 
-011F   3FFD               M    movwi -3[SP]
-0120   2???           00709     call set_video_ptr  ; -- FSR0L FSR0H op bit
-0121   3001           00710     movlw 0x1
-0122   1903           00711     skpnz ; bit Z modified before leaving set_video_ptr
-0123   3???           00712     bra bitop01 ; least significant bit
-0124                  00713 bitop00:
-0124   3589           00714     lslf WREG
-0125   0B81           00715     decfsz T
-0126   3???           00716     bra bitop00
-0127                  00717 bitop01: 
-                      00718     ; WREG= bit mask
-0127   0081           00719     movwf T    ; -- FSR0L FSR0H op mask
-                      00720     pick 1  ; WREG= op
-0128   3F7F               M     moviw -1[SP]
-0129   1D03           00721     skpz
-012A   3???           00722     bra xor_bit  ; 
-012B                  00723 clear_bit:
-012B   0901           00724     comf T,W
-012C   0580           00725     andwf INDF0,F
-012D   3???           00726     bra bitop02 ; -- FSR0L FSR0H op mask
-012E                  00727 xor_bit:
-012E   0801           00728     movfw T   ; -- FSR0L FSR0H op mask
-012F   0680           00729     xorwf INDF0,F
-0130   0500           00730     andwf INDF0,W
-0131   0601           00731     xorwf T,W ; on screen bit value, 0 if no collision
-0132   0081           00732     movwf T  ; -- FSR0L FSR0H op f
-0133                  00733 bitop02:    
-                      00734 ; restore FSR0    
-                      00735     pick 2  
-0133   3F7E               M     moviw -2[SP]
-0134   0085           00736     movwf FSR0H
-                      00737     pick 3
-0135   3F7D               M     moviw -3[SP]
-0136   0084           00738     movwf FSR0L
-                      00739     pop  ; collision flag
-0137   0017               M     moviw SP--
-                      00740     drop_n 3 ; drop parameters frame
-0138   317D               M     addfsr SP,-3
-                      00741     push ; store collision flag
-0139   001C               M     movwi ++SP
-                      00742     enable_video
-013A   1100               M     bcf flags, F_MUTEX
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 17
+0117   2???           00707     call set_video_ptr  ; -- FSR0L FSR0H op bit
+0118   3001           00708     movlw 0x1
+0119   1903           00709     skpnz ; bit Z modified before leaving set_video_ptr
+011A   3???           00710     bra bitop01 ; least significant bit
+011B                  00711 bitop00:
+011B   3589           00712     lslf WREG
+011C   0B81           00713     decfsz T
+011D   3???           00714     bra bitop00
+011E                  00715 bitop01: 
+                      00716     ; WREG= bit mask
+011E   0081           00717     movwf T    ; -- FSR0L FSR0H op mask
+                      00718 ;operation selector    
+                      00719     pick 1  ; WREG= op
+011F   3F7F               M     moviw -1[SP]
+0120   1903           00720     skpnz
+0121   3???           00721     bra clear_bit
+0122   0389           00722     decf WREG
+0123   1903           00723     skpnz
+0124   3???           00724     bra xor_bit  ;
+0125   0389           00725     decf WREG
+0126   1903           00726     skpnz
+0127   3???           00727     bra test_bit
+                      00728 ; set bit  SET_OP
+0128   0801           00729     movfw T
+0129   0480           00730     iorwf INDF0,F
+012A   3???           00731     bra bitop02
+012B                  00732 test_bit:  ; TEST_OP
+012B   0801           00733     movfw T
+012C   0500           00734     andwf INDF0,W
+012D   0081           00735     movwf T     ; FSR0L FSR0H op bit
+012E   3???           00736     bra bitop02
+012F                  00737 clear_bit:  ; CLR_OP
+012F   0901           00738     comf T,W
+0130   0580           00739     andwf INDF0,F
+0131   3???           00740     bra bitop02 ; -- FSR0L FSR0H op mask
+0132                  00741 xor_bit: ; XOR_OP
+0132   0801           00742     movfw T   ; -- FSR0L FSR0H op mask
+0133   0680           00743     xorwf INDF0,F
+0134   0500           00744     andwf INDF0,W
+0135   0601           00745     xorwf T,W ; on screen bit value, 0 if no collision
+0136   0081           00746     movwf T  ; -- FSR0L FSR0H op f
+0137                  00747 bitop02:    
+                      00748 ; restore FSR0    
+                      00749     pick 2  
+0137   3F7E               M     moviw -2[SP]
+0138   0085           00750     movwf FSR0H
+                      00751     pick 3
+0139   3F7D               M     moviw -3[SP]
+013A   0084           00752     movwf FSR0L
+                      00753     pop  ; collision flag
+013B   0017               M     moviw SP--
+                      00754     drop_n 3 ; drop parameters frame
+013C   317D               M     addfsr SP,-3
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 17
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-013B   0008           00743     return
-                      00744 
-                      00745 ; draw row of 4 pixels
-                      00746 ; stop when n==0    
-                      00747 ; input:
-                      00748 ;   {x,y} left coordinates
-                      00749 ;   n pixels to draw
-                      00750 ;   f collision flag to be modified    
-                      00751 ; output:
-                      00752 ;   f=collision flag, return modified value   
-                      00753 ; >> no bank dependency << 
-013C                  00754 xor_row: ; ( f n x y -- f )
-                      00755 ; bounds check y
-013C   1B81           00756     btfsc T,7
-013D   3???           00757     bra xor_row_done ; y<0
-013E   3020           00758     movlw YSIZE
-013F   0201           00759     subwf T,W
-0140   1803           00760     skpnc
-0141   3???           00761     bra xor_row_done ; y>=YSIZE
-0142                  00762 xor_row01:    
-                      00763     pick 2 ; check if n==0
-0142   3F7E               M     moviw -2[SP]
-0143   1903           00764     skpnz
-0144   3???           00765     bra xor_row_done ; row empty nothing to do
-0145   3589           00766     lslf WREG
-                      00767     insert 2  ; save shifted n
-0146   3FFE               M    movwi -2[SP]
-0147   1C03           00768     skpc
-0148   3???           00769     bra xor_row02 ; bit==0 no draw
-                      00770 ; bounds check x{0:43}    
-                      00771     pick 1
-0149   3F7F               M     moviw -1[SP]
-014A   1B89           00772     btfsc WREG,7 
-014B   3???           00773     bra xor_row02 ; x<0 don't print
-014C   3C2F           00774     sublw XSIZE-1
-014D   1C03           00775     skpc
-014E   3???           00776     bra xor_row_done ; x>=XSIZE
-                      00777 ; check for empty row
-                      00778     over ; f n x y x 
-014F   3F7F               M     moviw -1[SP]
+                      00755     push ; store collision flag
+013D   001C               M     movwi ++SP
+                      00756     enable_video
+013E   1100               M     bcf flags, F_MUTEX
+013F   0008           00757     return
+                      00758 
+                      00759 ; draw row of 4 pixels
+                      00760 ; stop when n==0    
+                      00761 ; input:
+                      00762 ;   {x,y} left coordinates
+                      00763 ;   n pixels to draw
+                      00764 ;   f collision flag to be modified    
+                      00765 ; output:
+                      00766 ;   f=collision flag, return modified value   
+                      00767 ; >> no bank dependency << 
+0140                  00768 xor_row: ; ( f n x y -- f )
+                      00769 ; bounds check y
+0140   1B81           00770     btfsc T,7
+0141   3???           00771     bra xor_row_done ; y<0
+0142   3020           00772     movlw YSIZE
+0143   0201           00773     subwf T,W
+0144   1803           00774     skpnc
+0145   3???           00775     bra xor_row_done ; y>=YSIZE
+0146                  00776 xor_row01:    
+                      00777     pick 2 ; check if n==0
+0146   3F7E               M     moviw -2[SP]
+0147   1903           00778     skpnz
+0148   3???           00779     bra xor_row_done ; row empty nothing to do
+0149   3589           00780     lslf WREG
+                      00781     insert 2  ; save shifted n
+014A   3FFE               M    movwi -2[SP]
+014B   1C03           00782     skpc
+014C   3???           00783     bra xor_row02 ; bit==0 no draw
+                      00784 ; bounds check x{0:43}    
+                      00785     pick 1
+014D   3F7F               M     moviw -1[SP]
+014E   1B89           00786     btfsc WREG,7 
+014F   3???           00787     bra xor_row02 ; x<0 don't print
+0150   3C2F           00788     sublw XSIZE-1
+0151   1C03           00789     skpc
+0152   3???           00790     bra xor_row_done ; x>=XSIZE
+                      00791 ; check for empty row
+                      00792     over ; f n x y x 
+0153   3F7F               M     moviw -1[SP]
                           M     push
-0150   001C               M     movwi ++SP
-                      00779     over ; f n x y x y
-0151   3F7F               M     moviw -1[SP]
+0154   001C               M     movwi ++SP
+                      00793     over ; f n x y x y
+0155   3F7F               M     moviw -1[SP]
                           M     push
-0152   001C               M     movwi ++SP
-                      00780     lit XOR_OP ; f n x y x y op
-0153   3001               M    movlw XOR_OP
-0154   001C               M    movwi ++SP 
-0155   2???           00781     call bitop ; -- f n x y f
-                      00782     pick 4 ; pick flag
-0156   3F7C               M     moviw -4[SP]
-0157   0481           00783     iorwf T
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 18
+0156   001C               M     movwi ++SP
+                      00794     lit XOR_OP ; f n x y x y op
+0157   3001               M    movlw XOR_OP
+0158   001C               M    movwi ++SP 
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 18
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00784     pop      ; -- f n x y
-0158   0017               M     moviw SP--
-                      00785     insert 3 ; store modified flag
-0159   3FFD               M    movwi -3[SP]
-015A                  00786 xor_row02:
-                      00787     inc_n 1  ; x+=1
-015A   3F7F               M     moviw -1[SP]
-015B   0A89               M     incf WREG,F
-015C   3FFF               M     movwi -1[SP]
-015D   3???           00788     bra xor_row01
-015E                  00789 xor_row_done: ; f n x y
-                      00790     drop_n 3  ; only keep f
-015E   317D               M     addfsr SP,-3
-015F   0008           00791     return
-                      00792 
-                      00793 ; read flash memory word
-                      00794 ; input:
-                      00795 ;   lo is low byte of address
-                      00796 ;   hi is high byte of address
-                      00797 ;   ofs offset in table (limited to 255 )    
-                      00798 ; output:
-                      00799 ;   PMDATH: PMDAL
-                      00800 ;reset <nibble> variable 
-                      00801 ; >> modify BSR <<    
-0160                  00802 get_flash_word: ; ( ofs lo hi -- )
-0160   0023           00803     banksel PMADR
-                      00804     pop
-0161   0017               M     moviw SP--
-0162   0092           00805     movwf PMADRH
-                      00806     pop
-0163   0017               M     moviw SP--
-0164   0091           00807     movwf PMADRL
-                      00808     pop
+0159   2???           00795     call bitop ; -- f n x y f
+                      00796     pick 4 ; pick flag
+015A   3F7C               M     moviw -4[SP]
+015B   0481           00797     iorwf T
+                      00798     pop      ; -- f n x y
+015C   0017               M     moviw SP--
+                      00799     insert 3 ; store modified flag
+015D   3FFD               M    movwi -3[SP]
+015E                  00800 xor_row02:
+                      00801     inc_n 1  ; x+=1
+015E   3F7F               M     moviw -1[SP]
+015F   0A89               M     incf WREG,F
+0160   3FFF               M     movwi -1[SP]
+0161   3???           00802     bra xor_row01
+0162                  00803 xor_row_done: ; f n x y
+                      00804     drop_n 3  ; only keep f
+0162   317D               M     addfsr SP,-3
+0163   0008           00805     return
+                      00806 
+                      00807 ; read flash memory word
+                      00808 ; input:
+                      00809 ;   lo is low byte of address
+                      00810 ;   hi is high byte of address
+                      00811 ;   ofs offset in table (limited to 255 )    
+                      00812 ; output:
+                      00813 ;   PMDATH: PMDAL
+                      00814 ;reset <nibble> variable 
+                      00815 ; >> modify BSR <<    
+0164                  00816 get_flash_word: ; ( ofs lo hi -- )
+0164   0023           00817     banksel PMADR
+                      00818     pop
 0165   0017               M     moviw SP--
-0166   0791           00809     addwf PMADRL
-0167   0103           00810     clrw 
-0168   3D92           00811     addwfc PMADRH
-0169                  00812 read_flash:    
-0169   1315           00813     bcf PMCON1,CFGS
-016A   1415           00814     bsf PMCON1, RD
-016B   0000           00815     nop
-016C   0000           00816     nop
-016D   01??           00817     clrf nibble
-016E   0008           00818     return
-                      00819 
-                      00820 ; increament pointer 
-                      00821 ; and read next flash word    
-                      00822 ; >> modify BSR <<    
-016F                  00823 next_flash_word:
-016F   0023           00824     banksel PMADR
-0170   0A91           00825     incf PMADRL
-0171   1903           00826     skpnz
-0172   0A92           00827     incf PMADRH
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 19
+0166   0092           00819     movwf PMADRH
+                      00820     pop
+0167   0017               M     moviw SP--
+0168   0091           00821     movwf PMADRL
+                      00822     pop
+0169   0017               M     moviw SP--
+016A   0791           00823     addwf PMADRL
+016B   0103           00824     clrw 
+016C   3D92           00825     addwfc PMADRH
+016D                  00826 read_flash:    
+016D   1315           00827     bcf PMCON1,CFGS
+016E   1415           00828     bsf PMCON1, RD
+016F   0000           00829     nop
+0170   0000           00830     nop
+0171   01??           00831     clrf nibble
+0172   0008           00832     return
+                      00833 
+                      00834 ; increament pointer 
+                      00835 ; and read next flash word    
+                      00836 ; >> modify BSR <<    
+0173                  00837 next_flash_word:
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 19
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0173   3???           00828     bra read_flash
-                      00829     
-                      00830 ;get nibble from PMDAT
-                      00831 ; output:
-                      00832 ;   stack nibble in bits 7:4
-                      00833 ; increment nibble variable    
-                      00834 ; >> modify BSR <<    
-0174                  00835 get_nibble: ; ( -- nibble )
-0174   3003           00836     movlw 3
-0175   06??           00837     xorwf nibble,W
-0176   1903           00838     skpnz ; if set all nibbles of this word read
-0177   2???           00839     call next_flash_word
-0178   0023           00840     banksel PMDAT
-0179   08??           00841     movfw nibble
-017A   1903           00842     skpnz
-017B   3???           00843     bra row0
-017C   0B89           00844     decfsz WREG
-017D   3???           00845     bra row2
-017E                  00846 row1:    
-017E   0813           00847     movfw PMDATL
-017F   3???           00848     bra nibble_mask
-0180                  00849 row2:
-0180   0E13           00850     swapf PMDATL,W
-0181   3???           00851     bra nibble_mask
-0182                  00852 row0:    
-0182   0E14           00853     swapf PMDATH,W
-0183                  00854 nibble_mask:
-0183   39F0           00855     andlw 0xf0
-                      00856     push
-0184   001C               M     movwi ++SP
-0185   0A??           00857     incf nibble,F ; advance nibble pointer
-0186   0008           00858     return
-                      00859 
-                      00860 ; print 4 pixels row
-                      00861 ; inputs:
-                      00862 ;   x,y left coordinates
-                      00863 ;   f  collision flag
-                      00864 ; output:    
-                      00865 ;   advance y coordinate for next row    
-0187                  00866 print_row: ; ( x y f -- x y f )     
-0187   2???           00867     call get_nibble ; -- x y f n 
-                      00868     pick 3 
-0188   3F7D               M     moviw -3[SP]
-                      00869     push    ; x y f n x
-0189   001C               M     movwi ++SP
-                      00870     pick 3
-018A   3F7D               M     moviw -3[SP]
-                      00871     push      ; x y f n x y
-018B   001C               M     movwi ++SP
-018C   2???           00872     call xor_row ; -- x y f
-                      00873     inc_n 1 ; y+=1
-018D   3F7F               M     moviw -1[SP]
-018E   0A89               M     incf WREG,F
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 20
+0173   0023           00838     banksel PMADR
+0174   0A91           00839     incf PMADRL
+0175   1903           00840     skpnz
+0176   0A92           00841     incf PMADRH
+0177   3???           00842     bra read_flash
+                      00843     
+                      00844 ;get nibble from PMDAT
+                      00845 ; output:
+                      00846 ;   stack nibble in bits 7:4
+                      00847 ; increment nibble variable    
+                      00848 ; >> modify BSR <<    
+0178                  00849 get_nibble: ; ( -- nibble )
+0178   3003           00850     movlw 3
+0179   06??           00851     xorwf nibble,W
+017A   1903           00852     skpnz ; if set all nibbles of this word read
+017B   2???           00853     call next_flash_word
+017C   0023           00854     banksel PMDAT
+017D   08??           00855     movfw nibble
+017E   1903           00856     skpnz
+017F   3???           00857     bra row0
+0180   0B89           00858     decfsz WREG
+0181   3???           00859     bra row2
+0182                  00860 row1:    
+0182   0813           00861     movfw PMDATL
+0183   3???           00862     bra nibble_mask
+0184                  00863 row2:
+0184   0E13           00864     swapf PMDATL,W
+0185   3???           00865     bra nibble_mask
+0186                  00866 row0:    
+0186   0E14           00867     swapf PMDATH,W
+0187                  00868 nibble_mask:
+0187   39F0           00869     andlw 0xf0
+                      00870     push
+0188   001C               M     movwi ++SP
+0189   0A??           00871     incf nibble,F ; advance nibble pointer
+018A   0008           00872     return
+                      00873 
+                      00874 ; print 4 pixels row
+                      00875 ; inputs:
+                      00876 ;   x,y left coordinates
+                      00877 ;   f  collision flag
+                      00878 ; output:    
+                      00879 ;   advance y coordinate for next row    
+018B                  00880 print_row: ; ( x y f -- x y f )     
+018B   2???           00881     call get_nibble ; -- x y f n 
+                      00882     pick 3 
+018C   3F7D               M     moviw -3[SP]
+                      00883     push    ; x y f n x
+018D   001C               M     movwi ++SP
+                      00884     pick 3
+018E   3F7D               M     moviw -3[SP]
+                      00885     push      ; x y f n x y
+018F   001C               M     movwi ++SP
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 20
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-018F   3FFF               M     movwi -1[SP]
-0190   0008           00874     return
-                      00875     
-                      00876 ; draw character 
-                      00877 ; input:
-                      00878 ;   x,y left/top coordinates
-                      00879 ;   c   character to print    
-0191                  00880 print_char: ; ( x y c -- )
-0191   3581           00881     lslf T ; 2 words per digit
-                      00882     lit low(digits)
-0192   30??               M    movlw low(digits)
-0193   001C               M    movwi ++SP 
-                      00883     lit high(digits) ; x y ofs adrL adrH
-0194   30??               M    movlw high(digits)
-0195   001C               M    movwi ++SP 
-0196   2???           00884     call get_flash_word  ; x y
-                      00885     lit 0   ; x y f=0
-0197   3000               M    movlw 0
-0198   001C               M    movwi ++SP 
-0199   2???           00886     call print_row
-019A   2???           00887     call print_row
-019B   2???           00888     call print_row 
-019C   2???           00889     call print_row 
-019D   2???           00890     call print_row 
-                      00891     drop_n 3  ; ( x y f -- )
-019E   317D               M     addfsr SP,-3
-019F   0008           00892     return
-                      00893 
-                      00894 ; print current tetriminos
-                      00895 ; input:
-                      00896 ;   arguments in game variables   
-                      00897 ;   titrim: tetriminos id
-                      00898 ;   angle: rotation angle    
-                      00899 ;   tx,ty  left/top coordinates
-                      00900 ; output:
-                      00901 ;   collision flag,  0 if no collision    
-                      00902 ; >> modify BSR <<    
-01A0                  00903 print_tetrim: ; (  -- f )
-01A0   0020           00904     banksel GAME_VAR
-01A1   35??           00905     lslf tetrim,W
-01A2   3589           00906     lslf WREG
-                      00907     push
-01A3   001C               M     movwi ++SP
-01A4   3018           00908     movlw 24
-01A5   0201           00909     subwf T,W
-01A6   1803           00910     skpnc
-01A7   3???           00911     bra ti ; I tetrominos
-01A8   08??           00912     movfw angle
-01A9   0781           00913     addwf T,F
-01AA   30??           00914     movlw low(tetriminos)
-                      00915     push    ; ofs addrL
-01AB   001C               M     movwi ++SP
-01AC   30??           00916     movlw high(tetriminos)
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 21
+0190   2???           00886     call xor_row ; -- x y f
+                      00887     inc_n 1 ; y+=1
+0191   3F7F               M     moviw -1[SP]
+0192   0A89               M     incf WREG,F
+0193   3FFF               M     movwi -1[SP]
+0194   0008           00888     return
+                      00889     
+                      00890 ; draw character 
+                      00891 ; input:
+                      00892 ;   x,y left/top coordinates
+                      00893 ;   c   character to print    
+0195                  00894 print_char: ; ( x y c -- )
+0195   3581           00895     lslf T ; 2 words per digit
+                      00896     lit low(digits)
+0196   30??               M    movlw low(digits)
+0197   001C               M    movwi ++SP 
+                      00897     lit high(digits) ; x y ofs adrL adrH
+0198   30??               M    movlw high(digits)
+0199   001C               M    movwi ++SP 
+019A   2???           00898     call get_flash_word  ; x y
+                      00899     lit 0   ; x y f=0
+019B   3000               M    movlw 0
+019C   001C               M    movwi ++SP 
+019D   2???           00900     call print_row
+019E   2???           00901     call print_row
+019F   2???           00902     call print_row 
+01A0   2???           00903     call print_row 
+01A1   2???           00904     call print_row 
+                      00905     drop_n 3  ; ( x y f -- )
+01A2   317D               M     addfsr SP,-3
+01A3   0008           00906     return
+                      00907 
+                      00908 ; print current tetriminos
+                      00909 ; input:
+                      00910 ;   arguments in game variables   
+                      00911 ;   titrim: tetriminos id
+                      00912 ;   angle: rotation angle    
+                      00913 ;   tx,ty  left/top coordinates
+                      00914 ; output:
+                      00915 ;   collision flag,  0 if no collision    
+                      00916 ; >> modify BSR <<    
+01A4                  00917 print_tetrim: ; (  -- f )
+01A4   0020           00918     banksel GAME_VAR
+01A5   35??           00919     lslf tetrim,W
+01A6   3589           00920     lslf WREG
+                      00921     push
+01A7   001C               M     movwi ++SP
+01A8   3018           00922     movlw 24
+01A9   0201           00923     subwf T,W
+01AA   1803           00924     skpnc
+01AB   3???           00925     bra ti ; I tetrominos
+01AC   08??           00926     movfw angle
+01AD   0781           00927     addwf T,F
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 21
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00917     push    ; ofs addrL addrH
-01AD   001C               M     movwi ++SP
-01AE   3???           00918     bra prt01
-01AF                  00919 ti: ; special treatment for I tetriminos
-01AF   0181           00920     clrf T
-01B0   35??           00921     lslf angle,W
-01B1   0781           00922     addwf T,F
-01B2   30??           00923     movlw low(I0) 
-                      00924     push     ; ofs addrL
-01B3   001C               M     movwi ++SP
-01B4   30??           00925     movlw high(I0)
-                      00926     push     ; ofs addrL addrH
-01B5   001C               M     movwi ++SP
-01B6                  00927 prt01:    
-01B6   2???           00928     call get_flash_word  ; --
-01B7   002?           00929     banksel tx
-01B8   08??           00930     movfw tx
-                      00931     push    ; -- x
+01AE   30??           00928     movlw low(tetriminos)
+                      00929     push    ; ofs addrL
+01AF   001C               M     movwi ++SP
+01B0   30??           00930     movlw high(tetriminos)
+                      00931     push    ; ofs addrL addrH
+01B1   001C               M     movwi ++SP
+01B2   3???           00932     bra prt01
+01B3                  00933 ti: ; special treatment for I tetriminos
+01B3   0181           00934     clrf T
+01B4   35??           00935     lslf angle,W
+01B5   0781           00936     addwf T,F
+01B6   30??           00937     movlw low(I0) 
+                      00938     push     ; ofs addrL
+01B7   001C               M     movwi ++SP
+01B8   30??           00939     movlw high(I0)
+                      00940     push     ; ofs addrL addrH
 01B9   001C               M     movwi ++SP
-01BA   08??           00932     movfw ty
-                      00933     push    ; -- x y 
-01BB   001C               M     movwi ++SP
-                      00934     lit 0   ; -- x y f
-01BC   3000               M    movlw 0
-01BD   001C               M    movwi ++SP 
-01BE   2???           00935     call print_row ; x y f -- x y+1 f
-01BF   2???           00936     call print_row
-01C0   2???           00937     call print_row
-01C1   0023           00938     banksel PMDAT
-01C2   3030           00939     movlw 0x30
-01C3   0514           00940     andwf PMDATH,W
-01C4   1903           00941     skpnz
-01C5   2???           00942     call print_row
-01C6   0801           00943     movfw T
-                      00944     drop_n 3
-01C7   317D               M     addfsr SP,-3
-                      00945     push  ; -- f
-01C8   001C               M     movwi ++SP
-01C9   0008           00946     return
-                      00947     
-                      00948 ;print a text line store in flash
-                      00949 ; text terminated by 0xff
-                      00950 ; input: 
-                      00951 ;  x, y left coordinates
-                      00952 ;  idx  index of message    
-01CA                  00953 print_label: ; ( x y idx -- )
-                      00954     lit 0    ; x y idx i
-01CA   3000               M    movlw 0
-01CB   001C               M    movwi ++SP 
-01CC                  00955 prt_lbl_loop:
-                      00956     dup      ; x y idx i i
-01CC   0801               M     movfw T
-01CD   001C               M     movwi ++SP
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 22
+01BA                  00941 prt01:    
+01BA   2???           00942     call get_flash_word  ; --
+01BB   002?           00943     banksel tx
+01BC   08??           00944     movfw tx
+                      00945     push    ; -- x
+01BD   001C               M     movwi ++SP
+01BE   08??           00946     movfw ty
+                      00947     push    ; -- x y 
+01BF   001C               M     movwi ++SP
+                      00948     lit 0   ; -- x y f
+01C0   3000               M    movlw 0
+01C1   001C               M    movwi ++SP 
+01C2   2???           00949     call print_row ; x y f -- x y+1 f
+01C3   2???           00950     call print_row
+01C4   2???           00951     call print_row
+01C5   0023           00952     banksel PMDAT
+01C6   3030           00953     movlw 0x30
+01C7   0514           00954     andwf PMDATH,W
+01C8   1903           00955     skpnz
+01C9   2???           00956     call print_row
+01CA   0801           00957     movfw T
+                      00958     drop_n 3
+01CB   317D               M     addfsr SP,-3
+                      00959     push  ; -- f
+01CC   001C               M     movwi ++SP
+01CD   0008           00960     return
+                      00961     
+                      00962 ;print a text line store in flash
+                      00963 ; text terminated by 0xff
+                      00964 ; input: 
+                      00965 ;  x, y left coordinates
+                      00966 ;  idx  index of message    
+01CE                  00967 print_label: ; ( x y idx -- )
+                      00968     lit 0    ; x y idx i
+01CE   3000               M    movlw 0
+01CF   001C               M    movwi ++SP 
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 22
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00957     pick 2   ; WREG=idx
-01CE   3F7E               M     moviw -2[SP]
-01CF   2???           00958     call labels ; x y idx i i -- x y idx i  
-01D0   1B89           00959     btfsc WREG,7
-01D1   3???           00960     bra prt_lbl_done
-                      00961     push ; x y idx i c
-01D2   001C               M     movwi ++SP
-                      00962     pick 4
-01D3   3F7C               M     moviw -4[SP]
-                      00963     push    ; x y idx i c x 
-01D4   001C               M     movwi ++SP
-                      00964     pick 4
-01D5   3F7C               M     moviw -4[SP]
-                      00965     push    ; x y idx i c x y
+01D0                  00969 prt_lbl_loop:
+                      00970     dup      ; x y idx i i
+01D0   0801               M     movfw T
+01D1   001C               M     movwi ++SP
+                      00971     pick 2   ; WREG=idx
+01D2   3F7E               M     moviw -2[SP]
+01D3   2???           00972     call labels ; x y idx i i -- x y idx i  
+01D4   1B89           00973     btfsc WREG,7
+01D5   3???           00974     bra prt_lbl_done
+                      00975     push ; x y idx i c
 01D6   001C               M     movwi ++SP
-                      00966     rot     ; x y idx i x y c
-                          M     pick 2
-01D7   3F7E               M     moviw -2[SP]
-                          M     push        ; n1 n2 n3 n1
+                      00976     pick 4
+01D7   3F7C               M     moviw -4[SP]
+                      00977     push    ; x y idx i c x 
 01D8   001C               M     movwi ++SP
+                      00978     pick 4
+01D9   3F7C               M     moviw -4[SP]
+                      00979     push    ; x y idx i c x y
+01DA   001C               M     movwi ++SP
+                      00980     rot     ; x y idx i x y c
                           M     pick 2
-01D9   3F7E               M     moviw -2[SP]
+01DB   3F7E               M     moviw -2[SP]
+                          M     push        ; n1 n2 n3 n1
+01DC   001C               M     movwi ++SP
+                          M     pick 2
+01DD   3F7E               M     moviw -2[SP]
                           M     insert 3   ;  n2 n2 n3 n1
-01DA   3FFD               M    movwi -3[SP]
+01DE   3FFD               M    movwi -3[SP]
                           M     pick 1
-01DB   3F7F               M     moviw -1[SP]
+01DF   3F7F               M     moviw -1[SP]
                           M     insert 2   ; n2 n3 n3 n1
-01DC   3FFE               M    movwi -2[SP]
+01E0   3FFE               M    movwi -2[SP]
                           M     pop        ; n2 n3 n3 
-01DD   0017               M     moviw SP--
-01DE   0081               M     movwf T    ; n2 n3 n1
-01DF   2???           00967     call print_char ; -- x y idx i 
-01E0   0A81           00968     incf T
-                      00969     pick 3    ; x
-01E1   3F7D               M     moviw -3[SP]
-01E2   3E04           00970     addlw 4   ; x+=4
-                      00971     insert 3  
-01E3   3FFD               M    movwi -3[SP]
-01E4   3???           00972     bra prt_lbl_loop
-01E5                  00973 prt_lbl_done:
-                      00974     drop_n 4
-01E5   317C               M     addfsr SP,-4
-01E6   0008           00975     return
-                      00976 
-                      00977 ;print an integer
-                      00978 ;from right to left ( least first)
-                      00979 ; input:    
-                      00980 ;   x,y  coordinate right end
-                      00981 ;   number to print in acca    
-                      00982 ;   accbL contain digit after div10 call    
-01E7                  00983 print_int: ; ( x y -- )
-01E7   08??           00984     movfw accaH
-01E8   04??           00985     iorwf accaL,W
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 23
+01E1   0017               M     moviw SP--
+01E2   0081               M     movwf T    ; n2 n3 n1
+01E3   2???           00981     call print_char ; -- x y idx i 
+01E4   0A81           00982     incf T
+                      00983     pick 3    ; x
+01E5   3F7D               M     moviw -3[SP]
+01E6   3E04           00984     addlw 4   ; x+=4
+                      00985     insert 3  
+01E7   3FFD               M    movwi -3[SP]
+01E8   3???           00986     bra prt_lbl_loop
+01E9                  00987 prt_lbl_done:
+                      00988     drop_n 4
+01E9   317C               M     addfsr SP,-4
+01EA   0008           00989     return
+                      00990 
+                      00991 ;print an integer
+                      00992 ;from right to left ( least first)
+                      00993 ; input:    
+                      00994 ;   x,y  coordinate right end
+                      00995 ;   number to print in acca    
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 23
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-01E9   1903           00986     skpnz
-01EA   3???           00987     bra print_last
-                      00988     over
-01EB   3F7F               M     moviw -1[SP]
+                      00996 ;   accbL contain digit after div10 call    
+01EB                  00997 print_int: ; ( x y -- )
+01EB   08??           00998     movfw accaH
+01EC   04??           00999     iorwf accaL,W
+01ED   1903           01000     skpnz
+01EE   3???           01001     bra print_last
+                      01002     over
+01EF   3F7F               M     moviw -1[SP]
                           M     push
-01EC   001C               M     movwi ++SP
-                      00989     over    ; x y x y
-01ED   3F7F               M     moviw -1[SP]
+01F0   001C               M     movwi ++SP
+                      01003     over    ; x y x y
+01F1   3F7F               M     moviw -1[SP]
                           M     push
-01EE   001C               M     movwi ++SP
-01EF   2???           00990     call div10
-01F0   08??           00991     movfw accbL ; remainder of division
-                      00992     push   ; x y x y d
-01F1   001C               M     movwi ++SP
-01F2   2???           00993     call print_char ; -- x y 
-                      00994     pick 1
-01F3   3F7F               M     moviw -1[SP]
-                      00995     push
-01F4   001C               M     movwi ++SP
-01F5   3004           00996     movlw 4
-01F6   0281           00997     subwf T
-                      00998     pop
-01F7   0017               M     moviw SP--
-                      00999     insert 1
-01F8   3FFF               M    movwi -1[SP]
-01F9   3???           01000     bra print_int
-01FA                  01001 print_last:
-                      01002     pick 1
-01FA   3F7F               M     moviw -1[SP]
-01FB   3A2B           01003     xorlw 43
-01FC   1D03           01004     skpz
-01FD   3???           01005     bra no_zero
-                      01006     push
-01FE   001C               M     movwi ++SP
-01FF   3???           01007     bra print_char
-0200                  01008 no_zero:
-                      01009     drop_n 2
-0200   317E               M     addfsr SP,-2
-0201   0008           01010     return
-                      01011     
-                      01012 ; draw horizontal line ( length  y x -- )
-                      01013 ; inputs:
-                      01014 ;   length of line
-                      01015 ;   {x,y} left coordinates       
-0202                  01016 hline:
-                      01017     pick 2
-0202   3F7E               M     moviw -2[SP]
-0203   1903           01018     skpnz
-0204   3???           01019     bra hline_done
-0205   0389           01020     decf WREG
-                      01021     insert 2
-0206   3FFE               M    movwi -2[SP]
-                      01022     dup     ; len y x x
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 24
+01F2   001C               M     movwi ++SP
+01F3   2???           01004     call div10
+01F4   08??           01005     movfw accbL ; remainder of division
+                      01006     push   ; x y x y d
+01F5   001C               M     movwi ++SP
+01F6   2???           01007     call print_char ; -- x y 
+                      01008     pick 1
+01F7   3F7F               M     moviw -1[SP]
+                      01009     push
+01F8   001C               M     movwi ++SP
+01F9   3004           01010     movlw 4
+01FA   0281           01011     subwf T
+                      01012     pop
+01FB   0017               M     moviw SP--
+                      01013     insert 1
+01FC   3FFF               M    movwi -1[SP]
+01FD   3???           01014     bra print_int
+01FE                  01015 print_last:
+                      01016     pick 1
+01FE   3F7F               M     moviw -1[SP]
+01FF   3A2B           01017     xorlw 43
+0200   1D03           01018     skpz
+0201   3???           01019     bra no_zero
+                      01020     push
+0202   001C               M     movwi ++SP
+0203   3???           01021     bra print_char
+0204                  01022 no_zero:
+                      01023     drop_n 2
+0204   317E               M     addfsr SP,-2
+0205   0008           01024     return
+                      01025     
+                      01026 ; draw horizontal line ( length  y x -- )
+                      01027 ; inputs:
+                      01028 ;   length of line
+                      01029 ;   {x,y} left coordinates       
+0206                  01030 hline:
+                      01031     pick 2
+0206   3F7E               M     moviw -2[SP]
+0207   1903           01032     skpnz
+0208   3???           01033     bra hline_done
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 24
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0207   0801               M     movfw T
-0208   001C               M     movwi ++SP
-                      01023     pick 2
-0209   3F7E               M     moviw -2[SP]
-                      01024     push    ; len y x x y
-020A   001C               M     movwi ++SP
-                      01025     lit XOR_OP
-020B   3001               M    movlw XOR_OP
-020C   001C               M    movwi ++SP 
-020D   2???           01026     call bitop
-                      01027     drop
-020E   317F               M    addfsr SP,-1
-020F   0A81           01028     incf T  ; len y x+1
-0210   3???           01029     bra hline
-0211                  01030 hline_done:    
-                      01031     drop_n 3
-0211   317D               M     addfsr SP,-3
-0212   0008           01032     return
-                      01033 
-                      01034 ;draw vertical line ( length x y -- )
-                      01035 ; inputs:
-                      01036 ;   length of line
-                      01037 ;   {x,y} top coordinate
-0213                  01038 vline:  ; len y x
-                      01039     pick 2 
-0213   3F7E               M     moviw -2[SP]
-0214   1903           01040     skpnz
-0215   3???           01041     bra vline_done
-0216   0389           01042     decf WREG
-                      01043     insert 2
-0217   3FFE               M    movwi -2[SP]
-                      01044     pick 1      
-0218   3F7F               M     moviw -1[SP]
-                      01045     push    ; len x y x
-0219   001C               M     movwi ++SP
-                      01046     pick 1
-021A   3F7F               M     moviw -1[SP]
-                      01047     push    ; len x y x y
-021B   001C               M     movwi ++SP
-                      01048     lit XOR_OP
-021C   3001               M    movlw XOR_OP
-021D   001C               M    movwi ++SP 
-021E   2???           01049     call bitop
-                      01050     drop
-021F   317F               M    addfsr SP,-1
-0220   0A81           01051     incf T
-0221   3???           01052     bra vline
-0222                  01053 vline_done:
-                      01054     drop_n 3
-0222   317D               M     addfsr SP,-3
-0223   0008           01055     return
-                      01056     
-  0000000A            01057 WELL_WIDTH equ 10
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 25
+0209   0389           01034     decf WREG
+                      01035     insert 2
+020A   3FFE               M    movwi -2[SP]
+                      01036     dup     ; len y x x
+020B   0801               M     movfw T
+020C   001C               M     movwi ++SP
+                      01037     pick 2
+020D   3F7E               M     moviw -2[SP]
+                      01038     push    ; len y x x y
+020E   001C               M     movwi ++SP
+                      01039     lit XOR_OP
+020F   3001               M    movlw XOR_OP
+0210   001C               M    movwi ++SP 
+0211   2???           01040     call bitop
+                      01041     drop
+0212   317F               M    addfsr SP,-1
+0213   0A81           01042     incf T  ; len y x+1
+0214   3???           01043     bra hline
+0215                  01044 hline_done:    
+                      01045     drop_n 3
+0215   317D               M     addfsr SP,-3
+0216   0008           01046     return
+                      01047 
+                      01048 ;draw vertical line ( length x y -- )
+                      01049 ; inputs:
+                      01050 ;   length of line
+                      01051 ;   {x,y} top coordinate
+0217                  01052 vline:  ; len y x
+                      01053     pick 2 
+0217   3F7E               M     moviw -2[SP]
+0218   1903           01054     skpnz
+0219   3???           01055     bra vline_done
+021A   0389           01056     decf WREG
+                      01057     insert 2
+021B   3FFE               M    movwi -2[SP]
+                      01058     pick 1      
+021C   3F7F               M     moviw -1[SP]
+                      01059     push    ; len x y x
+021D   001C               M     movwi ++SP
+                      01060     pick 1
+021E   3F7F               M     moviw -1[SP]
+                      01061     push    ; len x y x y
+021F   001C               M     movwi ++SP
+                      01062     lit XOR_OP
+0220   3001               M    movlw XOR_OP
+0221   001C               M    movwi ++SP 
+0222   2???           01063     call bitop
+                      01064     drop
+0223   317F               M    addfsr SP,-1
+0224   0A81           01065     incf T
+0225   3???           01066     bra vline
+0226                  01067 vline_done:
+                      01068     drop_n 3
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 25
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-  00000016            01058 WELL_DEPTH equ 22 
-0224                  01059 game_init:
-                      01060 ;clear screen    
-                      01061     lit 0  
-0224   3000               M    movlw 0
-0225   001C               M    movwi ++SP 
-0226   2???           01062     call fill_buffer
-                      01063 ; draw game well    
-                      01064     lit WELL_DEPTH
-0227   3016               M    movlw WELL_DEPTH
-0228   001C               M    movwi ++SP 
-                      01065     lit 0
-0229   3000               M    movlw 0
-022A   001C               M    movwi ++SP 
-                      01066     lit 0
-022B   3000               M    movlw 0
+0226   317D               M     addfsr SP,-3
+0227   0008           01069     return
+                      01070     
+  0000000A            01071 WELL_WIDTH equ 10
+  00000016            01072 WELL_DEPTH equ 22 
+0228                  01073 game_init:
+                      01074 ;clear screen    
+                      01075     lit 0  
+0228   3000               M    movlw 0
+0229   001C               M    movwi ++SP 
+022A   2???           01076     call fill_buffer
+                      01077 ; draw game well    
+                      01078     lit WELL_DEPTH
+022B   3016               M    movlw WELL_DEPTH
 022C   001C               M    movwi ++SP 
-022D   2???           01067      call vline
-                      01068     lit WELL_DEPTH
-022E   3016               M    movlw WELL_DEPTH
-022F   001C               M    movwi ++SP 
-                      01069     lit WELL_WIDTH+1
-0230   300B               M    movlw WELL_WIDTH+1
-0231   001C               M    movwi ++SP 
-                      01070     lit 0
-0232   3000               M    movlw 0
+                      01079     lit 0
+022D   3000               M    movlw 0
+022E   001C               M    movwi ++SP 
+                      01080     lit 0
+022F   3000               M    movlw 0
+0230   001C               M    movwi ++SP 
+0231   2???           01081      call vline
+                      01082     lit WELL_DEPTH
+0232   3016               M    movlw WELL_DEPTH
 0233   001C               M    movwi ++SP 
-0234   2???           01071     call vline
-                      01072     lit WELL_WIDTH+2
-0235   300C               M    movlw WELL_WIDTH+2
-0236   001C               M    movwi ++SP 
-                      01073     lit WELL_DEPTH
-0237   3016               M    movlw WELL_DEPTH
-0238   001C               M    movwi ++SP 
-                      01074     lit 0
-0239   3000               M    movlw 0
+                      01083     lit WELL_WIDTH+1
+0234   300B               M    movlw WELL_WIDTH+1
+0235   001C               M    movwi ++SP 
+                      01084     lit 0
+0236   3000               M    movlw 0
+0237   001C               M    movwi ++SP 
+0238   2???           01085     call vline
+                      01086     lit WELL_WIDTH+2
+0239   300C               M    movlw WELL_WIDTH+2
 023A   001C               M    movwi ++SP 
-023B   2???           01075     call hline
-                      01076 ; print "SCORE" label    
-                      01077     lit WELL_WIDTH+3 ; x
-023C   300D               M    movlw WELL_WIDTH+3
-023D   001C               M    movwi ++SP 
-                      01078     lit 0            ; y
-023E   3000               M    movlw 0
-023F   001C               M    movwi ++SP 
-                      01079     lit LBL_SCORE         
-0240   3000               M    movlw LBL_SCORE
+                      01087     lit WELL_DEPTH
+023B   3016               M    movlw WELL_DEPTH
+023C   001C               M    movwi ++SP 
+                      01088     lit 0
+023D   3000               M    movlw 0
+023E   001C               M    movwi ++SP 
+023F   2???           01089     call hline
+                      01090 ; print "SCORE" label    
+                      01091     lit WELL_WIDTH+3 ; x
+0240   300D               M    movlw WELL_WIDTH+3
 0241   001C               M    movwi ++SP 
-0242   2???           01080     call print_label
-                      01081 ; print "LINES" label    
-                      01082     lit WELL_WIDTH+3 ; x
-0243   300D               M    movlw WELL_WIDTH+3
-0244   001C               M    movwi ++SP 
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 26
+                      01092     lit 0            ; y
+0242   3000               M    movlw 0
+0243   001C               M    movwi ++SP 
+                      01093     lit LBL_SCORE         
+0244   3000               M    movlw LBL_SCORE
+0245   001C               M    movwi ++SP 
+0246   2???           01094     call print_label
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 26
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      01083     lit 12           ; y
-0245   300C               M    movlw 12
-0246   001C               M    movwi ++SP 
-                      01084     lit LBL_LINES
-0247   3001               M    movlw LBL_LINES
+                      01095 ; print "LINES" label    
+                      01096     lit WELL_WIDTH+3 ; x
+0247   300D               M    movlw WELL_WIDTH+3
 0248   001C               M    movwi ++SP 
-0249   2???           01085     call print_label
-                      01086 ; variables initialization
-024A   0020           01087     banksel 0
-024B   3004           01088     movlw 4
-024C   00??           01089     movwf tx
-024D   01??           01090     clrf ty
-024E   01??           01091     clrf tetrim
-024F   01??           01092     clrf angle
-0250   01??           01093     clrf scoreL
-0251   01??           01094     clrf scoreH
-0252   01??           01095     clrf dropped
-0253   01??           01096     clrf buttons
-0254   1600           01097     bsf flags,F_GSTOP
-0255   0008           01098     return
-                      01099 
-  00000000            01100 ROW_EMPTY equ 0     
-  0000000A            01101 ROW_FULL equ 10 ; 10 bits in row
-                      01102 ; check the state of well row
-                      01103 ; input:
-                      01104 ;   s number of bits set initialized at 0 by caller    
-                      01105 ;   r row number: 0 top, 22 bottom  
-                      01106 ; output:    
-                      01107 ;   s={0:10}  number of bits set
-0256                  01108 query_row: ; ( s=0 r -- s=0:10 )
-                      01109     lit 10 ; s r x   ; check x from  10 to 1
-0256   300A               M    movlw 10
-0257   001C               M    movwi ++SP 
-0258                  01110 qr00:
-                      01111     dup   ; s r x x
-0258   0801               M     movfw T
-0259   001C               M     movwi ++SP
-                      01112     pick 2 
-025A   3F7E               M     moviw -2[SP]
-                      01113     push  ; s r x x y
-025B   001C               M     movwi ++SP
-025C   2???           01114     call get_pixel ; -- s r x n
-025D   1903           01115     skpnz   ; Z modified by get_pixel
-025E   3???           01116     bra qr01
-                      01117     inc_n 3
+                      01097     lit 12           ; y
+0249   300C               M    movlw 12
+024A   001C               M    movwi ++SP 
+                      01098     lit LBL_LINES
+024B   3001               M    movlw LBL_LINES
+024C   001C               M    movwi ++SP 
+024D   2???           01099     call print_label
+                      01100 ; variables initialization
+024E   0020           01101     banksel 0
+024F   3004           01102     movlw 4
+0250   00??           01103     movwf tx
+0251   01??           01104     clrf ty
+0252   01??           01105     clrf tetrim
+0253   01??           01106     clrf angle
+0254   01??           01107     clrf scoreL
+0255   01??           01108     clrf scoreH
+0256   01??           01109     clrf dropped
+0257   01??           01110     clrf buttons
+0258   1600           01111     bsf flags,F_GSTOP
+0259   0008           01112     return
+                      01113 
+                      01114 ; slide well row down
+                      01115 ; input:
+                      01116 ;   b  bottom row to slide
+                      01117 ;   t  target row
+                      01118 ; output:
+                      01119 ;   none
+025A                  01120 slide_down: ; ( b t -- )
+                      01121     reserve 1
+025A   3141               M     addfsr SP, 1 
+025B                  01122 row_loop: ; y{b:1}
+025B   300A           01123     movlw 10
+025C   0081           01124     movwf T ; -- b t x
+025D                  01125 col_loop:  ; x{10:1}
+                      01126     dup   ; -- b t x x
+025D   0801               M     movfw T
+025E   001C               M     movwi ++SP
+                      01127     pick 3
 025F   3F7D               M     moviw -3[SP]
-0260   0A89               M     incf WREG,F
-0261   3FFD               M     movwi -3[SP]
-0262                  01118 qr01:    
-                      01119     drop     ; -- s r x 
-0262   317F               M    addfsr SP,-1
-0263   0B81           01120     decfsz T
-0264   3???           01121     bra qr00
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 27
+                      01128     push  ; -- b t x x y
+0260   001C               M     movwi ++SP
+0261   2???           01129     call get_pixel
+0262   1903           01130     skpnz
+                      01131     lit CLR_OP
+0263   3000               M    movlw CLR_OP
+0264   001C               M    movwi ++SP 
+0265   1D03           01132     skpz
+                      01133     lit SET_OP
+0266   3003               M    movlw SET_OP
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 27
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      01122     drop_n 2 ; -- s
-0265   317E               M     addfsr SP,-2
-0266   0008           01123     return
-                      01124  
-                      01125 ; generate a new tetriminos
-                      01126 ; input:
-                      01127 ;   none
-                      01128 ; output:
-                      01129 ;   Z flag set if collision
-0267                  01130 new_tminos:
-0267   0020           01131     banksel GAME_VAR
-0268   3007           01132     movlw 7
-0269   05??           01133     andwf randL,W
-026A   3A07           01134     xorlw 7
-026B   1D03           01135     skpz
-026C   3A07           01136     xorlw 7
-026D   00??           01137     movwf tetrim
-026E   3003           01138     movlw 3
-026F   05??           01139     andwf randH,W
-0270   00??           01140     movwf angle
-0271   3004           01141     movlw 4
-0272   00??           01142     movwf tx
-0273   01??           01143     clrf ty
-0274   0008           01144     return
-                      01145  
-                      01146 ; wait player start signal
-                      01147 ; button B pressed    
-0275                  01148 wait_start:
-0275   0103           01149     clrw
-0276   2???           01150     call korobeiniki
-                      01151     push
-0277   001C               M     movwi ++SP
-                      01152     lit 0
-0278   3000               M    movlw 0
-0279   001C               M    movwi ++SP 
-027A                  01153 koro:
-027A   0A81           01154     incf T
-027B   0801           01155     movfw T
-027C   2???           01156     call korobeiniki
-                      01157     push
-027D   001C               M     movwi ++SP
-                      01158     inc_n 1
-027E   3F7F               M     moviw -1[SP]
-027F   0A89               M     incf WREG,F
-0280   3FFF               M     movwi -1[SP]
-                      01159     pick 1
-0281   3F7F               M     moviw -1[SP]
-0282   2???           01160     call korobeiniki
-                      01161     push
-0283   001C               M     movwi ++SP
-0284   2???           01162     call tone
-                      01163     wait_sound
-0285   1A80               M     btfsc flags,F_SND
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 28
+0267   001C               M    movwi ++SP 
+0268   2???           01134     call bitop ; b t x x y op -- b t x f
+                      01135     drop   ; no need for f
+0269   317F               M    addfsr SP,-1
+026A   0B81           01136     decfsz T
+026B   3???           01137     bra col_loop
+                      01138     dec_n 1  ; dec t
+026C   3F7F               M     moviw -1[SP]
+026D   0389               M     decf WREG,F
+026E   3FFF               M     movwi -1[SP]
+                      01139     dec_n 2  ; dec b
+026F   3F7E               M     moviw -2[SP]
+0270   0389               M     decf WREG,F
+0271   3FFE               M     movwi -2[SP]
+0272   1D03           01140     skpz 
+0273   3???           01141     bra row_loop
+                      01142     drop_n 3
+0274   317D               M     addfsr SP,-3
+0275   0008           01143     return
+                      01144     
+                      01145     
+  00000000            01146 ROW_EMPTY equ 0     
+  0000000A            01147 ROW_FULL equ 10 ; 10 bits in row
+                      01148 ; check the state of well row
+                      01149 ; input:
+                      01150 ;   s number of bits set initialized at 0 by caller    
+                      01151 ;   r row number: 0 top, 22 bottom  
+                      01152 ; output:    
+                      01153 ;   s={0:10}  number of bits set
+0276                  01154 query_row: ; ( s=0 r -- s=0:10 )
+                      01155     lit 10 ; s r x   ; check x from  10 to 1
+0276   300A               M    movlw 10
+0277   001C               M    movwi ++SP 
+0278                  01156 qr00:
+                      01157     dup   ; s r x x
+0278   0801               M     movfw T
+0279   001C               M     movwi ++SP
+                      01158     pick 2 
+027A   3F7E               M     moviw -2[SP]
+                      01159     push  ; s r x x y
+027B   001C               M     movwi ++SP
+027C   2???           01160     call get_pixel ; -- s r x n
+027D   1903           01161     skpnz   ; Z modified by get_pixel
+027E   3???           01162     bra qr01
+                      01163     inc_n 3
+027F   3F7D               M     moviw -3[SP]
+0280   0A89               M     incf WREG,F
+0281   3FFD               M     movwi -3[SP]
+0282                  01164 qr01:    
+                      01165     drop     ; -- s r x 
+0282   317F               M    addfsr SP,-1
+0283   0B81           01166     decfsz T
+0284   3???           01167     bra qr00
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 28
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0286   3???               M     bra $-1
-0287   2???           01164     call read_pad
-0288   1A00           01165     btfsc buttons, BTN_A
-0289   3???           01166     bra wait_end
-                      01167     dec_n 1
-028A   3F7F               M     moviw -1[SP]
-028B   0389               M     decf WREG,F
-028C   3FFF               M     movwi -1[SP]
-028D   1D03           01168     skpz
-028E   3???           01169     bra koro
-                      01170     pause 60
+                      01168     drop_n 2 ; -- s
+0285   317E               M     addfsr SP,-2
+0286   0008           01169     return
+                      01170  
+                      01171 ; collision test
+                      01172 ; check if current tetriminos
+                      01173 ; is in collision position
+                      01174 ; input:
+                      01175 ;   none
+                      01176 ; output:
+                      01177 ;   WREG, Z
+0287                  01178 coll_test:
+                      01179     
+0287   0008           01180     return
+                      01181     
+                      01182     
+                      01183 ; generate a new tetriminos
+                      01184 ; input:
+                      01185 ;   none
+                      01186 ; output:
+                      01187 ;   none
+0288                  01188 new_tminos:
+0288   0020           01189     banksel GAME_VAR
+0289   3007           01190     movlw 7
+028A   05??           01191     andwf randL,W
+028B   3A07           01192     xorlw 7
+028C   1D03           01193     skpz
+028D   3A07           01194     xorlw 7
+028E   00??           01195     movwf tetrim
+028F   3003           01196     movlw 3
+0290   05??           01197     andwf randH,W
+0291   00??           01198     movwf angle
+0292   3004           01199     movlw 4
+0293   00??           01200     movwf tx
+0294   01??           01201     clrf ty
+0295   0008           01202     return
+                      01203  
+                      01204 ; wait player start signal
+                      01205 ; button A pressed    
+0296                  01206 wait_start:
+0296   0103           01207     clrw
+0297   2???           01208     call korobeiniki
+                      01209     push
+0298   001C               M     movwi ++SP
+                      01210     lit 0
+0299   3000               M    movlw 0
+029A   001C               M    movwi ++SP 
+029B                  01211 koro:
+029B   0A81           01212     incf T
+029C   0801           01213     movfw T
+029D   2???           01214     call korobeiniki
+                      01215     push
+029E   001C               M     movwi ++SP
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 29
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      01216     inc_n 1
+029F   3F7F               M     moviw -1[SP]
+02A0   0A89               M     incf WREG,F
+02A1   3FFF               M     movwi -1[SP]
+                      01217     pick 1
+02A2   3F7F               M     moviw -1[SP]
+02A3   2???           01218     call korobeiniki
+                      01219     push
+02A4   001C               M     movwi ++SP
+02A5   2???           01220     call tone
+                      01221     wait_sound
+02A6   1A80               M     btfsc flags,F_SND
+02A7   3???               M     bra $-1
+02A8   2???           01222     call read_pad
+02A9   1A00           01223     btfsc buttons, BTN_A
+02AA   3???           01224     bra wait_end
+                      01225     dec_n 1
+02AB   3F7F               M     moviw -1[SP]
+02AC   0389               M     decf WREG,F
+02AD   3FFF               M     movwi -1[SP]
+02AE   1D03           01226     skpz
+02AF   3???           01227     bra koro
+                      01228     pause 60
                           M     start_timer 60
-028F   303C               M     movlw 60
-0290   00??               M     movwf gtimer
-0291   1580               M     bsf flags, F_GTMR
+02B0   303C               M     movlw 60
+02B1   00??               M     movwf gtimer
+02B2   1580               M     bsf flags, F_GTMR
                           M     wait_timer
-0292   1980               M     btfsc flags, F_GTMR
-0293   3???               M     bra $-1
-0294   3???           01171     bra wait_start
-0295                  01172 wait_end:    
-                      01173     drop_n 2
-0295   317E               M     addfsr SP,-2
-0296   0008           01174     return
-                      01175     
-                      01176 ;;;;;;;;;;;;;;;;;;;;;;;;;
-                      01177 ;   game logic
-                      01178 ;;;;;;;;;;;;;;;;;;;;;;;;;    
-0297                  01179 tetris:
-                      01180 ; print score
-0297   002?           01181     banksel scoreL
-0298   08??           01182     movfw scoreL
-0299   00??           01183     movwf accaL
-029A   08??           01184     movfw scoreH
-029B   00??           01185     movwf accaH
-                      01186     lit 43
-029C   302B               M    movlw 43
-029D   001C               M    movwi ++SP 
-                      01187     lit 6
-029E   3006               M    movlw 6
-029F   001C               M    movwi ++SP 
-02A0   2???           01188     call print_int
-                      01189 ;print dropped line
-02A1   002?           01190     banksel dropped
-02A2   08??           01191     movfw dropped
-02A3   00??           01192     movwf accaL
-02A4   01??           01193     clrf accaH
-                      01194     lit 43
-02A5   302B               M    movlw 43
-02A6   001C               M    movwi ++SP 
-                      01195     lit 18
-02A7   3012               M    movlw 18
-02A8   001C               M    movwi ++SP 
-02A9   2???           01196     call print_int
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 29
+02B3   1980               M     btfsc flags, F_GTMR
+02B4   3???               M     bra $-1
+02B5   3???           01229     bra wait_start
+02B6                  01230 wait_end:    
+                      01231     drop_n 2
+02B6   317E               M     addfsr SP,-2
+02B7   0008           01232     return
+                      01233     
+                      01234 ;;;;;;;;;;;;;;;;;;;;;;;;;
+                      01235 ;   game logic
+                      01236 ;;;;;;;;;;;;;;;;;;;;;;;;;    
+02B8                  01237 tetris:
+                      01238 ; print score
+02B8   002?           01239     banksel scoreL
+02B9   08??           01240     movfw scoreL
+02BA   00??           01241     movwf accaL
+02BB   08??           01242     movfw scoreH
+02BC   00??           01243     movwf accaH
+                      01244     lit 43
+02BD   302B               M    movlw 43
+02BE   001C               M    movwi ++SP 
+                      01245     lit 6
+02BF   3006               M    movlw 6
+02C0   001C               M    movwi ++SP 
+02C1   2???           01246     call print_int
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 30
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      01197 ;print start prompt
-                      01198     lit 0
-02AA   3000               M    movlw 0
-02AB   001C               M    movwi ++SP 
-                      01199     lit 24
-02AC   3018               M    movlw 24
-02AD   001C               M    movwi ++SP 
-                      01200     lit LBL_PRESS
-02AE   3002               M    movlw LBL_PRESS
-02AF   001C               M    movwi ++SP 
-02B0   2???           01201     call print_label
-                      01202 ; wait button A press
-                      01203 ; to start game    
-02B1   2???           01204     call wait_start 
-02B2   1200           01205     bcf flags, F_GSTOP
-                      01206 ; delete prompt
-                      01207     lit 0
-02B3   3000               M    movlw 0
-02B4   001C               M    movwi ++SP 
-                      01208     lit 24
-02B5   3018               M    movlw 24
-02B6   001C               M    movwi ++SP 
-                      01209     lit LBL_PRESS
-02B7   3002               M    movlw LBL_PRESS
-02B8   001C               M    movwi ++SP 
-02B9   2???           01210     call print_label
-                      01211 ; game start
-02BA                  01212 game_loop:
-                      01213 ; generate new tetriminos
-                      01214 ; if collision at this stage
-                      01215 ; game is over
-02BA   2???           01216     call new_tminos ; Z return collision status
-02BB                  01217 fall_loop:
-02BB   2???           01218     call print_tetrim
-                      01219     pop
-02BC   0017               M     moviw SP--
-02BD   1D03           01220     skpz
-02BE   3???           01221     bra game_over
-                      01222     pause 10
+                      01247 ;print dropped line
+02C2   002?           01248     banksel dropped
+02C3   08??           01249     movfw dropped
+02C4   00??           01250     movwf accaL
+02C5   01??           01251     clrf accaH
+                      01252     lit 43
+02C6   302B               M    movlw 43
+02C7   001C               M    movwi ++SP 
+                      01253     lit 18
+02C8   3012               M    movlw 18
+02C9   001C               M    movwi ++SP 
+02CA   2???           01254     call print_int
+                      01255 ;print start prompt
+                      01256     lit 0
+02CB   3000               M    movlw 0
+02CC   001C               M    movwi ++SP 
+                      01257     lit 24
+02CD   3018               M    movlw 24
+02CE   001C               M    movwi ++SP 
+                      01258     lit LBL_PRESS
+02CF   3002               M    movlw LBL_PRESS
+02D0   001C               M    movwi ++SP 
+02D1   2???           01259     call print_label
+                      01260 ; wait button A press
+                      01261 ; to start game    
+02D2   2???           01262     call wait_start 
+02D3   1200           01263     bcf flags, F_GSTOP
+                      01264 ; delete prompt
+                      01265     lit 0
+02D4   3000               M    movlw 0
+02D5   001C               M    movwi ++SP 
+                      01266     lit 24
+02D6   3018               M    movlw 24
+02D7   001C               M    movwi ++SP 
+                      01267     lit LBL_PRESS
+02D8   3002               M    movlw LBL_PRESS
+02D9   001C               M    movwi ++SP 
+02DA   2???           01268     call print_label
+                      01269 ; game start
+02DB                  01270 game_loop:
+                      01271 ; generate new tetriminos
+                      01272 ; if collision at this stage
+                      01273 ; game is over
+02DB   2???           01274     call new_tminos 
+02DC                  01275 fall_loop: ; tetriminos fall in the well
+02DC   2???           01276     call coll_test ; collision test
+02DD   2???           01277     call print_tetrim
+                      01278     pop
+02DE   0017               M     moviw SP--
+02DF   1D03           01279     skpz
+02E0   3???           01280     bra game_over
+                      01281     pause 10
                           M     start_timer 10
-02BF   300A               M     movlw 10
-02C0   00??               M     movwf gtimer
-02C1   1580               M     bsf flags, F_GTMR
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 31
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+02E1   300A               M     movlw 10
+02E2   00??               M     movwf gtimer
+02E3   1580               M     bsf flags, F_GTMR
                           M     wait_timer
-02C2   1980               M     btfsc flags, F_GTMR
-02C3   3???               M     bra $-1
-02C4   2???           01223     call print_tetrim
-                      01224     pop
-02C5   0017               M     moviw SP--
-                      01225 ; read pad
-02C6   2???           01226     call read_pad
-02C7   0020           01227     banksel GAME_VAR
-02C8   08??           01228     movfw buttons
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 30
+02E4   1980               M     btfsc flags, F_GTMR
+02E5   3???               M     bra $-1
+02E6   2???           01282     call print_tetrim
+                      01283     pop
+02E7   0017               M     moviw SP--
+                      01284 ; read pad
+02E8   2???           01285     call read_pad
+02E9   0020           01286     banksel GAME_VAR
+02EA   08??           01287     movfw buttons
+                      01288     case 1<<BTN_A, hard_drop
+02EB   3A10               M     xorlw 1<<BTN_A
+02EC   1903               M     skpnz
+02ED   3???               M     bra hard_drop
+02EE   3A10               M     xorlw 1<<BTN_A
+                      01289     case 1<<BTN_B, soft_drop
+02EF   3A20               M     xorlw 1<<BTN_B
+02F0   1903               M     skpnz
+02F1   3???               M     bra soft_drop
+02F2   3A20               M     xorlw 1<<BTN_B
+                      01290     case 1<<BTN_UP, rot_right
+02F3   3A01               M     xorlw 1<<BTN_UP
+02F4   1903               M     skpnz
+02F5   3???               M     bra rot_right
+02F6   3A01               M     xorlw 1<<BTN_UP
+                      01291     case 1<<BTN_DN, rot_left
+02F7   3A02               M     xorlw 1<<BTN_DN
+02F8   1903               M     skpnz
+02F9   3???               M     bra rot_left
+02FA   3A02               M     xorlw 1<<BTN_DN
+                      01292     case 1<<BTN_RT, move_right
+02FB   3A08               M     xorlw 1<<BTN_RT
+02FC   1903               M     skpnz
+02FD   3???               M     bra move_right
+02FE   3A08               M     xorlw 1<<BTN_RT
+                      01293     case 1<<BTN_LT, move_left
+02FF   3A04               M     xorlw 1<<BTN_LT
+0300   1903               M     skpnz
+0301   3???               M     bra move_left
+0302   3A04               M     xorlw 1<<BTN_LT
+0303   3???           01294     bra new_position
+0304                  01295 hard_drop:
+0304   3???           01296     bra new_position
+0305                  01297 soft_drop:
+0305   3???           01298     bra new_position
+0306                  01299 rot_left:
+0306   03??           01300     decf angle,F
+0307   3003           01301     movlw 3
+0308   05??           01302     andwf angle,F
+0309   3???           01303     bra new_position
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 32
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      01229     case 1<<BTN_A, hard_drop
-02C9   3A10               M     xorlw 1<<BTN_A
-02CA   1903               M     skpnz
-02CB   3???               M     bra hard_drop
-02CC   3A10               M     xorlw 1<<BTN_A
-                      01230     case 1<<BTN_B, soft_drop
-02CD   3A20               M     xorlw 1<<BTN_B
-02CE   1903               M     skpnz
-02CF   3???               M     bra soft_drop
-02D0   3A20               M     xorlw 1<<BTN_B
-                      01231     case 1<<BTN_UP, rot_right
-02D1   3A01               M     xorlw 1<<BTN_UP
-02D2   1903               M     skpnz
-02D3   3???               M     bra rot_right
-02D4   3A01               M     xorlw 1<<BTN_UP
-                      01232     case 1<<BTN_DN, rot_left
-02D5   3A02               M     xorlw 1<<BTN_DN
-02D6   1903               M     skpnz
-02D7   3???               M     bra rot_left
-02D8   3A02               M     xorlw 1<<BTN_DN
-                      01233     case 1<<BTN_RT, move_right
-02D9   3A08               M     xorlw 1<<BTN_RT
-02DA   1903               M     skpnz
-02DB   3???               M     bra move_right
-02DC   3A08               M     xorlw 1<<BTN_RT
-                      01234     case 1<<BTN_LT, move_left
-02DD   3A04               M     xorlw 1<<BTN_LT
-02DE   1903               M     skpnz
-02DF   3???               M     bra move_left
-02E0   3A04               M     xorlw 1<<BTN_LT
-02E1   3???           01235     bra new_position
-02E2                  01236 hard_drop:
-02E2   3???           01237     bra new_position
-02E3                  01238 soft_drop:
-02E3   3???           01239     bra new_position
-02E4                  01240 rot_left:
-02E4   03??           01241     decf angle,F
-02E5   3003           01242     movlw 3
-02E6   05??           01243     andwf angle,F
-02E7   3???           01244     bra new_position
-02E8                  01245 rot_right:
-02E8   0A??           01246     incf angle,F
-02E9   3003           01247     movlw 3
-02EA   05??           01248     andwf angle,F
-02EB   3???           01249     bra new_position
-02EC                  01250 move_left:
-02EC   03??           01251     decf tx,F
-02ED   3???           01252     bra new_position
-02EE                  01253 move_right:
-02EE   300A           01254     movlw 10
-02EF   06??           01255     xorwf tx,W
-02F0   1D03           01256     skpz
-02F1   0A??           01257     incf tx,F
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 31
+030A                  01304 rot_right:
+030A   0A??           01305     incf angle,F
+030B   3003           01306     movlw 3
+030C   05??           01307     andwf angle,F
+030D   3???           01308     bra new_position
+030E                  01309 move_left:
+030E   03??           01310     decf tx,F
+030F   3???           01311     bra new_position
+0310                  01312 move_right:
+0310   300A           01313     movlw 10
+0311   06??           01314     xorwf tx,W
+0312   1D03           01315     skpz
+0313   0A??           01316     incf tx,F
+                      01317 ; apply move and rotation
+0314                  01318 new_position:    
+                      01319 ; check full row and clean
+                      01320 ; adjust score 
+0314   3???           01321     bra fall_loop
+0315                  01322 game_over:
+0315   2???           01323     call print_tetrim
+                      01324     pop
+0316   0017               M     moviw SP--
+                      01325     
+0317   0008           01326     return
+                      01327     
+0318                  01328 init:
+                      01329     pstack_init
+0318   0187               M     clrf FSR1H
+0319   301F               M     movlw S0
+031A   0086               M     movwf FSR1L
+                      01330 ; ADC configuration
+031B   0021           01331     banksel ADCON0
+031C   300C           01332     movlw (PAD_CHS<<CHS0)
+031D   009D           01333     movwf ADCON0
+031E   3020           01334     movlw (2<<ADCS0)
+031F   009E           01335     movwf ADCON1
+0320   0024           01336     banksel WPUA
+0321   120C           01337     bcf WPUA, PAD_PIN
+                      01338 ;;;;;;;;;;;;;;;;;;;;;    
+0322   0021           01339     banksel TRISA
+0323   30F8           01340     movlw ~((1<<SYNC_OUT)|(1<<VIDEO_OUT)|(1<<LED_PIN))
+0324   058C           01341     andwf TRISA,F
+0325   0022           01342     banksel VIDEO_LAT
+0326   108C           01343     bcf VIDEO_LAT,VIDEO_OUT
+0327   100C           01344     bcf LATA,LED_PIN
+                      01345 ; audio pwm initialization
+0328   120C           01346     bcf LATA,AUDIO_PIN
+0329   003B           01347     banksel PWM2PH
+032A   01A1           01348     clrf PWM2PHL
+032B   01A2           01349     clrf PWM2PHH
+032C   01A7           01350     clrf PWM2OFL
+032D   01A8           01351     clrf PWM2OFH
+032E   172B           01352     bsf AUDIO_PWMCON,OE
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 33
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      01258 ; apply move and rotation
-02F2                  01259 new_position:    
-                      01260 ; check full row and clean
-                      01261 ; adjust score 
-02F2   3???           01262     bra fall_loop
-02F3                  01263 game_over:
-02F3   2???           01264     call print_tetrim
-                      01265     pop
-02F4   0017               M     moviw SP--
-                      01266     
-02F5   0008           01267     return
-                      01268     
-02F6                  01269 init:
-                      01270     pstack_init
-02F6   0187               M     clrf FSR1H
-02F7   301F               M     movlw S0
-02F8   0086               M     movwf FSR1L
-                      01271 ; ADC configuration
-02F9   0021           01272     banksel ADCON0
-02FA   300C           01273     movlw (PAD_CHS<<CHS0)
-02FB   009D           01274     movwf ADCON0
-02FC   3020           01275     movlw (2<<ADCS0)
-02FD   009E           01276     movwf ADCON1
-02FE   0024           01277     banksel WPUA
-02FF   120C           01278     bcf WPUA, PAD_PIN
-                      01279 ;;;;;;;;;;;;;;;;;;;;;    
-0300   0021           01280     banksel TRISA
-0301   30F8           01281     movlw ~((1<<SYNC_OUT)|(1<<VIDEO_OUT)|(1<<LED_PIN))
-0302   058C           01282     andwf TRISA,F
-0303   0022           01283     banksel VIDEO_LAT
-0304   108C           01284     bcf VIDEO_LAT,VIDEO_OUT
-0305   100C           01285     bcf LATA,LED_PIN
-                      01286 ; audio pwm initialization
-0306   120C           01287     bcf LATA,AUDIO_PIN
-0307   003B           01288     banksel PWM2PH
-0308   01A1           01289     clrf PWM2PHL
-0309   01A2           01290     clrf PWM2PHH
-030A   01A7           01291     clrf PWM2OFL
-030B   01A8           01292     clrf PWM2OFH
-030C   172B           01293     bsf AUDIO_PWMCON,OE
-030D   0022           01294     banksel APFCON
-030E   149D           01295     bsf APFCON,P2SEL
-                      01296    
-                      01297 ;configure EUSART in sychronsous mode
-                      01298 ;to use as pixel serializer
-030F   0023           01299     banksel SPBRG
-0310   3002           01300     movlw 2
-0311   009B           01301     movwf SPBRGL
-0312   019C           01302     clrf SPBRGH
-0313   019A           01303     clrf TXREG
-0314   30B0           01304     movlw (1<<SYNC)|(1<<CSRC)|(1<<TXEN)
-0315   009E           01305     movwf TXSTA
-0316   179D           01306     bsf RCSTA, SPEN
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 32
+032F   0022           01353     banksel APFCON
+0330   149D           01354     bsf APFCON,P2SEL
+                      01355    
+                      01356 ;configure EUSART in sychronsous mode
+                      01357 ;to use as pixel serializer
+0331   0023           01358     banksel SPBRG
+0332   3002           01359     movlw 2
+0333   009B           01360     movwf SPBRGL
+0334   019C           01361     clrf SPBRGH
+0335   019A           01362     clrf TXREG
+0336   30B0           01363     movlw (1<<SYNC)|(1<<CSRC)|(1<<TXEN)
+0337   009E           01364     movwf TXSTA
+0338   179D           01365     bsf RCSTA, SPEN
+0339   30CF           01366     movlw ~((1<<CREN)|(1<<SREN))
+033A   059D           01367     andwf RCSTA
+                      01368 ; configure pwm video sync for horizontal period
+033B   003B           01369     banksel SYNC_PWMDCH
+033C   01B1           01370     clrf SYNC_PWMPH
+033D   01B2           01371     clrf SYNC_PWMPH+1
+033E   01BF           01372     clrf SYNC_PWMLDCON
+033F   30F5           01373     movlw HORZ_PERIOD&0XFF
+0340   00B5           01374     movwf SYNC_PWMPRL
+0341   3004           01375     movlw HORZ_PERIOD>>8
+0342   00B6           01376     movwf SYNC_PWMPRH
+0343   01BE           01377     clrf SYNC_PWMCLKCON
+0344   30D0           01378     movlw (3<<OE)|(1<<POL)
+0345   00BB           01379     movwf SYNC_PWMCON
+0346   305E           01380     movlw HORZ_PULSE&0xff
+0347   00B3           01381     movwf SYNC_PWMDCL
+0348   3000           01382     movlw HORZ_PULSE>>8
+0349   00B4           01383     movwf SYNC_PWMDCH
+034A   17BF           01384     bsf SYNC_PWMLDCON,LDA
+                      01385    ;enable video interrupt on period match
+034B   103D           01386     bcf SYNC_PWMINTF,PRIF
+034C   143C           01387     bsf SYNC_PWMINTE,PRIE
+                      01388     ; enable peripheral interrupt
+034D   0021           01389     banksel SYNC_PIE
+034E   1713           01390     bsf SYNC_PIE,SYNC_IE
+                      01391     ;enable interrupts
+034F   30C0           01392     movlw (1<<GIE)|(1<<PEIE)
+0350   008B           01393     movwf INTCON
+0351   01??           01394     clrf lcountL
+0352   01??           01395     clrf lcountH
+0353   01??           01396     clrf flags
+                      01397     ; seed lfsr PRNG
+0354   30AC           01398     movlw 0xAC
+0355   00??           01399     movwf randL
+0356   30E1           01400     movlw 0xE1
+0357   00??           01401     movwf randH
+                      01402 
+                      01403     
+0358                  01404 main:
+0358   2???           01405     call game_init
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 34
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0317   30CF           01307     movlw ~((1<<CREN)|(1<<SREN))
-0318   059D           01308     andwf RCSTA
-                      01309 ; configure pwm video sync for horizontal period
-0319   003B           01310     banksel SYNC_PWMDCH
-031A   01B1           01311     clrf SYNC_PWMPH
-031B   01B2           01312     clrf SYNC_PWMPH+1
-031C   01BF           01313     clrf SYNC_PWMLDCON
-031D   30F5           01314     movlw HORZ_PERIOD&0XFF
-031E   00B5           01315     movwf SYNC_PWMPRL
-031F   3004           01316     movlw HORZ_PERIOD>>8
-0320   00B6           01317     movwf SYNC_PWMPRH
-0321   01BE           01318     clrf SYNC_PWMCLKCON
-0322   30D0           01319     movlw (3<<OE)|(1<<POL)
-0323   00BB           01320     movwf SYNC_PWMCON
-0324   305E           01321     movlw HORZ_PULSE&0xff
-0325   00B3           01322     movwf SYNC_PWMDCL
-0326   3000           01323     movlw HORZ_PULSE>>8
-0327   00B4           01324     movwf SYNC_PWMDCH
-0328   17BF           01325     bsf SYNC_PWMLDCON,LDA
-                      01326    ;enable video interrupt on period match
-0329   103D           01327     bcf SYNC_PWMINTF,PRIF
-032A   143C           01328     bsf SYNC_PWMINTE,PRIE
-                      01329     ; enable peripheral interrupt
-032B   0021           01330     banksel SYNC_PIE
-032C   1713           01331     bsf SYNC_PIE,SYNC_IE
-                      01332     ;enable interrupts
-032D   30C0           01333     movlw (1<<GIE)|(1<<PEIE)
-032E   008B           01334     movwf INTCON
-032F   01??           01335     clrf lcountL
-0330   01??           01336     clrf lcountH
-0331   01??           01337     clrf flags
-                      01338     ; seed lfsr PRNG
-0332   30AC           01339     movlw 0xAC
-0333   00??           01340     movwf randL
-0334   30E1           01341     movlw 0xE1
-0335   00??           01342     movwf randH
-                      01343 
-                      01344     
-0336                  01345 main:
-0336   2???           01346     call game_init
-0337   2???           01347     call tetris
-0338   3???           01348     bra main
-                      01349   
-                      01350 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                      01351 ;   data tables
-                      01352 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                      01353 
-                      01354 ; **************** encoding ************************************************
-                      01355 ; enhanced PIC instructions are coded on 14 bits
-                      01356 ; these 14 bits can be read as data using flash memory
-                      01357 ; writing/reading mechanism, see datasheet chapter 10 for detail.
-                      01358 ; the 'dw' assembler directive encode data in those 14 bits contrary to 'dt'
-                      01359 ; directive which encode a single byte as a RETLW instruction.
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 33
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-                      01360 ; So we get a 50% compression by encoding 3 nibbles/flash word. 
-                      01361 ; the encoding used in the following tables is as follow:    
-                      01362 ; bits 13:12  number of nibbles where 0 means there is more than 3 nibbles
-                      01363 ; in this data chunk so 1 or more other words follow this one.    
-                      01364 ; other 12 bits are sliced in 4 bits nibbles.
-                      01365 ;****************************************************************************
-                      01366 
-0339                  01367 digits: ; each digit is 5 rows
-0339   0EAA 2AE0      01368     dw 0x0EAA,0x2AE0 ; 0
-033B   04C4 24E0      01369     dw 0x04C4,0x24E0 ; 1
-033D   0E2E 28E0      01370     dw 0x0E2E,0x28E0 ; 2
-033F   0E2E 22E0      01371     dw 0x0E2E,0x22E0 ; 3
-0341   0AAE 2220      01372     dw 0x0AAE,0x2220 ; 4
-0343   0E8E 22E0      01373     dw 0x0E8E,0x22E0 ; 5
-0345   088E 2AE0      01374     dw 0x088E,0x2AE0 ; 6
-0347   0E22 2220      01375     dw 0x0E22,0x2220 ; 7
-0349   0EAE 2AE0      01376     dw 0x0EAE,0x2AE0 ; 8
-034B   0EAE 2220      01377     dw 0x0EAE,0x2220 ; 9
-                      01378 ; letters needed for 'SCORE' and 'LINES" labels
-034D   3EAE 2AA0      01379     dw 0x3EAE,0x2AA0 ; A  code 10
-034F   3688 2860      01380     dw 0x3688,0x2860 ; C  code 11
-0351   3E8E 28E0      01381     dw 0x3E8E,0x28E0 ; E  code 12
-0353   3E44 24E0      01382     dw 0x3E44,0x24E0 ; I  code 13
-0355   3888 28E0      01383     dw 0x3888,0x28E0 ; L  code 14
-0357   38CA 2AA0      01384     dw 0x38CA,0x2AA0 ; N  code 15
-0359   34AA 2A40      01385     dw 0x34AA,0x2A40 ; O  code 16
-035B   3EAE 2880      01386     dw 0x3EAE,0x2880 ; P  code 17
-035D   38EA 2880      01387     dw 0x38EA,0x2880 ; R  code 18
-035F   3684 22C0      01388     dw 0x3684,0x22C0 ; S  code 19
-0361   3040 2400      01389     dw 0x3040,0x2400 ; :  code 20
-0363   2000 2000      01390     dw 0x2000,0x2000 ; space code 21
-                      01391 
-                      01392 ; comments notation: Rn clockwise rotation n*90 degr.    
-                      01393 ; note that vertical I as 4 rows so it needs 2 words    
-0365                  01394 tetriminos: 
-0365   388C           01395     dw 0x388C ; L R0
-0366   30E8           01396     dw 0x30E8 ; L R1
-0367   3C44           01397     dw 0x3C44 ; L R2
-0368   32E0           01398     dw 0x32E0 ; L R3
-0369   344C           01399     dw 0x344C ; J R0
-036A   38E0           01400     dw 0x38E0 ; J R1
-036B   3644           01401     dw 0x3644 ; J R2
-036C   30E2           01402     dw 0x30E2 ; J R3
-036D   3CC0           01403     dw 0x3CC0 ; O R0 
-036E   3CC0           01404     dw 0x3CC0 ; O R2 
-036F   3CC0           01405     dw 0x3CC0 ; O R2 
-0370   3CC0           01406     dw 0x3CC0 ; O R3 
-0371   36C0           01407     dw 0x36C0 ; S R0
-0372   3462           01408     dw 0x3462 ; S R1
-0373   36C0           01409     dw 0x36C0 ; S R2
-0374   3462           01410     dw 0x3462 ; S R3
-0375   3E40           01411     dw 0x3E40 ; T R0
-0376   3262           01412     dw 0x3262 ; T R1
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 34
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-0377   304E           01413     dw 0x304E ; T R2
-0378   38C8           01414     dw 0x38C8 ; T R3
-0379   3C60           01415     dw 0x3C60 ; Z R0
-037A   34C8           01416     dw 0x34C8 ; Z R1
-037B   3C60           01417     dw 0x3C60 ; Z R3
-037C   34C8           01418     dw 0x34C8 ; Z R4
-                      01419 ; annoying! I tetriminos need a special treatment 
-                      01420 ; because vertical I need 2 words for encoding.   
-037D   0444 1400      01421 I0: dw 0x0444,0x1400 ; I R0  
-037F   300F 1000      01422     dw 0x300F,0x1000 ; I R1  second word is filling for alignment
-0381   0222 1200      01423     dw 0x0222,0x1200 ; I R2
-0383   10F0 1000      01424     dw 0x10F0,0x1000 ; I R3  
+0359   2???           01406     call tetris
+035A   3???           01407     bra main
+                      01408   
+                      01409 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      01410 ;   data tables
+                      01411 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      01412 
+                      01413 ; **************** encoding ************************************************
+                      01414 ; enhanced PIC instructions are coded on 14 bits
+                      01415 ; these 14 bits can be read as data using flash memory
+                      01416 ; writing/reading mechanism, see datasheet chapter 10 for detail.
+                      01417 ; the 'dw' assembler directive encode data in those 14 bits contrary to 'dt'
+                      01418 ; directive which encode a single byte as a RETLW instruction.
+                      01419 ; So we get a 50% compression by encoding 3 nibbles/flash word. 
+                      01420 ; the encoding used in the following tables is as follow:    
+                      01421 ; bits 13:12  number of nibbles where 0 means there is more than 3 nibbles
+                      01422 ; in this data chunk so 1 or more other words follow this one.    
+                      01423 ; other 12 bits are sliced in 4 bits nibbles.
+                      01424 ;****************************************************************************
                       01425 
-  00000000            01426 LBL_SCORE equ 0
-  00000001            01427 LBL_LINES equ 1
-  00000002            01428 LBL_PRESS equ 2
-                      01429  
-0385                  01430 labels:
-0385   000B           01431     brw
-0386   3???           01432     bra txt_score
-0387   3???           01433     bra txt_lines
-0388   3???           01434     bra txt_press
-                      01435     
-0389                  01436 txt_score: ; "SCORE"
-                      01437     pop
-0389   0017               M     moviw SP--
-038A   000B           01438     brw
-038B   3413 340B 3410 01439     dt 19,11,16,18,12,20,255
+035B                  01426 digits: ; each digit is 5 rows
+035B   0EAA 2AE0      01427     dw 0x0EAA,0x2AE0 ; 0
+035D   04C4 24E0      01428     dw 0x04C4,0x24E0 ; 1
+035F   0E2E 28E0      01429     dw 0x0E2E,0x28E0 ; 2
+0361   0E2E 22E0      01430     dw 0x0E2E,0x22E0 ; 3
+0363   0AAE 2220      01431     dw 0x0AAE,0x2220 ; 4
+0365   0E8E 22E0      01432     dw 0x0E8E,0x22E0 ; 5
+0367   088E 2AE0      01433     dw 0x088E,0x2AE0 ; 6
+0369   0E22 2220      01434     dw 0x0E22,0x2220 ; 7
+036B   0EAE 2AE0      01435     dw 0x0EAE,0x2AE0 ; 8
+036D   0EAE 2220      01436     dw 0x0EAE,0x2220 ; 9
+                      01437 ; letters needed for 'SCORE' and 'LINES" labels
+036F   0EAE 2AA0      01438     dw 0x0EAE,0x2AA0 ; A  code 10
+0371   0688 2860      01439     dw 0x0688,0x2860 ; C  code 11
+0373   0E8E 28E0      01440     dw 0x0E8E,0x28E0 ; E  code 12
+0375   0E44 24E0      01441     dw 0x0E44,0x24E0 ; I  code 13
+0377   0888 28E0      01442     dw 0x0888,0x28E0 ; L  code 14
+0379   08CA 2AA0      01443     dw 0x08CA,0x2AA0 ; N  code 15
+037B   04AA 2A40      01444     dw 0x04AA,0x2A40 ; O  code 16
+037D   0EAE 2880      01445     dw 0x0EAE,0x2880 ; P  code 17
+037F   08EA 2880      01446     dw 0x08EA,0x2880 ; R  code 18
+0381   0684 22C0      01447     dw 0x0684,0x22C0 ; S  code 19
+0383   0040 2400      01448     dw 0x0040,0x2400 ; :  code 20
+0385   2000 2000      01449     dw 0x2000,0x2000 ; space code 21
+                      01450 
+                      01451 ; comments notation: Rn clockwise rotation n*90 degr.    
+                      01452 ; note that vertical I as 4 rows so it needs 2 words    
+0387                  01453 tetriminos: 
+0387   388C           01454     dw 0x388C ; L R0
+0388   30E8           01455     dw 0x30E8 ; L R1
+0389   3C44           01456     dw 0x3C44 ; L R2
+038A   32E0           01457     dw 0x32E0 ; L R3
+038B   344C           01458     dw 0x344C ; J R0
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 35
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+038C   38E0           01459     dw 0x38E0 ; J R1
+038D   3644           01460     dw 0x3644 ; J R2
+038E   30E2           01461     dw 0x30E2 ; J R3
+038F   3CC0           01462     dw 0x3CC0 ; O R0 
+0390   3CC0           01463     dw 0x3CC0 ; O R2 
+0391   3CC0           01464     dw 0x3CC0 ; O R2 
+0392   3CC0           01465     dw 0x3CC0 ; O R3 
+0393   36C0           01466     dw 0x36C0 ; S R0
+0394   3462           01467     dw 0x3462 ; S R1
+0395   36C0           01468     dw 0x36C0 ; S R2
+0396   3462           01469     dw 0x3462 ; S R3
+0397   3E40           01470     dw 0x3E40 ; T R0
+0398   3262           01471     dw 0x3262 ; T R1
+0399   304E           01472     dw 0x304E ; T R2
+039A   38C8           01473     dw 0x38C8 ; T R3
+039B   3C60           01474     dw 0x3C60 ; Z R0
+039C   34C8           01475     dw 0x34C8 ; Z R1
+039D   3C60           01476     dw 0x3C60 ; Z R3
+039E   34C8           01477     dw 0x34C8 ; Z R4
+                      01478 ; annoying! I tetriminos need a special treatment 
+                      01479 ; because vertical I need 2 words for encoding.   
+039F   0444 1400      01480 I0: dw 0x0444,0x1400 ; I R0  
+03A1   300F 1000      01481     dw 0x300F,0x1000 ; I R1  second word is filling for alignment
+03A3   0222 1200      01482     dw 0x0222,0x1200 ; I R2
+03A5   10F0 1000      01483     dw 0x10F0,0x1000 ; I R3  
+                      01484 
+  00000000            01485 LBL_SCORE equ 0
+  00000001            01486 LBL_LINES equ 1
+  00000002            01487 LBL_PRESS equ 2
+                      01488  
+03A7                  01489 labels:
+03A7   000B           01490     brw
+03A8   3???           01491     bra txt_score
+03A9   3???           01492     bra txt_lines
+03AA   3???           01493     bra txt_press
+                      01494     
+03AB                  01495 txt_score: ; "SCORE"
+                      01496     pop
+03AB   0017               M     moviw SP--
+03AC   000B           01497     brw
+03AD   3413 340B 3410 01498     dt 19,11,16,18,12,20,255
        3412 340C 3414 
        34FF 
-                      01440     
-0392                  01441 txt_lines: ; "LINES"
-                      01442     pop
-0392   0017               M     moviw SP--
-0393   000B           01443     brw
-0394   340E 340D 340F 01444     dt 14,13,15,12,19,20,255
+                      01499     
+03B4                  01500 txt_lines: ; "LINES"
+                      01501     pop
+03B4   0017               M     moviw SP--
+03B5   000B           01502     brw
+03B6   340E 340D 340F 01503     dt 14,13,15,12,19,20,255
        340C 3413 3414 
        34FF 
-                      01445 
-039B                  01446 txt_press: ; "PRESS A"
-                      01447     pop
-039B   0017               M     moviw SP--
-039C   000B           01448     brw
-039D   3411 3412 340C 01449     dt 17,18,12,19,19,21,10,255
+                      01504 
+03BD                  01505 txt_press: ; "PRESS A"
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 36
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      01506     pop
+03BD   0017               M     moviw SP--
+03BE   000B           01507     brw
+03BF   3411 3412 340C 01508     dt 17,18,12,19,19,21,10,255
        3413 3413 3415 
        340A 34FF 
-                      01450     
-                      01451 
-03A5                  01452 tone_pr:
-03A5   000B           01453     brw
-03A6   3402 34ED      01454     dt 0x02, 0xed   ; 330   (MI4)   0
-03A8   34B5 34DF      01455     dt 0xb5, 0xdf   ; 349   (FA4)   1
-03AA   3428 34D3      01456     dt 0x28, 0xd3   ; 370   (FA4#)  2
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 35
+                      01509     
+                      01510 
+03C7                  01511 tone_pr:
+03C7   000B           01512     brw
+03C8   3402 34ED      01513     dt 0x02, 0xed   ; 330   (MI4)   0
+03CA   34B5 34DF      01514     dt 0xb5, 0xdf   ; 349   (FA4)   1
+03CC   3428 34D3      01515     dt 0x28, 0xd3   ; 370   (FA4#)  2
+03CE   344C 34C7      01516     dt 0x4c, 0xc7   ; 392   (SOL4)  3
+03D0   341E 34BC      01517     dt 0x1e, 0xbc   ; 415   (SOL4#) 4
+03D2   348F 34B1      01518     dt 0x8f, 0xb1   ; 440   (LA4)   5
+03D4   3498 34A7      01519     dt 0x98, 0xa7   ; 466   (LA4#)  6
+03D6   3430 349E      01520     dt 0x30, 0x9e   ; 494   (SI4)   7
+03D8   344F 3495      01521     dt 0x4f, 0x95   ; 523hz (DO5)   8
+03DA   34ED 348C      01522     dt 0xed, 0x8c   ; 554   (DO5#)  9
+03DC   3404 3485      01523     dt 0x04, 0x85   ; 587   (RÉ5)   10
+03DE   348D 347D      01524     dt 0x8d, 0x7d   ; 622   (RÉ5#)  11
+03E0   3481 3476      01525     dt 0x81, 0x76   ; 659   (MI5)   12
+03E2   34DA 346F      01526     dt 0xda, 0x6f   ; 698   (FA5)   13
+03E4   3493 3469      01527     dt 0x93, 0x69   ; 740   (FA5#)  14
+03E6   34A6 3463      01528     dt 0xa6, 0x63   ; 784   (SOL5)  15
+03E8   340F 345E      01529     dt 0x0f, 0x5e   ; 831   (SOL5#) 16
+03EA   34C7 3458      01530     dt 0xc7, 0x58   ; 880   (LA5)   17
+03EC   34CC 3453      01531     dt 0xcc, 0x53   ; 932   (LA5#)  18
+03EE   3418 344F      01532     dt 0x18, 0x4f   ; 988   (SI5)   19
+03F0   3482 3442      01533     dt 0x82, 0x42   ; 1046hz (do6)  20
+03F2   3400 3400      01534     dt 0, 0         ; silence       21
+                      01535     
+03F4                  01536 korobeiniki: ;folklore russe
+                      01537     ;nombre de notes
+03F4   000B           01538     brw
+03F5   3422           01539     dt 34
+                      01540     ; duré, note
+03F6   342D 3400      01541     dt 45, 0 
+03F8   340F 3404      01542     dt 15, 4
+03FA   341E 3407      01543     dt 30, 7
+03FC   340F 3403      01544     dt 15, 3
+03FE   340F 3400      01545     dt 15, 0
+                      01546     
+0400   342D 3405      01547     dt 45, 5
+0402   340F 3409      01548     dt 15, 9
+0404   341E 340C      01549     dt 30, 12
+0406   340F 340A      01550     dt 15, 10
+0408   340F 3408      01551     dt 15, 8
+                      01552     
+040A   342D 3407      01553     dt 45, 7
+040C   340F 3408      01554     dt 15, 8
+040E   341E 340A      01555     dt 30, 10
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 37
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-03AC   344C 34C7      01457     dt 0x4c, 0xc7   ; 392   (SOL4)  3
-03AE   341E 34BC      01458     dt 0x1e, 0xbc   ; 415   (SOL4#) 4
-03B0   348F 34B1      01459     dt 0x8f, 0xb1   ; 440   (LA4)   5
-03B2   3498 34A7      01460     dt 0x98, 0xa7   ; 466   (LA4#)  6
-03B4   3430 349E      01461     dt 0x30, 0x9e   ; 494   (SI4)   7
-03B6   344F 3495      01462     dt 0x4f, 0x95   ; 523hz (DO5)   8
-03B8   34ED 348C      01463     dt 0xed, 0x8c   ; 554   (DO5#)  9
-03BA   3404 3485      01464     dt 0x04, 0x85   ; 587   (RÉ5)   10
-03BC   348D 347D      01465     dt 0x8d, 0x7d   ; 622   (RÉ5#)  11
-03BE   3481 3476      01466     dt 0x81, 0x76   ; 659   (MI5)   12
-03C0   34DA 346F      01467     dt 0xda, 0x6f   ; 698   (FA5)   13
-03C2   3493 3469      01468     dt 0x93, 0x69   ; 740   (FA5#)  14
-03C4   34A6 3463      01469     dt 0xa6, 0x63   ; 784   (SOL5)  15
-03C6   340F 345E      01470     dt 0x0f, 0x5e   ; 831   (SOL5#) 16
-03C8   34C7 3458      01471     dt 0xc7, 0x58   ; 880   (LA5)   17
-03CA   34CC 3453      01472     dt 0xcc, 0x53   ; 932   (LA5#)  18
-03CC   3418 344F      01473     dt 0x18, 0x4f   ; 988   (SI5)   19
-03CE   3482 3442      01474     dt 0x82, 0x42   ; 1046hz (do6)  20
-03D0   3400 3400      01475     dt 0, 0         ; silence       21
-                      01476     
-03D2                  01477 korobeiniki: ;folklore russe
-                      01478     ;nombre de notes
-03D2   000B           01479     brw
-03D3   3422           01480     dt 34
-                      01481     ; duré, note
-03D4   342D 3400      01482     dt 45, 0 
-03D6   340F 3404      01483     dt 15, 4
-03D8   341E 3407      01484     dt 30, 7
-03DA   340F 3403      01485     dt 15, 3
-03DC   340F 3400      01486     dt 15, 0
-                      01487     
-03DE   342D 3405      01488     dt 45, 5
-03E0   340F 3409      01489     dt 15, 9
-03E2   341E 340C      01490     dt 30, 12
-03E4   340F 340A      01491     dt 15, 10
-03E6   340F 3408      01492     dt 15, 8
-                      01493     
-03E8   342D 3407      01494     dt 45, 7
-03EA   340F 3408      01495     dt 15, 8
-03EC   341E 340A      01496     dt 30, 10
-03EE   341E 340C      01497     dt 30, 12
-                      01498     
-03F0   341E 3408      01499     dt 30, 8
-03F2   341E 3405      01500     dt 30, 5
-03F4   343C 3405      01501     dt 60, 5
-                      01502     
-03F6   342D 340D      01503     dt 45, 13
-03F8   340F 340F      01504     dt 15, 15
-03FA   341E 3411      01505     dt 30, 17
-03FC   340F 340F      01506     dt 15, 15
-03FE   340F 340D      01507     dt 15, 13
-                      01508     
-0400   342D 340C      01509     dt 45, 12
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 36
-
-
-LOC  OBJECT CODE     LINE SOURCE TEXT
-  VALUE
-
-0402   340F 340D      01510     dt 15, 13
-0404   341E 340C      01511     dt 30, 12
-0406   340F 340A      01512     dt 15, 10
-0408   340F 3408      01513     dt 15, 8
-                      01514     
-040A   342D 3407      01515     dt 45, 7
-040C   340F 3408      01516     dt 15, 8
-040E   341E 340A      01517     dt 30, 10
-0410   341E 340C      01518     dt 30, 12
-                      01519     
-0412   341E 3408      01520     dt 30, 8
-0414   341E 3405      01521     dt 30, 5
-0416   343C 3405      01522     dt 60, 5
-                      01523     
-                      01524     
-3FE7 1EFF             01525     end
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 37
+0410   341E 340C      01556     dt 30, 12
+                      01557     
+0412   341E 3408      01558     dt 30, 8
+0414   341E 3405      01559     dt 30, 5
+0416   343C 3405      01560     dt 60, 5
+                      01561     
+0418   342D 340D      01562     dt 45, 13
+041A   340F 340F      01563     dt 15, 15
+041C   341E 3411      01564     dt 30, 17
+041E   340F 340F      01565     dt 15, 15
+0420   340F 340D      01566     dt 15, 13
+                      01567     
+0422   342D 340C      01568     dt 45, 12
+0424   340F 340D      01569     dt 15, 13
+0426   341E 340C      01570     dt 30, 12
+0428   340F 340A      01571     dt 15, 10
+042A   340F 3408      01572     dt 15, 8
+                      01573     
+042C   342D 3407      01574     dt 45, 7
+042E   340F 3408      01575     dt 15, 8
+0430   341E 340A      01576     dt 30, 10
+0432   341E 340C      01577     dt 30, 12
+                      01578     
+0434   341E 3408      01579     dt 30, 8
+0436   341E 3405      01580     dt 30, 5
+0438   343C 3405      01581     dt 60, 5
+                      01582     
+                      01583     
+3FE7 1EFF             01584     end
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 38
 
 
 SYMBOL TABLE
@@ -2144,7 +2216,7 @@ BSR2                              00000002
 BSR3                              00000003
 BSR4                              00000004
 BSR_SHAD                          00000FE6
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 38
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 39
 
 
 SYMBOL TABLE
@@ -2203,7 +2275,7 @@ CWG1DBF4                          00000004
 CWG1DBF5                          00000005
 CWG1DBR                           00000691
 CWG1DBR0                          00000000
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 39
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 40
 
 
 SYMBOL TABLE
@@ -2262,7 +2334,7 @@ F_GTMR                            00000003
 F_MUTEX                           00000002
 F_SND                             00000005
 F_VSYNC                           00000000
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 40
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 41
 
 
 SYMBOL TABLE
@@ -2295,7 +2367,7 @@ HFIOFS                            00000000
 HORZ_DLY                          00000032
 HORZ_PERIOD                       000004F5
 HORZ_PULSE                        0000005E
-I0                                0000037D
+I0                                0000039F
 INDF0                             00000000
 INDF1                             00000001
 INLVLA                            0000038C
@@ -2321,7 +2393,7 @@ IOCAN0                            00000000
 IOCAN1                            00000001
 IOCAN2                            00000002
 IOCAN3                            00000003
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 41
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 42
 
 
 SYMBOL TABLE
@@ -2380,7 +2452,7 @@ NOT_DONE                          00000001
 NOT_PD                            00000003
 NOT_POR                           00000001
 NOT_RI                            00000002
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 42
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 43
 
 
 SYMBOL TABLE
@@ -2439,7 +2511,7 @@ PMCON2                            00000196
 PMDAT                             00000193
 PMDATH                            00000194
 PMDATL                            00000193
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 43
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 44
 
 
 SYMBOL TABLE
@@ -2498,7 +2570,7 @@ PWM1INTF                          00000D9D
 PWM1INTFLG                        00000D9D
 PWM1LD                            00000007
 PWM1LDA_A                         00000000
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 44
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 45
 
 
 SYMBOL TABLE
@@ -2557,7 +2629,7 @@ PWM1PHL0                          00000000
 PWM1PHL1                          00000001
 PWM1PHL2                          00000002
 PWM1PHL3                          00000003
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 45
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 46
 
 
 SYMBOL TABLE
@@ -2616,7 +2688,7 @@ PWM2CON                           00000DAB
 PWM2CS0                           00000000
 PWM2CS1                           00000001
 PWM2DC                            00000DA3
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 46
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 47
 
 
 SYMBOL TABLE
@@ -2675,7 +2747,7 @@ PWM2OFIF                          00000003
 PWM2OFL                           00000DA7
 PWM2OFL0                          00000000
 PWM2OFL1                          00000001
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 47
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 48
 
 
 SYMBOL TABLE
@@ -2734,7 +2806,7 @@ PWM2PRL1                          00000001
 PWM2PRL2                          00000002
 PWM2PRL3                          00000003
 PWM2PRL4                          00000004
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 48
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 49
 
 
 SYMBOL TABLE
@@ -2793,7 +2865,7 @@ PWM3DCL7                          00000007
 PWM3EN                            00000007
 PWM3EN_A                          00000002
 PWM3IE                            00000006
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 49
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 50
 
 
 SYMBOL TABLE
@@ -2852,7 +2924,7 @@ PWM3PHH4                          00000004
 PWM3PHH5                          00000005
 PWM3PHH6                          00000006
 PWM3PHH7                          00000007
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 50
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 51
 
 
 SYMBOL TABLE
@@ -2911,7 +2983,7 @@ PWM3TMRL2                         00000002
 PWM3TMRL3                         00000003
 PWM3TMRL4                         00000004
 PWM3TMRL5                         00000005
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 51
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 52
 
 
 SYMBOL TABLE
@@ -2946,6 +3018,7 @@ SCKP                              00000004
 SCS0                              00000000
 SCS1                              00000001
 SENDB                             00000003
+SET_OP                            00000003
 SLRA0                             00000000
 SLRA1                             00000001
 SLRA2                             00000002
@@ -2969,13 +3042,13 @@ SWDTEN                            00000000
 SYNC                              00000004
 SYNC_IE                           00000006
 SYNC_IF                           00000006
-SYNC_OUT                          00000002
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 52
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 53
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+SYNC_OUT                          00000002
 SYNC_PIE                          00000093
 SYNC_PIR                          00000013
 SYNC_PWMCLKCON                    00000DBE
@@ -3018,6 +3091,7 @@ T2OUTPS2                          00000005
 T2OUTPS3                          00000006
 TC                                00000032
 TCY                               000000C8
+TEST_OP                           00000002
 TMR0                              00000015
 TMR0CS                            00000005
 TMR0IE                            00000005
@@ -3027,14 +3101,14 @@ TMR1                              00000016
 TMR1CS0                           00000006
 TMR1CS1                           00000007
 TMR1GE                            00000007
-TMR1GIE                           00000007
-TMR1GIF                           00000007
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 53
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 54
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+TMR1GIE                           00000007
+TMR1GIF                           00000007
 TMR1H                             00000017
 TMR1IE                            00000000
 TMR1IF                            00000000
@@ -3086,14 +3160,14 @@ VREGCON                           00000197
 VREGPM                            00000001
 W                                 00000000
 WDTCON                            00000097
-WDTPS0                            00000001
-WDTPS1                            00000002
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 54
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 55
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+WDTPS0                            00000001
+WDTPS1                            00000002
 WDTPS2                            00000003
 WDTPS3                            00000004
 WDTPS4                            00000005
@@ -3117,17 +3191,17 @@ XSIZE                             00000030
 YSIZE                             00000020
 Z                                 00000002
 Z_SHAD                            00000002
+_.org_1_0075                      00000075
+_.org_1_0077                      00000077
 _.org_1_0079                      00000079
-_.org_1_007B                      0000007B
-_.org_1_007D                      0000007D
-_.org_1_0080                      00000080
-_.org_1_00C6                      000000C6
-_.org_1_00C8                      000000C8
-_.org_1_00DE                      000000DE
-_.org_1_00E5                      000000E5
-_.org_1_0286                      00000286
-_.org_1_0293                      00000293
-_.org_1_02C3                      000002C3
+_.org_1_007C                      0000007C
+_.org_1_00BC                      000000BC
+_.org_1_00BE                      000000BE
+_.org_1_00DA                      000000DA
+_.org_1_00E1                      000000E1
+_.org_1_02A7                      000002A7
+_.org_1_02B4                      000002B4
+_.org_1_02E5                      000002E5
 _BOREN_NSLEEP                     00003DFF
 _BOREN_OFF                        000039FF
 _BOREN_ON                         00003FFF
@@ -3145,14 +3219,14 @@ _DEVID1                           00008006
 _FOSC_ECH                         00003FFF
 _FOSC_ECL                         00003FFD
 _FOSC_ECM                         00003FFE
-_FOSC_INTOSC                      00003FFC
-_IDLOC0                           00008000
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 55
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 56
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+_FOSC_INTOSC                      00003FFC
+_IDLOC0                           00008000
 _IDLOC1                           00008001
 _IDLOC2                           00008002
 _IDLOC3                           00008003
@@ -3185,173 +3259,176 @@ accbL                             0000000A
 add                               
 addpmadr                          
 angle                             00000041
-bitop                             00000117
-bitop00                           00000124
-bitop01                           00000127
-bitop02                           00000133
+bitop                             0000010E
+bitop00                           0000011B
+bitop01                           0000011E
+bitop02                           00000137
 buttons                           0000000C
 case                              
-clear_bit                         0000012B
+clear_bit                         0000012F
+col_loop                          0000025D
+coll_test                         00000287
 dec_n                             
-digits                            00000339
+digits                            0000035B
 disable_video                     
-div10                             0000005D
-div10_loop                        00000061
+div10                             00000059
+div10_loop                        0000005D
 drop                              
 drop_n                            
 dropped                           00000046
 dup                               
 enable_video                      
-fall_loop                         000002BB
-fetch                             
-fill_buffer                       000000ED
-fill_loop                         000000F5
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 56
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 57
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+fall_loop                         000002DC
+fetch                             
+fill_buffer                       000000E9
+fill_loop                         000000F1
 flags                             00000002
-game_init                         00000224
-game_loop                         000002BA
-game_over                         000002F3
-get_flash_word                    00000160
-get_nibble                        00000174
-get_pixel                         0000010D
-gpx00                             00000111
-gpx01                             00000114
+game_init                         00000228
+game_loop                         000002DB
+game_over                         00000315
+get_flash_word                    00000164
+get_nibble                        00000178
+get_pixel                         00000109
 gt_255                            0000002A
 gtimer                            00000003
-hard_drop                         000002E2
-hline                             00000202
-hline_done                        00000211
+hard_drop                         00000304
+hline                             00000206
+hline_done                        00000215
 inc_n                             
-init                              000002F6
+init                              00000318
 insert                            
 isr                               00000004
-isr_exit                          00000059
-koro                              0000027A
-korobeiniki                       000003D2
-labels                            00000385
+isr_exit                          00000055
+koro                              0000029B
+korobeiniki                       000003F4
+labels                            000003A7
 lcountH                           00000001
 lcountL                           00000000
 ldpmadr                           
 lit                               
 lt_256                            0000000E
-main                              00000336
-move_left                         000002EC
-move_right                        000002EE
+main                              00000358
+move_left                         0000030E
+move_right                        00000310
 movtw                             
 movwt                             
-mult6                             0000006D
-new_position                      000002F2
-new_tminos                        00000267
-next_flash_word                   0000016F
+mult6                             00000069
+new_position                      00000314
+new_tminos                        00000288
+next_flash_word                   00000173
 nibble                            0000000D
-nibble_mask                       00000183
-no_zero                           00000200
+nibble_mask                       00000187
+no_zero                           00000204
 over                              
 pause                             
 pick                              
-pixels_loop                       000000D9
+pixels_loop                       000000D5
 pop                               
-print_char                        00000191
-print_int                         000001E7
-print_label                       000001CA
-print_last                        000001FA
-print_row                         00000187
-print_tetrim                      000001A0
-prt01                             000001B6
-prt_lbl_done                      000001E5
-prt_lbl_loop                      000001CC
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 57
+print_char                        00000195
+print_int                         000001EB
+print_label                       000001CE
+print_last                        000001FE
+print_row                         0000018B
+print_tetrim                      000001A4
+prt01                             000001BA
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 58
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+prt_lbl_done                      000001E9
+prt_lbl_loop                      000001D0
 pstack_init                       
 push                              
 q                                 0000000A
-qr00                              00000258
-qr01                              00000262
-query_row                         00000256
+qr00                              00000278
+qr01                              00000282
+query_row                         00000276
 r                                 00000000
 randH                             00000006
 randL                             00000005
 rcount                            00000007
-read_exit                         000000A5
-read_flash                        00000169
-read_pad                          00000072
+read_exit                         000000A1
+read_flash                        0000016D
+read_pad                          0000006E
 reserve                           
 rot                               
-rot_left                          000002E4
-rot_right                         000002E8
-row0                              00000182
-row1                              0000017E
-row2                              00000180
+rot_left                          00000306
+rot_right                         0000030A
+row0                              00000186
+row1                              00000182
+row2                              00000184
+row_loop                          0000025B
 rst                               0000000E
 scoreH                            00000045
 scoreL                            00000044
-set_video_ptr                     000000FB
-soft_drop                         000002E3
+set_video_ptr                     000000F7
+slide_down                        0000025A
+soft_drop                         00000305
 start_timer                       
 store                             
 sub                               
 swap                              
-task0                             00000043
-task1                             0000004C
-task2                             00000053
+task0                             0000003F
+task1                             00000048
+task2                             0000004F
 tasks                             00000035
 tbranch                           
 tcyDelay                          
+test_bit                          0000012B
 tetrim                            00000040
-tetriminos                        00000365
-tetris                            00000297
-ti                                000001AF
-tone                              000000A8
-tone_pr                           000003A5
+tetriminos                        00000387
+tetris                            000002B8
+ti                                000001B3
+tone                              000000A4
+tone_pr                           000003C7
 tone_tmr                          00000004
-try_a                             00000082
-try_b                             00000088
+try_a                             0000007E
+try_b                             00000084
 try_button                        
-try_dn                            000000A0
-try_lt                            0000009A
-try_rt                            0000008E
-try_up                            00000094
-tx                                00000042
-txt_lines                         00000392
-txt_press                         0000039B
-txt_score                         00000389
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-11-2016  20:53:50         PAGE 58
+try_dn                            0000009C
+try_lt                            00000096
+try_rt                            0000008A
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-12-2016  11:57:40         PAGE 59
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+try_up                            00000090
+tx                                00000042
+txt_lines                         000003B4
+txt_press                         000003BD
+txt_score                         000003AB
 ty                                00000043
 video_buffer_b0                   00000050
 video_buffer_b2                   000000A0
 video_buffer_b3                   00000120
-video_serialize                   000000BF
-vline                             00000213
-vline_done                        00000222
+video_serialize                   000000BB
+vline                             00000217
+vline_done                        00000226
 vsync_end                         00000022
 vsync_start                       0000001A
-wait_end                          00000295
+wait_end                          000002B6
 wait_sound                        
-wait_start                        00000275
+wait_start                        00000296
 wait_timer                        
-xor_bit                           0000012E
-xor_row                           0000013C
-xor_row01                         00000142
-xor_row02                         0000015A
-xor_row_done                      0000015E
+xor_bit                           00000132
+xor_row                           00000140
+xor_row01                         00000146
+xor_row02                         0000015E
+xor_row_done                      00000162
 zbranch                           
 
 Errors   :     0
 Warnings :     0 reported,     0 suppressed
-Messages :     0 reported,   128 suppressed
+Messages :     0 reported,   131 suppressed
 
 
