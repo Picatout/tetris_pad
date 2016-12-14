@@ -97,6 +97,7 @@ F_MUTEX equ 2 ; video routine lock out
 F_GTMR equ 3  ; game timer active
 F_GSTOP equ 4 ; game stopped
 F_SND equ 5 ; sound timer active 
+F_COLL equ 6 ; collision flag
  
 LFSR_TAPS equ 0xB4 ; xor mask
  
@@ -308,8 +309,10 @@ tx  res 1 ; x coordinate
 ty  res 1 ; y coordinate
 scoreL res 1 ; game score  16 bits
 scoreH res 1 
-dropped res 1 ; dropped lines
-
+droppedL res 1	; total
+droppedH res 1	; dropped lines
+  
+ 
 ; These 3 sections are used for video pixels buffering
 ; with indirect access using FSR0
 ; to form a contiguous address space. 
@@ -1106,7 +1109,8 @@ game_init:
     clrf angle
     clrf scoreL
     clrf scoreH
-    clrf dropped
+    clrf droppedL
+    clrf droppedH
     clrf buttons
     bsf flags,F_GSTOP
     return
@@ -1167,18 +1171,42 @@ qr01:
     bra qr00
     drop_n 2 ; -- s
     return
- 
-; collision test
-; check if current tetriminos
-; is in collision position
+
+; count and drop full rows
 ; input:
 ;   none
 ; output:
-;   WREG, Z
-coll_test:
-    
+;   n number of droppend rows
+;condition:
+;  check each row from bottom up
+;  stop at first empty row
+;  full rows are dropped    
+count_full: ; ( -- n)
+    lit 0 ; full rows counter
+    lit 21 ; row number {21:1}
+count_loop:
+    lit 0
+    over 
+    call query_row ; n r s r -- n r s
+    pop	    ; n r
+    skpnz
+    bra count_done
+    xorlw 10
+    skpz
+    bra next_row
+; this is a full row    
+    inc_n 1 ; increment n
+    decf T,W
+    push      ; n r b 
+    over      ; n r b r
+    call slide_down ; n r b r -- n r
+    incf T,F
+next_row:
+    decfsz T,F
+    bra count_loop
+count_done:
+    drop   ; n r -- n
     return
-    
     
 ; generate a new tetriminos
 ; input:
@@ -1188,17 +1216,26 @@ coll_test:
 new_tminos:
     banksel GAME_VAR
     movlw 7
-    andwf randL,W
-    xorlw 7
-    skpz
-    xorlw 7
     movwf tetrim
-    movlw 3
-    andwf randH,W
-    movwf angle
-    movlw 4
+    clrf angle
+;    movlw 7
+;    andwf randL,W
+;    xorlw 7
+;    skpz
+;    xorlw 7
+;    movwf tetrim
+;    movlw 3
+;    andwf randH,W
+;    movwf angle
+;    movlw 4
     movwf tx
     clrf ty
+    call print_tetrim
+    pop
+    skpz
+    bsf flags, F_GSTOP
+    call print_tetrim
+    pop
     return
  
 ; wait player start signal
@@ -1206,18 +1243,18 @@ new_tminos:
 wait_start:
     clrw
     call korobeiniki
-    push
-    lit 0
+    push    ; count
+    lit 0   ; sequence
 koro:
-    incf T
-    movfw T
+    incf T,F ; -- count sequence
+    movfw T  ; WREG=sequence
     call korobeiniki
-    push
-    inc_n 1
-    pick 1
+    push    ; -- count sequence duration
+    inc_n 1 ;
+    pick 1  
     call korobeiniki
-    push
-    call tone
+    push    ; -- count nidx duration note
+    call tone  ; -- count nidx 
     wait_sound
     call read_pad
     btfsc buttons, BTN_A
@@ -1225,16 +1262,65 @@ koro:
     dec_n 1
     skpz
     bra koro
+    drop_n 2
     pause 60
     bra wait_start
 wait_end:    
     drop_n 2
     return
-    
-;;;;;;;;;;;;;;;;;;;;;;;;;
-;   game logic
-;;;;;;;;;;;;;;;;;;;;;;;;;    
-tetris:
+ 
+; collision test
+; after rotation or translation
+; input:
+;   none
+; output:
+;   none
+coll_test: 
+    bcf flags, F_COLL
+    call print_tetrim ; collision test
+    pop
+    skpz
+    bsf flags, F_COLL
+    call print_tetrim ; erase it
+    pop
+    btfss flags, F_COLL
+    return
+    banksel GAME_VAR
+    movfw buttons
+    case 1<<BTN_A, undo_hard_drop
+    case 1<<BTN_B, undo_soft_drop
+    case 1<<BTN_UP, undo_rot_right
+    case 1<<BTN_DN, undo_rot_left
+    case 1<<BTN_RT, undo_move_right
+    case 1<<BTN_LT, undo_move_left
+    return
+undo_hard_drop:
+    return
+undo_soft_drop:
+    return
+undo_rot_right:
+    decf angle,F
+    movlw 3
+    andwf angle,F
+    return
+undo_rot_left:
+    incf angle,F
+    movlw 3
+    andwf angle,F
+    return
+undo_move_right:
+    decf tx,F
+    return
+undo_move_left:
+    incf tx,F
+    return
+
+; print score and lines
+; input:
+;   none
+; output:
+;   none
+update_display    
 ; print score
     banksel scoreL
     movfw scoreL
@@ -1245,13 +1331,21 @@ tetris:
     lit 6
     call print_int
 ;print dropped line
-    banksel dropped
-    movfw dropped
+    banksel droppedL
+    movfw droppedL
     movwf accaL
-    clrf accaH
+    movwf droppedH
+    movwf accaH
     lit 43
     lit 18
     call print_int
+    return
+    
+;;;;;;;;;;;;;;;;;;;;;;;;;
+;   game logic
+;;;;;;;;;;;;;;;;;;;;;;;;;    
+tetris:
+    call update_display
 ;print start prompt
     lit 0
     lit 24
@@ -1271,15 +1365,20 @@ game_loop:
 ; generate new tetriminos
 ; if collision at this stage
 ; game is over
-    call new_tminos 
+    call new_tminos
+    btfss flags, F_GSTOP
+    bra fall_loop
+    lit 30
+    lit 19
+    call tone
+    wait_sound
+    call game_init
+    bra tetris
 fall_loop: ; tetriminos fall in the well
-    call coll_test ; collision test
     call print_tetrim
     pop
-    skpz
-    bra game_over
     pause 10
-    call print_tetrim
+    call print_tetrim ; erase tetriminos
     pop
 ; read pad
     call read_pad
@@ -1291,38 +1390,71 @@ fall_loop: ; tetriminos fall in the well
     case 1<<BTN_DN, rot_left
     case 1<<BTN_RT, move_right
     case 1<<BTN_LT, move_left
-    bra new_position
+    bra move_down
 hard_drop:
-    bra new_position
+    bra move_down
 soft_drop:
-    bra new_position
+    bra move_down
 rot_left:
     decf angle,F
     movlw 3
     andwf angle,F
-    bra new_position
+    call coll_test
+    bra move_down
 rot_right:
     incf angle,F
     movlw 3
     andwf angle,F
-    bra new_position
+    call coll_test
+    bra move_down
 move_left:
     decf tx,F
-    bra new_position
+    call coll_test
+    bra move_down
 move_right:
-    movlw 10
-    xorwf tx,W
-    skpz
     incf tx,F
-; apply move and rotation
-new_position:    
-; check full row and clean
-; adjust score 
-    bra fall_loop
-game_over:
+    call coll_test
+; move down
+move_down:
+    bcf flags, F_COLL
+    banksel GAME_VAR
+    incf ty,F ; tetriminos fall
+    call print_tetrim ; collision test
+    pop
+    skpz
+    bsf flags, F_COLL
     call print_tetrim
     pop
-    
+    btfss flags, F_COLL
+    bra fall_loop
+    banksel GAME_VAR
+    decf ty,F
+    call print_tetrim
+    pop
+; check full row and clean
+    call update_display ; erase numbers
+    call count_full
+shift_score:
+    banksel GAME_VAR
+    movfw T
+    addwf droppedL
+    clrw
+    addwfc droppedH
+    movf T,F
+    skpnz
+    bra adjust_score
+    movlw 1
+    lslf WREG
+    decfsz T,F
+    bra $-2
+; adjust score 
+adjust_score:
+    addwf scoreL
+    clrw
+    addwfc scoreH
+    drop 
+    call update_display ; display new values
+    bra game_loop
     return
     
 init:
