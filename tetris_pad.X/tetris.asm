@@ -127,27 +127,12 @@ r-=2
     endif
     endm
 
+; button selector case    
 case macro n, label
-    xorlw n
-    skpnz
+    btfsc buttons,n
     bra label
-    xorlw n
     endm
  
-ldpmadr macro addr ; load PMADR register
-    movlw low(addr)
-    movwf PMADRL
-    movlw high(addr)
-    movwf PMADRH
-    endm
-    
-addpmadr macro value ; add value to PMADR
-    movlw value
-    addwf PMADRL
-    clrw
-    addwfc PMADRH
-    endm
-    
 start_timer macro value ; start game timer
     movlw value
     movwf gtimer
@@ -227,11 +212,6 @@ store macro var ; ( n -- ) pop T in variable
    movwf var
    endm
    
-fetch macro var  ; ( -- n ) push var on stack
-   movfw var
-   movwi ++SP
-   endm
-
 pick macro n  ; pick nth element of stack to WREG
     moviw -n[SP]
     endm
@@ -240,22 +220,6 @@ insert macro n ;  insert WREG at position n on stack
    movwi -n[SP]
    endm
    
-movtw macro ; ( n -- n ) overwrite WREG with T
-   movfw T
-   endm
-   
-movwt macro ; ( n1 -- n2 ) overwrite T with WREG
-    movwf T
-    endm
-    
-add macro  ; add WREG to T result on T
-    addwf T,F
-   endm
-   
-sub macro  ; substract WREG from T result on T
-   subwf T,F
-   endm
-
 inc_n macro n ; increament nth element of stack
     moviw -n[SP]
     incf WREG,F
@@ -266,18 +230,6 @@ dec_n macro n ; decreament nth element of stack
     moviw -n[SP]
     decf WREG,F
     movwi -n[SP]
-    endm
-    
-zbranch macro label ; branch if T == 0
-    pop
-    skpnz
-    bra label
-    endm
-    
-tbranch macro label ; branch if T != 0
-    pop
-    skpz
-    bra label
     endm
     
 reserve macro n ; reserve n bytes on stack for local variables
@@ -300,7 +252,7 @@ rot macro ; ( n1 n2 n3 -- n2 n3 n1 )
 dstack udata 0x20
 _stack res 32
 ; game variables section 
-GAME_VAR equ 0 ; variables bank
+GAME_VAR equ 0 ; game variables bank
 game_var udata 0x40 
 ; tetris game state
 tetrim res 1 ; active tretriminos 
@@ -316,6 +268,7 @@ droppedH res 1	; dropped lines
 ; These 3 sections are used for video pixels buffering
 ; with indirect access using FSR0
 ; to form a contiguous address space. 
+; total size 192 bytes 
 vb_b0    udata 0x50
 video_buffer_b0 res 32
 vb_b1    udata 0xA0
@@ -349,8 +302,13 @@ accbH res 1
 buttons res 1
 ; flash reader next nibble {0-3}
 nibble res 1
- 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; temporary registers
+t0  res 1
+t1  res 1
+  
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; reset entry point
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 rst: 
     org 0
     banksel ANSELA
@@ -359,6 +317,12 @@ rst:
     goto init
     
     org 4
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;   
+; interrupt service routine
+; the only interrupt is on SYNC_PWM timer
+; this intterrupt trigger once 
+; for each horizontal line, i.e. 15748/sec.    
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;    
 isr:
     banksel SYNC_PWMINTF
     bcf SYNC_PWMINTF,PRIF
@@ -370,8 +334,10 @@ isr:
     xorlw 3
     skpnz
     bra vsync_end
-lt_256: ; lcount < 256
-    btfsc flags, F_MUTEX
+; scanline < 256
+; check if visible line    
+lt_256:
+    btfsc flags, F_MUTEX ; video output lockout
     bra isr_exit
     movfw lcountL
     sublw FIRST_VIDEO-1
@@ -381,9 +347,11 @@ lt_256: ; lcount < 256
     sublw LAST_VIDEO
     skpc
     bra isr_exit
-    call video_serialize
-    bra isr_exit    
-vsync_start: ; scanline 0 start vertical sync pulse
+; output video pixels for this line    
+    call video_serialize 
+    bra isr_exit 
+; scanline 0 start vertical sync pulse    
+vsync_start: 
     banksel SYNC_PWMDCL
     movlw (HORZ_PERIOD-HORZ_PULSE)&0xff
     movwf SYNC_PWMDCL
@@ -392,7 +360,8 @@ vsync_start: ; scanline 0 start vertical sync pulse
     bsf SYNC_PWMLDCON,LDA
     bsf flags, F_VSYNC
     bra isr_exit
-vsync_end: ; scanline 3 end vertical sync pulse
+; scanline 3 end vertical sync pulse
+vsync_end: 
     banksel SYNC_PWMDCL
     movlw HORZ_PULSE&0xff
     movwf SYNC_PWMDCL
@@ -401,24 +370,30 @@ vsync_end: ; scanline 3 end vertical sync pulse
     bsf SYNC_PWMLDCON,LDA
     bcf flags, F_VSYNC
     bra isr_exit
-gt_255: ; lcount>255
+; scan line > 255    
+gt_255:
+; check for end of field    
     movlw LAST_LINE&0xff
     btfss flags,F_EVEN
     addlw 1
     xorwf lcountL,W
     skpz
     bra tasks
+; this is end of field
+; reset line counter    
     clrf lcountL
     clrf lcountH
     movlw 1<<F_EVEN
-    xorwf flags,F
+    xorwf flags,F ; toggle field flag
     retfie
 ; round robin task scheduler
 ; each task execute once every 1/60th sec.
 ; condition:    
 ;   Task must complete inside
-;   horizontal period.
+;   horizontal period. i.e. before SYNC_PWM period end
+; 6 tasks slots available    
 tasks:
+; task selector    
     movfw lcountL
     skpnz
     bra task0
@@ -441,7 +416,7 @@ task0:
     bcf AUDIO_PWMCON,EN
     bra isr_exit
 task1:   
-; decrement game timer    
+; game timer    
     movf gtimer,F ; 
     skpnz
     bra isr_exit
@@ -456,7 +431,6 @@ task2:
     skpnc
     movlw LFSR_TAPS
     xorwf randH
-    bra isr_exit 
 isr_exit:
     incf lcountL
     skpnz
@@ -622,22 +596,26 @@ pixels_loop:
     movwf FSR0L
     return
 
-; fill_buffer
-; fill screen buffer with WREG value    
-fill_buffer: ; ( c -- )
+; clear_screen
+; all pixels black
+; input:
+;   none
+; output:
+;   none    
+clear_screen: 
     disable_video
     movlw high(VIDEO_BUFFER)
     movwf FSR0H
     movlw low(VIDEO_BUFFER)
     movwf FSR0L
     movlw BUFFER_SIZE
-    push    ; c size
-    pick 1
-fill_loop:    
+    push  ; T=byte count  
+    movlw 0
+cls_loop:    
     movwi FSR0++
     decfsz T
-    bra fill_loop
-    drop_n 2
+    bra cls_loop
+    drop
     enable_video
     return
 
@@ -685,10 +663,10 @@ get_pixel: ; ( x y -- 0|2^n ) n{0:7)
     return
     
     
-CLR_OP equ 0 ; put pixel to 0
-XOR_OP equ 1 ; invert pixel
-TEST_OP	 equ 2  ; test bit value  return its value as flag
-SET_OP equ 3 ; put pixel to 1 	 
+CLR_OP equ 0    ; put pixel to 0
+SET_OP equ 1    ; put pixel to 1 	 
+XOR_OP equ 2    ; invert pixel
+TEST_OP	 equ 3  ; test bit value  return its value as flag
 ;operation on pixel    
 ; inputs:
 ;   {x,y} coordinates
@@ -720,18 +698,10 @@ bitop01:
     movwf T    ; -- FSR0L FSR0H op mask
 ;operation selector    
     pick 1  ; WREG= op
-    skpnz
+    brw
     bra clear_bit
-    decf WREG
-    skpnz
-    bra xor_bit  ;
-    decf WREG
-    skpnz
-    bra test_bit
-; set bit  SET_OP
-    movfw T
-    iorwf INDF0,F
-    bra bitop02
+    bra set_bit
+    bra xor_bit
 test_bit:  ; TEST_OP
     movfw T
     andwf INDF0,W
@@ -741,6 +711,10 @@ clear_bit:  ; CLR_OP
     comf T,W
     andwf INDF0,F
     bra bitop02 ; -- FSR0L FSR0H op mask
+set_bit:
+    movfw T
+    iorwf INDF0,F
+    bra bitop02
 xor_bit: ; XOR_OP
     movfw T   ; -- FSR0L FSR0H op mask
     xorwf INDF0,F
@@ -1074,9 +1048,7 @@ vline_done:
 WELL_WIDTH equ 10
 WELL_DEPTH equ 22 
 game_init:
-;clear screen    
-    lit 0  
-    call fill_buffer
+    call clear_screen
 ; draw game well    
     lit WELL_DEPTH
     lit 0
@@ -1101,49 +1073,46 @@ game_init:
     lit LBL_LINES
     call print_label
 ; variables initialization
-    banksel 0
-    movlw 4
-    movwf tx
-    clrf ty
-    clrf tetrim
-    clrf angle
+    bsf flags,F_GSTOP
+clear_score:
+    banksel GAME_VAR
     clrf scoreL
     clrf scoreH
     clrf droppedL
     clrf droppedH
-    clrf buttons
-    bsf flags,F_GSTOP
     return
 
-; slide well row down
+; drop 1 row
 ; input:
-;   b  bottom row to slide
-;   t  target row
+;   r  row to drop
 ; output:
 ;   none
-slide_down: ; ( b t -- )
-    reserve 1
-row_loop: ; y{b:1}
+drop1: ; ( r -- )
+    reserve 1 ; r x  
+row_loop: ; y{r:1}
     movlw 10
-    movwf T ; -- b t x
+    movwf T ; -- r x
 col_loop:  ; x{10:1}
-    dup	  ; -- b t x x
+    dup	  ; -- r x x
+    pick 2
+    decf WREG
+    push  ; -- r x x r-1
+    call get_pixel ; -- r x p
+    over	; r x p x
     pick 3
-    push  ; -- b t x x y
-    call get_pixel
-    skpnz
-    lit CLR_OP
+    push	; r x p x r
+    pick 2 
     skpz
-    lit SET_OP
-    call bitop ; b t x x y op -- b t x f
-    drop   ; no need for f
-    decfsz T
+    movlw 1
+    push
+    call bitop ;  r x p x r op -- r x p f 
+    drop_n 2
+    decfsz T	; r x-1 
     bra col_loop
-    dec_n 1  ; dec t
-    dec_n 2  ; dec b
+    dec_n 1  ; dec r
     skpz 
     bra row_loop
-    drop_n 3
+    drop_n 2
     return
     
     
@@ -1185,8 +1154,8 @@ count_full: ; ( -- n)
     lit 0 ; full rows counter
     lit 21 ; row number {21:1}
 count_loop:
-    lit 0
-    over 
+    lit 0   ; n r s  number of bits set
+    over    ; n r s r
     call query_row ; n r s r -- n r s
     pop	    ; n r
     skpnz
@@ -1196,10 +1165,8 @@ count_loop:
     bra next_row
 ; this is a full row    
     inc_n 1 ; increment n
-    decf T,W
-    push      ; n r b 
-    over      ; n r b r
-    call slide_down ; n r b r -- n r
+    dup    ; n r r
+    call drop1 ; n r r -- n r
     incf T,F
 next_row:
     decfsz T,F
@@ -1216,18 +1183,15 @@ count_done:
 new_tminos:
     banksel GAME_VAR
     movlw 7
+    andwf randL,W
+    xorlw 7
+    skpz
+    xorlw 7
     movwf tetrim
-    clrf angle
-;    movlw 7
-;    andwf randL,W
-;    xorlw 7
-;    skpz
-;    xorlw 7
-;    movwf tetrim
-;    movlw 3
-;    andwf randH,W
-;    movwf angle
-;    movlw 4
+    movlw 3
+    andwf randH,W
+    movwf angle
+    movlw 4
     movwf tx
     clrf ty
     call print_tetrim
@@ -1267,6 +1231,8 @@ koro:
     bra wait_start
 wait_end:    
     drop_n 2
+    call clear_score
+    bcf flags, F_GSTOP
     return
  
 ; collision test
@@ -1286,13 +1252,13 @@ coll_test:
     btfss flags, F_COLL
     return
     banksel GAME_VAR
-    movfw buttons
-    case 1<<BTN_A, undo_hard_drop
-    case 1<<BTN_B, undo_soft_drop
-    case 1<<BTN_UP, undo_rot_right
-    case 1<<BTN_DN, undo_rot_left
-    case 1<<BTN_RT, undo_move_right
-    case 1<<BTN_LT, undo_move_left
+;    movfw buttons
+    case BTN_A, undo_hard_drop
+    case BTN_B, undo_soft_drop
+    case BTN_UP, undo_rot_right
+    case BTN_DN, undo_rot_left
+    case BTN_RT, undo_move_right
+    case BTN_LT, undo_move_left
     return
 undo_hard_drop:
     return
@@ -1320,9 +1286,9 @@ undo_move_left:
 ;   none
 ; output:
 ;   none
-update_display    
+update_display:    
 ; print score
-    banksel scoreL
+    banksel GAME_VAR
     movfw scoreL
     movwf accaL
     movfw scoreH
@@ -1331,10 +1297,10 @@ update_display
     lit 6
     call print_int
 ;print dropped line
-    banksel droppedL
+    banksel GAME_VAR
     movfw droppedL
     movwf accaL
-    movwf droppedH
+    movfw droppedH
     movwf accaH
     lit 43
     lit 18
@@ -1354,13 +1320,12 @@ tetris:
 ; wait button A press
 ; to start game    
     call wait_start 
-    bcf flags, F_GSTOP
 ; delete prompt
     lit 0
     lit 24
     lit LBL_PRESS
     call print_label
-; game start
+; game start here
 game_loop:
 ; generate new tetriminos
 ; if collision at this stage
@@ -1383,13 +1348,12 @@ fall_loop: ; tetriminos fall in the well
 ; read pad
     call read_pad
     banksel GAME_VAR
-    movfw buttons
-    case 1<<BTN_A, hard_drop
-    case 1<<BTN_B, soft_drop
-    case 1<<BTN_UP, rot_right
-    case 1<<BTN_DN, rot_left
-    case 1<<BTN_RT, move_right
-    case 1<<BTN_LT, move_left
+    case BTN_A, hard_drop
+    case BTN_B, soft_drop
+    case BTN_UP, rot_right
+    case BTN_DN, rot_left
+    case BTN_RT, move_right
+    case BTN_LT, move_left
     bra move_down
 hard_drop:
     bra move_down
@@ -1434,21 +1398,21 @@ move_down:
 ; check full row and clean
     call update_display ; erase numbers
     call count_full
-shift_score:
+; add full row count to dropped variable
     banksel GAME_VAR
     movfw T
-    addwf droppedL
+    addwf droppedL,F ; 
     clrw
     addwfc droppedH
+; count points = 2^n where n is count of dropped rows {1:4}    
     movf T,F
     skpnz
-    bra adjust_score
+    bra add_points
     movlw 1
     lslf WREG
     decfsz T,F
     bra $-2
-; adjust score 
-adjust_score:
+add_points:
     addwf scoreL
     clrw
     addwfc scoreH
@@ -1532,7 +1496,10 @@ init:
     movlw 0xE1
     movwf randH
 
-    
+
+;;;;;;; test code ;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    
 main:
     call game_init
     call tetris
