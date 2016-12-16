@@ -463,21 +463,6 @@ div10_loop:
     enable_video
     return
     
-;mult6
-; multiply WREG by PBL    
-; WREG*6
-; WREG*6=WREG*4+WREG*2    
-; input:
-;   WREG
-; output:
-;   WREG    
-mult6: 
-    movwf t0
-    lslf t0,F    ; t0=2*WREG
-    lslf t0,W  ; WREG=4*WREG
-    addwf t0,W ; WREG=6*WREG
-    return
-
 ;read_pad    
 ;read game pad
 ; store value in 'buttons'
@@ -568,8 +553,10 @@ set_yptr: ; ( y -- )
     movwf FSR0L
     movlw VIDEO_BUFFER>>8
     movwf FSR0H
+    lslf T,F
+    lslf T,W
+    addwf T,F
     pop
-    call mult6
     addwf FSR0L
     clrw 
     addwfc FSR0H
@@ -1269,16 +1256,14 @@ coll_test:
     return
     banksel GAME_VAR
 ;    movfw buttons
-    case BTN_A, undo_hard_drop
-    case BTN_B, undo_soft_drop
+    case BTN_B, undo_drop_tetrim
     case BTN_UP, undo_rot_right
     case BTN_DN, undo_rot_left
     case BTN_RT, undo_move_right
     case BTN_LT, undo_move_left
     return
-undo_hard_drop:
-    return
-undo_soft_drop:
+undo_drop_tetrim:
+    decf ty,F
     return
 undo_rot_right:
     decf angle,F
@@ -1322,6 +1307,25 @@ update_display:
     lit 18
     call print_int
     return
+
+;game_over
+; signal game terminated
+; input:
+;   none
+; output:
+;   none
+game_over:
+    lit 3
+beep:    
+    lit 30
+    lit 0
+    call tone
+    wait_sound
+    pause 15
+    decfsz T
+    bra beep
+    drop
+    return
     
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;   game logic
@@ -1349,14 +1353,7 @@ game_loop:
     call new_tminos
     btfss flags, F_GSTOP
     bra fall_loop
-#ifdef SOUND_SUPPORT    
-    lit 30
-    lit 19
-    call tone
-    wait_sound
-#else
-    pause 60
-#endif    
+    call game_over
     call game_init
     bra tetris
 fall_loop: ; tetriminos fall in the well
@@ -1368,17 +1365,22 @@ fall_loop: ; tetriminos fall in the well
 ; read pad
     call read_pad
     banksel GAME_VAR
-    case BTN_A, hard_drop
-    case BTN_B, soft_drop
+    case BTN_B, drop_tetrim
     case BTN_UP, rot_right
     case BTN_DN, rot_left
     case BTN_RT, move_right
     case BTN_LT, move_left
     bra move_down
-hard_drop:
-    bra move_down
-soft_drop:
-    bra move_down
+drop_tetrim:
+    banksel GAME_VAR
+    incf ty,F
+    call coll_test
+    btfss flags, F_COLL
+    bra $-4
+;    bcf flags, F_COLL
+    call print_tetrim
+    pop
+    bra score_update
 rot_left:
     decf angle,F
     movlw 3
@@ -1415,6 +1417,7 @@ move_down:
     decf ty,F
     call print_tetrim
     pop
+score_update:    
 ; check full row and clean
     call update_display ; erase numbers
     call count_full
@@ -1605,7 +1608,6 @@ I0: dw 0x0444,0x1400 ; I R0
 LBL_SCORE equ 0
 LBL_LINES equ 1
 LBL_PRESS equ 2
- 
 labels:
     brw
     bra txt_score
@@ -1626,6 +1628,7 @@ txt_press: ; "PRESS A"
     pop
     brw
     dt 17,18,12,19,19,21,10,255
+
     
 #ifdef SOUND_SUPPORT
 tone_pr:
