@@ -99,9 +99,11 @@ F_VSYNC equ 0 ; vertical sync active
 F_EVEN equ 1  ; even field
 F_GTMR equ 2  ; game timer active
 F_GSTOP equ 3 ; game stopped
-F_SND equ 4 ; sound timer active 
-F_COLL equ 5 ; collision flag
+F_COLL equ 4 ; collision flag
+#ifdef SOUND_SUPPORT 
+F_SND equ 5 ; sound timer active 
 F_NO_SND equ 6 ; quiet mode
+#endif
  
 LFSR_TAPS equ 0xB4 ; xor mask
  
@@ -162,12 +164,6 @@ STACK_SIZE equ 32
  
 S0 equ 0x1F ; stack base address - 1
 
-pstack_init macro ; initialise stack pointer
-    clrf FSR1H
-    movlw S0
-    movwf FSR1L
-    endm
-    
 push macro   ; ( -- n ) push WREG on stack
     movwi ++SP
     endm
@@ -446,8 +442,10 @@ div10_loop:
 ; the Vadc value is below its threshold
 read_pad:
     clrf buttons
+#ifdef SOUND_SUPPORT    
     btfsc flags, F_SND
     return ; can't read while tone playing
+#endif    
     banksel TRISA
     bsf TRISA,ADC_PIN
     banksel ADCON0
@@ -1178,10 +1176,7 @@ new_tminos:
     movlw 4
     movwf tx
     clrf ty
-    call print_tetrim ; -- f
-    call print_tetrim ; -- f f
-    drop
-    pop
+    call coll_test
     skpz
     bsf flags, F_GSTOP
     return
@@ -1243,41 +1238,14 @@ wait_end:
 ; input:
 ;   none
 ; output:
-;   none
+;   WREG=f collision flag 0|1
+;   Z==0 no collision    
 coll_test: 
     call print_tetrim ; -- f
     call print_tetrim ; -- f f
     drop
-    pop
-    skpnz
-    return
-; collision occured undo last move    
     banksel GAME_VAR
-;    movfw buttons
-    case BTN_B, undo_drop_tetrim
-    case BTN_UP, undo_rot_right
-    case BTN_DN, undo_rot_left
-    case BTN_RT, undo_move_right
-    case BTN_LT, undo_move_left
-    return
-undo_drop_tetrim:
-    decf ty,F
-    return
-undo_rot_right:
-    decf angle,F
-    movlw 3
-    andwf angle,F
-    return
-undo_rot_left:
-    incf angle,F
-    movlw 3
-    andwf angle,F
-    return
-undo_move_right:
-    decf tx,F
-    return
-undo_move_left:
-    incf tx,F
+    pop
     return
 
 ;update_display    
@@ -1388,42 +1356,48 @@ drop_tetrim:
     banksel GAME_VAR
     incf ty,F
     call coll_test
-    btfss flags, F_COLL
-    bra $-4
-    call print_tetrim
-    pop
+    skpnz
+    bra drop_tetrim
+    decf ty,F
     bra score_update
 rot_left:
     decf angle,F
     movlw 3
     andwf angle,F
     call coll_test
+    skpz
+    incf angle,F
+    movlw 3
+    andwf angle,F
     bra move_down
 rot_right:
     incf angle,F
     movlw 3
     andwf angle,F
     call coll_test
+    skpz
+    decf angle,F
+    movlw 3
+    andwf angle,F
     bra move_down
 move_left:
     decf tx,F
     call coll_test
+    skpz
+    incf tx,F
     bra move_down
 move_right:
     incf tx,F
     call coll_test
+    skpz
+    decf tx,F
 ; move down
 move_down:
-    bcf flags, F_COLL
-    banksel GAME_VAR
+;    banksel GAME_VAR
     incf ty,F ; tetriminos fall
-    call print_tetrim ; -- f
-    call print_tetrim ; -- f f
-    drop
-    pop
+    call coll_test
     skpnz
     bra fall_loop
-    banksel GAME_VAR
     decf ty,F
     call print_tetrim
     pop
@@ -1458,7 +1432,10 @@ add_points:
 ; hardware initialization
 ;;;;;;;;;;;;;;;;;;;;;;;;;;    
 init:
-    pstack_init
+; parameter stack initialization    
+    clrf FSR1H
+    movlw S0
+    movwf FSR1L
 ; ADC configuration
     banksel ADCON0
     movlw (PAD_CHS<<CHS0)
