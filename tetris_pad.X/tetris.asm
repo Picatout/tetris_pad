@@ -101,6 +101,7 @@ F_GTMR equ 2  ; game timer active
 F_GSTOP equ 3 ; game stopped
 F_SND equ 4 ; sound timer active 
 F_COLL equ 5 ; collision flag
+F_NO_SND equ 6 ; quiet mode
  
 LFSR_TAPS equ 0xB4 ; xor mask
  
@@ -727,14 +728,10 @@ xor_row_done: ; n x y
 ; output:
 ;   PMDATH:PMDAL contain 14 bits data word
 ; side effect:    
-;   reset <nibble> variable 
+;   set 'nibble' counter 
 ;   modify BSR    
-get_flash_word: ; ( ofs lo hi -- )
+get_flash_word: ; ( ofs -- )
     banksel PMADR
-    pop
-    movwf PMADRH
-    pop
-    movwf PMADRL
     pop
     addwf PMADRL,F
     clrw 
@@ -744,7 +741,11 @@ read_flash:
     bsf PMCON1, RD
     nop
     nop
-    clrf nibble
+    swapf PMDATH,W
+    andlw 3
+    skpnz
+    movlw 3
+    movwf nibble
     return
 
 ;next_flash_word    
@@ -755,7 +756,7 @@ read_flash:
 ; output:
 ;   PMDAT    
 ; side effect:
-;   clear 'nibble'    
+;   set 'nibble' counter    
 ;   modify BSR
 next_flash_word:
     banksel PMADR
@@ -774,47 +775,68 @@ next_flash_word:
 ;   increment 'nibble' variable    
 ;   modify BSR
 get_nibble: ; ( -- nibble )
-    movlw 3
-    xorwf nibble,W
+    movfw nibble
     skpnz 
     call next_flash_word
-    banksel PMDAT
+;    banksel PMDAT
 ; select nibble in word    
-    movfw nibble
+    xorlw 3
     skpnz
     bra row0
-    decfsz WREG
-    bra row2
-row1:    
-    movfw PMDATL
-    bra nibble_mask
+    xorlw 3
+    xorlw 2
+    skpnz
+    bra row1
 row2:
     swapf PMDATL,W
+    bra nibble_mask
+row1:    
+    movfw PMDATL
     bra nibble_mask
 row0:    
     swapf PMDATH,W
 nibble_mask:
     andlw 0xf0
     push
-    incf nibble,F ; advance nibble counter
+    decf nibble,F ; advance nibble counter
     return
 
-;print_row    
-; print 4 pixels row
-; inputs:
-;   x,y left coordinates
-; output:    
-;   advance y coordinate to next row    
-print_row: ; ( x y -- x y )     
-    call get_nibble ; x y -- x y n 
-    pick 2 ; x
-    push    ; x y n x
-    pick 2  ; y
-    push      ; x y n x y
-    call xor_row ; x y n x y -- x y
-    incf T,F ; y+=1
+;bitmap
+; apply a bitmap from program memory to video_buffer
+; a bitmap is 4 pixels wide and any number of rows    
+; input:
+;   PMADR  point to table in program memory    
+;   x,y  left/top coordinates in video_buffer
+;   ofs  offset of bitmap in table
+; output:
+;   none
+bitmap: ; ( x y ofs -- )
+    call get_flash_word  ; x y ofs -- x y 
+bmp00:
+    movfw nibble
+    push    ; x y cntr
+bmp02:    
+    call get_nibble ; x y cntr -- x y cntr n 
+    pick 3 ; x
+    push    ; x y cntr n x
+    pick 3  ; y
+    push      ; x y cntr n x y
+    call xor_row ; x y cntr n x y -- x y cntr
+    inc_n 1 ; y+=1
+    decfsz T
+    bra bmp02
+;    banksel PMDAT
+    swapf PMDATH,W
+    andlw 3
+    skpnz
+    bra bmp01
+    drop_n 3  ; clean stack
     return
-
+bmp01:
+    drop  ; x y 
+    call next_flash_word
+    bra bmp00
+    
 ;print_char     
 ; draw character in video_buffer 
 ; input:
@@ -824,15 +846,12 @@ print_row: ; ( x y -- x y )
 ;   none    
 print_char: ; ( x y c -- )
     lslf T ; 2 words per table entry
-    lit low(digits)
-    lit high(digits) ; x y ofs adrL adrH
-    call get_flash_word  ; -- x y 
-    call print_row
-    call print_row
-    call print_row 
-    call print_row 
-    call print_row 
-    drop_n 2  ; ( x y -- )
+    banksel PMADR
+    movlw low(digits)
+    movwf PMADRL
+    movlw high(digits)
+    movwf PMADRH
+    call bitmap ; x y ofs -- 
     return
 
 ;print_tetrim    
@@ -850,35 +869,26 @@ print_char: ; ( x y c -- )
 print_tetrim: ; ( -- f )
     bcf flags, F_COLL
     banksel GAME_VAR
+    movfw tx
+    push    ; -- x
+    movfw ty
+    push    ; -- x y 
     movfw angle
-    push    
+    push    ; -- x y a
     lslf tetrim,W   ; 4 words per table entry, one for each angle
     lslf WREG
     xorlw 24
     skpnz
     lslf T,F
     xorlw 24
-    addwf T,F  ; ofs
+    addwf T,F  ; x y ofs
+    banksel PMADR
     movlw low(tetriminos)
-    push    ; ofs addrL
+    movwf PMADRL
     movlw high(tetriminos)
-    push    ; ofs addrL addrH
-    call get_flash_word  ; of addrL addrH --
-    banksel GAME_VAR
-    movfw tx
-    push    ; -- x
-    movfw ty
-    push    ; -- x y 
-    call print_row ; x y -- x y+1
-    call print_row
-    call print_row
-    banksel PMDAT
-    movlw 0x30
-    andwf PMDATH,W
-    skpnz
-    call print_row
-    drop_n 1
-    clrf T
+    movwf PMADRH
+    call bitmap
+    lit 0
     btfsc flags, F_COLL
     incf T,F
     return
@@ -1190,6 +1200,8 @@ wait_start:
     push    ; count
     lit 0   ; sequence
 koro:
+    btfsc flags, F_NO_SND
+    bra no_sound
     incf T,F ; -- count sequence
     movfw T  ; WREG=sequence
     call korobeiniki
@@ -1200,9 +1212,12 @@ koro:
     push    ; -- count nidx duration note
     call tone  ; -- count nidx 
     wait_sound
+no_sound:    
     call read_pad
     btfsc buttons, BTN_A
     bra wait_end
+    btfsc buttons, BTN_B
+    bsf flags, F_NO_SND
     dec_n 1
     skpz
     bra koro
@@ -1545,29 +1560,29 @@ main:
 ;****************************************************************************
 
 digits: ; each digit is 5 rows
-    dw 0x0EAA,0x2AE0 ; 0
-    dw 0x04C4,0x24E0 ; 1
-    dw 0x0E2E,0x28E0 ; 2
-    dw 0x0E2E,0x22E0 ; 3
-    dw 0x0AAE,0x2220 ; 4
-    dw 0x0E8E,0x22E0 ; 5
-    dw 0x088E,0x2AE0 ; 6
-    dw 0x0E22,0x2220 ; 7
-    dw 0x0EAE,0x2AE0 ; 8
-    dw 0x0EAE,0x2220 ; 9
+    dw 0x0EAA,0x20AE ; 0
+    dw 0x04C4,0x204E ; 1
+    dw 0x0E2E,0x208E ; 2
+    dw 0x0E2E,0x202E ; 3
+    dw 0x0AAE,0x2022 ; 4
+    dw 0x0E8E,0x202E ; 5
+    dw 0x088E,0x20AE ; 6
+    dw 0x0E22,0x2022 ; 7
+    dw 0x0EAE,0x20AE ; 8
+    dw 0x0EAE,0x2022 ; 9
 ; letters needed for 'SCORE' and 'LINES" labels
-    dw 0x0EAE,0x2AA0 ; A  code 10
-    dw 0x0688,0x2860 ; C  code 11
-    dw 0x0E8E,0x28E0 ; E  code 12
-    dw 0x0E44,0x24E0 ; I  code 13
-    dw 0x0888,0x28E0 ; L  code 14
-    dw 0x08CA,0x2AA0 ; N  code 15
-    dw 0x04AA,0x2A40 ; O  code 16
-    dw 0x0EAE,0x2880 ; P  code 17
-    dw 0x08EA,0x2880 ; R  code 18
-    dw 0x0684,0x22C0 ; S  code 19
-    dw 0x0040,0x2400 ; :  code 20
-    dw 0x2000,0x2000 ; space code 21
+    dw 0x0EAE,0x20AA ; A  code 10
+    dw 0x0688,0x2086 ; C  code 11
+    dw 0x0E8E,0x208E ; E  code 12
+    dw 0x0E44,0x204E ; I  code 13
+    dw 0x0888,0x208E ; L  code 14
+    dw 0x08CA,0x20AA ; N  code 15
+    dw 0x04AA,0x20A4 ; O  code 16
+    dw 0x0EAE,0x2088 ; P  code 17
+    dw 0x08EA,0x2088 ; R  code 18
+    dw 0x0684,0x202C ; S  code 19
+    dw 0x0040,0x2040 ; :  code 20
+    dw 0x1000,0x0000 ; space code 21
 
 ; comments notation: Rn clockwise rotation n*90 degr.    
 ; note that vertical I as 4 rows so it needs 2 words    
@@ -1575,33 +1590,33 @@ tetriminos:
     dw 0x388C ; L R0
     dw 0x30E8 ; L R1
     dw 0x3C44 ; L R2
-    dw 0x32E0 ; L R3
+    dw 0x202E ; L R3
     dw 0x344C ; J R0
-    dw 0x38E0 ; J R1
+    dw 0x208E ; J R1
     dw 0x3644 ; J R2
     dw 0x30E2 ; J R3
-    dw 0x3CC0 ; O R0 
-    dw 0x3CC0 ; O R2 
-    dw 0x3CC0 ; O R2 
-    dw 0x3CC0 ; O R3 
-    dw 0x36C0 ; S R0
+    dw 0x20CC ; O R0 
+    dw 0x20CC ; O R2 
+    dw 0x20CC ; O R2 
+    dw 0x20CC ; O R3 
+    dw 0x206C ; S R0
     dw 0x3462 ; S R1
-    dw 0x36C0 ; S R2
+    dw 0x206C ; S R2
     dw 0x3462 ; S R3
-    dw 0x3E40 ; T R0
+    dw 0x20E4 ; T R0
     dw 0x3262 ; T R1
     dw 0x304E ; T R2
     dw 0x38C8 ; T R3
-    dw 0x3C60 ; Z R0
+    dw 0x20C6 ; Z R0
     dw 0x34C8 ; Z R1
-    dw 0x3C60 ; Z R3
+    dw 0x20C6 ; Z R3
     dw 0x34C8 ; Z R4
 ; annoying! I tetriminos need a special treatment 
 ; because vertical I need 2 words for encoding.   
-    dw 0x0444,0x1400 ; I R0  
-    dw 0x300F,0x1000 ; I R1  second word is filling for alignment
-    dw 0x0222,0x1200 ; I R2
-    dw 0x20F0,0x1000 ; I R3  
+    dw 0x0444,0x1004 ; I R0  
+    dw 0x200F,0x0000 ; I R1  second word is filling for alignment
+    dw 0x0444,0x1004 ; I R2
+    dw 0x200F,0x0000 ; I R3  
 
 #ifdef SOUND_SUPPORT
 ; tempered scale timer period values    
