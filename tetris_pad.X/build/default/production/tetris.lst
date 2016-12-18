@@ -1,4 +1,4 @@
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE  1
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -57,7 +57,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
   00000DC0            00041 SYNC_PWMOFCON equ PWM3OFCON ; offset control SFR
   00000DBF            00042 SYNC_PWMLDCON equ PWM3LDCON ; load control SFR
   00000006            00043 SYNC_IE equ PWM3IE  ; interrupt enable bit
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE  2
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -116,7 +116,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00094     bra label
                       00095     endm
                       00096     
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE  3
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -175,7 +175,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
   00000020            00147 STACK_SIZE equ 32
                       00148  
   0000001F            00149 S0 equ 0x1F ; stack base address - 1
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE  4
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE  4
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -234,7 +234,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00200     endm
                       00201     
                       00202 reserve macro n ; reserve n bytes on stack for local variables
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE  5
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE  5
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -293,7 +293,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00253 ; arithmetic accumulator A 16 bits
 0008                  00254 accaL res 1
 0009                  00255 accaH res 1
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE  6
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE  6
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -352,7 +352,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00306 ; scanline 0 start vertical sync pulse    
 0016                  00307 vsync_start: 
 0016   003B           00308     banksel SYNC_PWMDCL
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE  7
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE  7
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -411,7 +411,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 003A   3???           00359     bra isr_exit
 003B                  00360 task0:
                       00361 #ifdef SOUND_SUPPORT    
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE  8
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE  8
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -470,7 +470,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00412 ;   acca dividend  16 bits
                       00413 ; output:
                       00414 ;   acca: quotient
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE  9
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE  9
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -529,7 +529,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0074                  00450 try_a:
                       00451     try_button A_THR, try_b
 0074   3040               M     movlw A_THR
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 10
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 10
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -588,7 +588,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00479 ; play a tone
                       00480 ; input:
                       00481 ;   t   duration in multiple of 1/60 sec.
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 11
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 11
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -647,7 +647,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00529     
                       00530 ;video_serialize
                       00531 ; serialise video pixels to output pin
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 12
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 12
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -706,7 +706,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00D6   3???           00562     bra byte_serialize
                       00563     drop ; discard bytes counter
 00D7   317F               M    addfsr SP,-1
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 13
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 13
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -765,7 +765,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 00F0   3601           00608     lsrf T,W   
 00F1   3689           00609     lsrf WREG
 00F2   3689           00610     lsrf WREG
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 14
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 14
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -824,7 +824,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0108   0500           00660     andwf INDF0,W
 0109   0008           00661     return
                       00662     
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 15
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 15
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -883,7 +883,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 011F                  00704 xor_row02:
                       00705     inc_n 1  ; x+=1
 011F   3F7F               M     moviw -1[SP]
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 16
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 16
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -942,7 +942,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0135   0A91           00752     incf PMADRL
 0136   1903           00753     skpnz
 0137   0A92           00754     incf PMADRH
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 17
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 17
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1001,7 +1001,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 014D                  00804 bmp00:
 014D   08??           00805     movfw nibble
                       00806     push    ; x y cntr
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 18
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 18
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1060,7 +1060,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00847 ; print current tetriminos
                       00848 ; input:
                       00849 ;   none
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 19
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 19
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1119,7 +1119,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0185   0801           00895     movfw T     ; WREG= labelL
 0186   000A           00896     callw      
 0187   1B89           00897     btfsc WREG,7
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 20
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 20
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1178,7 +1178,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 01A0                  00934 print_int00:    
 01A0   08??           00935     movfw accaH
 01A1   04??           00936     iorwf accaL,W
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 21
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 21
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1237,7 +1237,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 01BD   3???           00972     bra hline_done  ; length=0
 01BE   0389           00973     decf WREG
                       00974     insert 2  ; decrement length
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 22
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 22
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1296,7 +1296,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       01010 ; output:
                       01011 ;   none
 01D7                  01012 drop1: ; ( r -- )
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 23
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 23
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1355,7 +1355,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       01050 ;   r row number: 0 top, 21 bottom  
                       01051 ; output:    
                       01052 ;   s={0:10}  number of bits set
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 24
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 24
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1414,7 +1414,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 020C   2???           01084     call query_row ; n r s r -- n r s
                       01085     pop     ; n r
 020D   0017               M     moviw SP--
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 25
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 25
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1473,7 +1473,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       01130 ; button A pressed    
                       01131 ; input:
                       01132 ;   none
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 26
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 26
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1532,7 +1532,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       01168     drop_n 2
 0251   317E               M     addfsr SP,-2
                       01169 #else
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 27
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 27
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1591,7 +1591,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       01218     lit 6
 0266   3006               M    movlw 6
 0267   001C               M    movwi ++SP 
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 28
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 28
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1650,7 +1650,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0289   108C           01261     bcf VIDEO_LAT,VIDEO_OUT
 028A   100C           01262     bcf LATA,LED_PIN
                       01263 #ifdef SOUND_SUPPORT    
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 29
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 29
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1709,7 +1709,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 02B5   01??           01314     clrf lcountH
 02B6   01??           01315     clrf flags
                       01316     ; seed lfsr PRNG
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 30
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 30
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1768,7 +1768,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 02D5   001C               M    movwi ++SP 
 02D6   2???           01348     call print_label
                       01349 ; print "LINES" label    
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 31
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 31
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1827,7 +1827,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 02EF   001C               M     movwi ++SP
 02F0   2???           01385     call clear_pixel ; x y x y -- x y
                       01386     dec_n 1 ; x-=1
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 32
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 32
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1886,7 +1886,7 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 0314   3???               M     bra move_right
                       01419     case BTN_LT, move_left
 0315   1900               M     btfsc buttons,BTN_LT
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 33
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 33
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -1901,274 +1901,277 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
 031B   1903           01425     skpnz
 031C   3???           01426     bra drop_tetrim
 031D   03??           01427     decf ty,F
-031E   3???           01428     bra score_update
-031F                  01429 rot_left:
-031F   03??           01430     decf angle,F
-0320   3003           01431     movlw 3
-0321   05??           01432     andwf angle,F
-0322   2???           01433     call coll_test
-0323   1D03           01434     skpz
-0324   0A??           01435     incf angle,F
-0325   3003           01436     movlw 3
-0326   05??           01437     andwf angle,F
-0327   3???           01438     bra move_down
-0328                  01439 rot_right:
-0328   0A??           01440     incf angle,F
-0329   3003           01441     movlw 3
-032A   05??           01442     andwf angle,F
-032B   2???           01443     call coll_test
-032C   1D03           01444     skpz
-032D   03??           01445     decf angle,F
-032E   3003           01446     movlw 3
-032F   05??           01447     andwf angle,F
-0330   3???           01448     bra move_down
-0331                  01449 move_left:
-0331   03??           01450     decf tx,F
-0332   2???           01451     call coll_test
-0333   1D03           01452     skpz
-0334   0A??           01453     incf tx,F
-0335   3???           01454     bra move_down
-0336                  01455 move_right:
-0336   0A??           01456     incf tx,F
-0337   2???           01457     call coll_test
-0338   1D03           01458     skpz
-0339   03??           01459     decf tx,F
-                      01460 ; move down
-033A                  01461 move_down:
-                      01462 ;    banksel GAME_VAR
-033A   0A??           01463     incf ty,F ; tetriminos fall
-033B   2???           01464     call coll_test
-033C   1903           01465     skpnz
-033D   3???           01466     bra fall_loop
-033E   03??           01467     decf ty,F
-033F   2???           01468     call print_tetrim
-                      01469     pop
-0340   0017               M     moviw SP--
-0341                  01470 score_update:    
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 34
+031E   2???           01428     call print_tetrim
+                      01429     pop
+031F   0017               M     moviw SP--
+0320   3???           01430     bra score_update
+0321                  01431 rot_left:
+0321   03??           01432     decf angle,F
+0322   3003           01433     movlw 3
+0323   05??           01434     andwf angle,F
+0324   2???           01435     call coll_test
+0325   1D03           01436     skpz
+0326   0A??           01437     incf angle,F
+0327   3003           01438     movlw 3
+0328   05??           01439     andwf angle,F
+0329   3???           01440     bra move_down
+032A                  01441 rot_right:
+032A   0A??           01442     incf angle,F
+032B   3003           01443     movlw 3
+032C   05??           01444     andwf angle,F
+032D   2???           01445     call coll_test
+032E   1D03           01446     skpz
+032F   03??           01447     decf angle,F
+0330   3003           01448     movlw 3
+0331   05??           01449     andwf angle,F
+0332   3???           01450     bra move_down
+0333                  01451 move_left:
+0333   03??           01452     decf tx,F
+0334   2???           01453     call coll_test
+0335   1D03           01454     skpz
+0336   0A??           01455     incf tx,F
+0337   3???           01456     bra move_down
+0338                  01457 move_right:
+0338   0A??           01458     incf tx,F
+0339   2???           01459     call coll_test
+033A   1D03           01460     skpz
+033B   03??           01461     decf tx,F
+                      01462 ; move down
+033C                  01463 move_down:
+                      01464 ;    banksel GAME_VAR
+033C   0A??           01465     incf ty,F ; tetriminos fall
+033D   2???           01466     call coll_test
+033E   1903           01467     skpnz
+033F   3???           01468     bra fall_loop
+0340   03??           01469     decf ty,F
+0341   2???           01470     call print_tetrim
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 34
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      01471 ; check full row and clean
-0341   2???           01472     call update_display ; erase numbers
-0342   2???           01473     call count_full
-                      01474 ; add full row count to dropped variable
-0343   0020           01475     banksel GAME_VAR
-0344   0801           01476     movfw T
-0345   07??           01477     addwf droppedL,F ; 
-0346   0103           01478     clrw
-0347   3D??           01479     addwfc droppedH
-                      01480 ; count points = 2^n where n is count of dropped rows {1:4}    
-0348   0881           01481     movf T,F
-0349   1903           01482     skpnz
-034A   3???           01483     bra add_points
-034B   3001           01484     movlw 1
-034C   3589           01485     lslf WREG
-034D   0B81           01486     decfsz T,F
-034E   3???           01487     bra $-2
-034F                  01488 add_points:
-034F   07??           01489     addwf scoreL
-0350   0103           01490     clrw
-0351   3D??           01491     addwfc scoreH
-                      01492     drop 
-0352   317F               M    addfsr SP,-1
-0353   2???           01493     call update_display ; display new values
-0354   3???           01494     bra game_loop
-                      01495     
-                      01496     
-                      01497 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                      01498 ;   data tables
+                      01471     pop
+0342   0017               M     moviw SP--
+0343                  01472 score_update:    
+                      01473 ; check full row and clean
+0343   2???           01474     call update_display ; erase numbers
+0344   2???           01475     call count_full
+                      01476 ; add full row count to dropped variable
+0345   0020           01477     banksel GAME_VAR
+0346   0801           01478     movfw T
+0347   07??           01479     addwf droppedL,F ; 
+0348   0103           01480     clrw
+0349   3D??           01481     addwfc droppedH
+                      01482 ; count points = 2^n where n is count of dropped rows {1:4}    
+034A   0881           01483     movf T,F
+034B   1903           01484     skpnz
+034C   3???           01485     bra add_points
+034D   3001           01486     movlw 1
+034E   3589           01487     lslf WREG
+034F   0B81           01488     decfsz T,F
+0350   3???           01489     bra $-2
+0351                  01490 add_points:
+0351   07??           01491     addwf scoreL
+0352   0103           01492     clrw
+0353   3D??           01493     addwfc scoreH
+                      01494     drop 
+0354   317F               M    addfsr SP,-1
+0355   2???           01495     call update_display ; display new values
+0356   3???           01496     bra game_loop
+                      01497     
+                      01498     
                       01499 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-                      01500 
-                      01501 ; **************** encoding ************************************************
-                      01502 ; enhanced PIC instructions are coded on 14 bits
-                      01503 ; these 14 bits can be read as data using program memory
-                      01504 ; writing/reading mechanism, see datasheet chapter 10 for detail.
-                      01505 ; the 'dw' assembler directive encode data in those 14 bits contrary to 'dt'
-                      01506 ; directive which encode a single byte as a RETLW instruction.
-                      01507 ; So we get a 50% compression by encoding 3 nibbles/program word. 
-                      01508 ; The encoding used in the following tables is as follow:    
-                      01509 ; bits 13:12  number of nibbles where 0 means there is more than 3 nibbles
-                      01510 ; in this data chunk so 1 or more other words follow this one.    
-                      01511 ; other 12 bits are 3 nibbles (i.e. 4 bits slices).
-                      01512 ;****************************************************************************
-                      01513 
-0355                  01514 digits: ; each digit is 5 rows
-0355   0EAA 20AE      01515     dw 0x0EAA,0x20AE ; 0
-0357   04C4 204E      01516     dw 0x04C4,0x204E ; 1
-0359   0E2E 208E      01517     dw 0x0E2E,0x208E ; 2
-035B   0E2E 202E      01518     dw 0x0E2E,0x202E ; 3
-035D   0AAE 2022      01519     dw 0x0AAE,0x2022 ; 4
-035F   0E8E 202E      01520     dw 0x0E8E,0x202E ; 5
-0361   088E 20AE      01521     dw 0x088E,0x20AE ; 6
-0363   0E22 2022      01522     dw 0x0E22,0x2022 ; 7
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 35
+                      01500 ;   data tables
+                      01501 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                      01502 
+                      01503 ; **************** encoding ************************************************
+                      01504 ; enhanced PIC instructions are coded on 14 bits
+                      01505 ; these 14 bits can be read as data using program memory
+                      01506 ; writing/reading mechanism, see datasheet chapter 10 for detail.
+                      01507 ; the 'dw' assembler directive encode data in those 14 bits contrary to 'dt'
+                      01508 ; directive which encode a single byte as a RETLW instruction.
+                      01509 ; So we get a 50% compression by encoding 3 nibbles/program word. 
+                      01510 ; The encoding used in the following tables is as follow:    
+                      01511 ; bits 13:12  number of nibbles where 0 means there is more than 3 nibbles
+                      01512 ; in this data chunk so 1 or more other words follow this one.    
+                      01513 ; other 12 bits are 3 nibbles (i.e. 4 bits slices).
+                      01514 ;****************************************************************************
+                      01515 
+0357                  01516 digits: ; each digit is 5 rows
+0357   0EAA 20AE      01517     dw 0x0EAA,0x20AE ; 0
+0359   04C4 204E      01518     dw 0x04C4,0x204E ; 1
+035B   0E2E 208E      01519     dw 0x0E2E,0x208E ; 2
+035D   0E2E 202E      01520     dw 0x0E2E,0x202E ; 3
+035F   0AAE 2022      01521     dw 0x0AAE,0x2022 ; 4
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 35
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-0365   0EAE 20AE      01523     dw 0x0EAE,0x20AE ; 8
-0367   0EAE 2022      01524     dw 0x0EAE,0x2022 ; 9
-                      01525 ; letters needed for 'SCORE' and 'LINES" labels
-0369   0EAE 20AA      01526     dw 0x0EAE,0x20AA ; A  code 10
-036B   0688 2086      01527     dw 0x0688,0x2086 ; C  code 11
-036D   0E8E 208E      01528     dw 0x0E8E,0x208E ; E  code 12
-036F   0E44 204E      01529     dw 0x0E44,0x204E ; I  code 13
-0371   0888 208E      01530     dw 0x0888,0x208E ; L  code 14
-0373   08CA 20AA      01531     dw 0x08CA,0x20AA ; N  code 15
-0375   04AA 20A4      01532     dw 0x04AA,0x20A4 ; O  code 16
-0377   0EAE 2088      01533     dw 0x0EAE,0x2088 ; P  code 17
-0379   08EA 2088      01534     dw 0x08EA,0x2088 ; R  code 18
-037B   0684 202C      01535     dw 0x0684,0x202C ; S  code 19
-037D   0040 2040      01536     dw 0x0040,0x2040 ; :  code 20
-037F   1000 0000      01537     dw 0x1000,0x0000 ; space code 21
-                      01538 
-                      01539 ; comments notation: Rn clockwise rotation n*90 degr.    
-                      01540 ; note that vertical I as 4 rows so it needs 2 words    
-0381                  01541 tetriminos: 
-0381   388C           01542     dw 0x388C ; L R0
-0382   30E8           01543     dw 0x30E8 ; L R1
-0383   3C44           01544     dw 0x3C44 ; L R2
-0384   202E           01545     dw 0x202E ; L R3
-0385   344C           01546     dw 0x344C ; J R0
-0386   208E           01547     dw 0x208E ; J R1
-0387   3644           01548     dw 0x3644 ; J R2
-0388   30E2           01549     dw 0x30E2 ; J R3
-0389   20CC           01550     dw 0x20CC ; O R0 
-038A   20CC           01551     dw 0x20CC ; O R2 
-038B   20CC           01552     dw 0x20CC ; O R2 
-038C   20CC           01553     dw 0x20CC ; O R3 
-038D   206C           01554     dw 0x206C ; S R0
-038E   3462           01555     dw 0x3462 ; S R1
-038F   206C           01556     dw 0x206C ; S R2
-0390   3462           01557     dw 0x3462 ; S R3
-0391   20E4           01558     dw 0x20E4 ; T R0
-0392   3262           01559     dw 0x3262 ; T R1
-0393   304E           01560     dw 0x304E ; T R2
-0394   38C8           01561     dw 0x38C8 ; T R3
-0395   20C6           01562     dw 0x20C6 ; Z R0
-0396   34C8           01563     dw 0x34C8 ; Z R1
-0397   20C6           01564     dw 0x20C6 ; Z R3
-0398   34C8           01565     dw 0x34C8 ; Z R4
-                      01566 ; annoying! I tetriminos need a special treatment 
-                      01567 ; because vertical I need 2 words for encoding.   
-0399   0444 1004      01568     dw 0x0444,0x1004 ; I R0  
-039B   200F 0000      01569     dw 0x200F,0x0000 ; I R1  second word is filling for alignment
-039D   0444 1004      01570     dw 0x0444,0x1004 ; I R2
-039F   200F 0000      01571     dw 0x200F,0x0000 ; I R3  
-                      01572 
-                      01573 #ifdef SOUND_SUPPORT
-                      01574 ; tempered scale timer period values    
-03A1                  01575 tone_pr:
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 36
+0361   0E8E 202E      01522     dw 0x0E8E,0x202E ; 5
+0363   088E 20AE      01523     dw 0x088E,0x20AE ; 6
+0365   0E22 2022      01524     dw 0x0E22,0x2022 ; 7
+0367   0EAE 20AE      01525     dw 0x0EAE,0x20AE ; 8
+0369   0EAE 2022      01526     dw 0x0EAE,0x2022 ; 9
+                      01527 ; letters needed for 'SCORE' and 'LINES" labels
+036B   0EAE 20AA      01528     dw 0x0EAE,0x20AA ; A  code 10
+036D   0688 2086      01529     dw 0x0688,0x2086 ; C  code 11
+036F   0E8E 208E      01530     dw 0x0E8E,0x208E ; E  code 12
+0371   0E44 204E      01531     dw 0x0E44,0x204E ; I  code 13
+0373   0888 208E      01532     dw 0x0888,0x208E ; L  code 14
+0375   08CA 20AA      01533     dw 0x08CA,0x20AA ; N  code 15
+0377   04AA 20A4      01534     dw 0x04AA,0x20A4 ; O  code 16
+0379   0EAE 2088      01535     dw 0x0EAE,0x2088 ; P  code 17
+037B   08EA 2088      01536     dw 0x08EA,0x2088 ; R  code 18
+037D   0684 202C      01537     dw 0x0684,0x202C ; S  code 19
+037F   0040 2040      01538     dw 0x0040,0x2040 ; :  code 20
+0381   1000 0000      01539     dw 0x1000,0x0000 ; space code 21
+                      01540 
+                      01541 ; comments notation: Rn clockwise rotation n*90 degr.    
+                      01542 ; note that vertical I as 4 rows so it needs 2 words    
+0383                  01543 tetriminos: 
+0383   388C           01544     dw 0x388C ; L R0
+0384   30E8           01545     dw 0x30E8 ; L R1
+0385   3C44           01546     dw 0x3C44 ; L R2
+0386   202E           01547     dw 0x202E ; L R3
+0387   344C           01548     dw 0x344C ; J R0
+0388   208E           01549     dw 0x208E ; J R1
+0389   3644           01550     dw 0x3644 ; J R2
+038A   30E2           01551     dw 0x30E2 ; J R3
+038B   20CC           01552     dw 0x20CC ; O R0 
+038C   20CC           01553     dw 0x20CC ; O R2 
+038D   20CC           01554     dw 0x20CC ; O R2 
+038E   20CC           01555     dw 0x20CC ; O R3 
+038F   206C           01556     dw 0x206C ; S R0
+0390   3462           01557     dw 0x3462 ; S R1
+0391   206C           01558     dw 0x206C ; S R2
+0392   3462           01559     dw 0x3462 ; S R3
+0393   20E4           01560     dw 0x20E4 ; T R0
+0394   3262           01561     dw 0x3262 ; T R1
+0395   304E           01562     dw 0x304E ; T R2
+0396   38C8           01563     dw 0x38C8 ; T R3
+0397   20C6           01564     dw 0x20C6 ; Z R0
+0398   34C8           01565     dw 0x34C8 ; Z R1
+0399   20C6           01566     dw 0x20C6 ; Z R3
+039A   34C8           01567     dw 0x34C8 ; Z R4
+                      01568 ; annoying! I tetriminos need a special treatment 
+                      01569 ; because vertical I need 2 words for encoding.   
+039B   0444 1004      01570     dw 0x0444,0x1004 ; I R0  
+039D   200F 0000      01571     dw 0x200F,0x0000 ; I R1  second word is filling for alignment
+039F   0444 1004      01572     dw 0x0444,0x1004 ; I R2
+03A1   200F 0000      01573     dw 0x200F,0x0000 ; I R3  
+                      01574 
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 36
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-03A1   000B           01576     brw
-03A2   3402 34ED      01577     dt 0x02, 0xed   ; 330   (MI4)   0
-03A4   34B5 34DF      01578     dt 0xb5, 0xdf   ; 349   (FA4)   1
-03A6   3428 34D3      01579     dt 0x28, 0xd3   ; 370   (FA4#)  2
-03A8   344C 34C7      01580     dt 0x4c, 0xc7   ; 392   (SOL4)  3
-03AA   341E 34BC      01581     dt 0x1e, 0xbc   ; 415   (SOL4#) 4
-03AC   348F 34B1      01582     dt 0x8f, 0xb1   ; 440   (LA4)   5
-03AE   3498 34A7      01583     dt 0x98, 0xa7   ; 466   (LA4#)  6
-03B0   3430 349E      01584     dt 0x30, 0x9e   ; 494   (SI4)   7
-03B2   344F 3495      01585     dt 0x4f, 0x95   ; 523hz (DO5)   8
-03B4   34ED 348C      01586     dt 0xed, 0x8c   ; 554   (DO5#)  9
-03B6   3404 3485      01587     dt 0x04, 0x85   ; 587   (RÉ5)   10
-03B8   348D 347D      01588     dt 0x8d, 0x7d   ; 622   (RÉ5#)  11
-03BA   3481 3476      01589     dt 0x81, 0x76   ; 659   (MI5)   12
-03BC   34DA 346F      01590     dt 0xda, 0x6f   ; 698   (FA5)   13
-03BE   3493 3469      01591     dt 0x93, 0x69   ; 740   (FA5#)  14
-03C0   34A6 3463      01592     dt 0xa6, 0x63   ; 784   (SOL5)  15
-03C2   340F 345E      01593     dt 0x0f, 0x5e   ; 831   (SOL5#) 16
-03C4   34C7 3458      01594     dt 0xc7, 0x58   ; 880   (LA5)   17
-03C6   34CC 3453      01595     dt 0xcc, 0x53   ; 932   (LA5#)  18
-03C8   3418 344F      01596     dt 0x18, 0x4f   ; 988   (SI5)   19
-03CA   3482 3442      01597     dt 0x82, 0x42   ; 1046hz (do6)  20
-03CC   3400 3400      01598     dt 0, 0         ; silence       21
-                      01599 
-                      01600     
-                      01601 ; a russian folklore soung    
-03CE                  01602 korobeiniki:
-                      01603     ;nombre de notes
-03CE   000B           01604     brw
-03CF   3422           01605     dt 34
-                      01606     ; duré, note
-03D0   342D 3400      01607     dt 45, 0 
-03D2   340F 3404      01608     dt 15, 4
-03D4   341E 3407      01609     dt 30, 7
-03D6   340F 3403      01610     dt 15, 3
-03D8   340F 3400      01611     dt 15, 0
-                      01612     
-03DA   342D 3405      01613     dt 45, 5
-03DC   340F 3409      01614     dt 15, 9
-03DE   341E 340C      01615     dt 30, 12
-03E0   340F 340A      01616     dt 15, 10
-03E2   340F 3408      01617     dt 15, 8
-                      01618     
-03E4   342D 3407      01619     dt 45, 7
-03E6   340F 3408      01620     dt 15, 8
-03E8   341E 340A      01621     dt 30, 10
-03EA   341E 340C      01622     dt 30, 12
-                      01623     
-03EC   341E 3408      01624     dt 30, 8
-03EE   341E 3405      01625     dt 30, 5
-03F0   343C 3405      01626     dt 60, 5
-                      01627     
-03F2   342D 340D      01628     dt 45, 13
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 37
+                      01575 #ifdef SOUND_SUPPORT
+                      01576 ; tempered scale timer period values    
+03A3                  01577 tone_pr:
+03A3   000B           01578     brw
+03A4   3402 34ED      01579     dt 0x02, 0xed   ; 330   (MI4)   0
+03A6   34B5 34DF      01580     dt 0xb5, 0xdf   ; 349   (FA4)   1
+03A8   3428 34D3      01581     dt 0x28, 0xd3   ; 370   (FA4#)  2
+03AA   344C 34C7      01582     dt 0x4c, 0xc7   ; 392   (SOL4)  3
+03AC   341E 34BC      01583     dt 0x1e, 0xbc   ; 415   (SOL4#) 4
+03AE   348F 34B1      01584     dt 0x8f, 0xb1   ; 440   (LA4)   5
+03B0   3498 34A7      01585     dt 0x98, 0xa7   ; 466   (LA4#)  6
+03B2   3430 349E      01586     dt 0x30, 0x9e   ; 494   (SI4)   7
+03B4   344F 3495      01587     dt 0x4f, 0x95   ; 523hz (DO5)   8
+03B6   34ED 348C      01588     dt 0xed, 0x8c   ; 554   (DO5#)  9
+03B8   3404 3485      01589     dt 0x04, 0x85   ; 587   (RÉ5)   10
+03BA   348D 347D      01590     dt 0x8d, 0x7d   ; 622   (RÉ5#)  11
+03BC   3481 3476      01591     dt 0x81, 0x76   ; 659   (MI5)   12
+03BE   34DA 346F      01592     dt 0xda, 0x6f   ; 698   (FA5)   13
+03C0   3493 3469      01593     dt 0x93, 0x69   ; 740   (FA5#)  14
+03C2   34A6 3463      01594     dt 0xa6, 0x63   ; 784   (SOL5)  15
+03C4   340F 345E      01595     dt 0x0f, 0x5e   ; 831   (SOL5#) 16
+03C6   34C7 3458      01596     dt 0xc7, 0x58   ; 880   (LA5)   17
+03C8   34CC 3453      01597     dt 0xcc, 0x53   ; 932   (LA5#)  18
+03CA   3418 344F      01598     dt 0x18, 0x4f   ; 988   (SI5)   19
+03CC   3482 3442      01599     dt 0x82, 0x42   ; 1046hz (do6)  20
+03CE   3400 3400      01600     dt 0, 0         ; silence       21
+                      01601 
+                      01602     
+                      01603 ; a russian folklore soung    
+03D0                  01604 korobeiniki:
+                      01605     ;nombre de notes
+03D0   000B           01606     brw
+03D1   3422           01607     dt 34
+                      01608     ; duré, note
+03D2   342D 3400      01609     dt 45, 0 
+03D4   340F 3404      01610     dt 15, 4
+03D6   341E 3407      01611     dt 30, 7
+03D8   340F 3403      01612     dt 15, 3
+03DA   340F 3400      01613     dt 15, 0
+                      01614     
+03DC   342D 3405      01615     dt 45, 5
+03DE   340F 3409      01616     dt 15, 9
+03E0   341E 340C      01617     dt 30, 12
+03E2   340F 340A      01618     dt 15, 10
+03E4   340F 3408      01619     dt 15, 8
+                      01620     
+03E6   342D 3407      01621     dt 45, 7
+03E8   340F 3408      01622     dt 15, 8
+03EA   341E 340A      01623     dt 30, 10
+03EC   341E 340C      01624     dt 30, 12
+                      01625     
+03EE   341E 3408      01626     dt 30, 8
+03F0   341E 3405      01627     dt 30, 5
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 37
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-03F4   340F 340F      01629     dt 15, 15
-03F6   341E 3411      01630     dt 30, 17
-03F8   340F 340F      01631     dt 15, 15
-03FA   340F 340D      01632     dt 15, 13
-                      01633     
-03FC   342D 340C      01634     dt 45, 12
-03FE   340F 340D      01635     dt 15, 13
-0400   341E 340C      01636     dt 30, 12
-0402   340F 340A      01637     dt 15, 10
-0404   340F 3408      01638     dt 15, 8
-                      01639     
-0406   342D 3407      01640     dt 45, 7
-0408   340F 3408      01641     dt 15, 8
-040A   341E 340A      01642     dt 30, 10
-040C   341E 340C      01643     dt 30, 12
-                      01644     
-040E   341E 3408      01645     dt 30, 8
-0410   341E 3405      01646     dt 30, 5
-0412   343C 3405      01647     dt 60, 5
-                      01648     
-                      01649  #endif
-                      01650 
-0414                  01651 lbl_score: ; "SCORE" label
-0414   3413 340B 3410 01652     dt 19,11,16,18,12,20,255
+03F2   343C 3405      01628     dt 60, 5
+                      01629     
+03F4   342D 340D      01630     dt 45, 13
+03F6   340F 340F      01631     dt 15, 15
+03F8   341E 3411      01632     dt 30, 17
+03FA   340F 340F      01633     dt 15, 15
+03FC   340F 340D      01634     dt 15, 13
+                      01635     
+03FE   342D 340C      01636     dt 45, 12
+0400   340F 340D      01637     dt 15, 13
+0402   341E 340C      01638     dt 30, 12
+0404   340F 340A      01639     dt 15, 10
+0406   340F 3408      01640     dt 15, 8
+                      01641     
+0408   342D 3407      01642     dt 45, 7
+040A   340F 3408      01643     dt 15, 8
+040C   341E 340A      01644     dt 30, 10
+040E   341E 340C      01645     dt 30, 12
+                      01646     
+0410   341E 3408      01647     dt 30, 8
+0412   341E 3405      01648     dt 30, 5
+0414   343C 3405      01649     dt 60, 5
+                      01650     
+                      01651  #endif
+                      01652 
+0416                  01653 lbl_score: ; "SCORE" label
+0416   3413 340B 3410 01654     dt 19,11,16,18,12,20,255
        3412 340C 3414 
        34FF 
-                      01653     
-041B                  01654 lbl_lines: ; "LINES"  label
-041B   340E 340D 340F 01655     dt 14,13,15,12,19,20,255
+                      01655     
+041D                  01656 lbl_lines: ; "LINES"  label
+041D   340E 340D 340F 01657     dt 14,13,15,12,19,20,255
        340C 3413 3414 
        34FF 
-                      01656 
-0422                  01657 lbl_press: ; "PRESS A" label
-0422   3411 3412 340C 01658     dt 17,18,12,19,19,21,10,255
+                      01658 
+0424                  01659 lbl_press: ; "PRESS A" label
+0424   3411 3412 340C 01660     dt 17,18,12,19,19,21,10,255
        3413 3413 3415 
        340A 34FF 
-                      01659 
-                      01660     
-                      01661  
-3FE7 1EFF             01662     end
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 38
+                      01661 
+                      01662     
+                      01663  
+3FE7 1EFF             01664     end
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 38
 
 
 SYMBOL TABLE
@@ -2227,7 +2230,7 @@ BSR2                              00000002
 BSR3                              00000003
 BSR4                              00000004
 BSR_SHAD                          00000FE6
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 39
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 39
 
 
 SYMBOL TABLE
@@ -2286,7 +2289,7 @@ CWG1DBF5                          00000005
 CWG1DBR                           00000691
 CWG1DBR0                          00000000
 CWG1DBR1                          00000001
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 40
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 40
 
 
 SYMBOL TABLE
@@ -2345,7 +2348,7 @@ F_GTMR                            00000002
 F_NO_SND                          00000006
 F_SND                             00000005
 F_VSYNC                           00000000
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 41
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 41
 
 
 SYMBOL TABLE
@@ -2404,7 +2407,7 @@ IOCAN1                            00000001
 IOCAN2                            00000002
 IOCAN3                            00000003
 IOCAN4                            00000004
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 42
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 42
 
 
 SYMBOL TABLE
@@ -2463,7 +2466,7 @@ NOT_RMCLR                         00000003
 NOT_RWDT                          00000004
 NOT_T1SYNC                        00000002
 NOT_TO                            00000004
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 43
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 43
 
 
 SYMBOL TABLE
@@ -2522,7 +2525,7 @@ POL                               00000004
 PORTA                             0000000C
 PR2                               0000001B
 PRIE                              00000000
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 44
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 44
 
 
 SYMBOL TABLE
@@ -2581,7 +2584,7 @@ PWM1LDCON                         00000D9F
 PWM1LDM                           00000006
 PWM1LDS0                          00000000
 PWM1LDS1                          00000001
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 45
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 45
 
 
 SYMBOL TABLE
@@ -2640,7 +2643,7 @@ PWM1PHL4                          00000004
 PWM1PHL5                          00000005
 PWM1PHL6                          00000006
 PWM1PHL7                          00000007
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 46
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 46
 
 
 SYMBOL TABLE
@@ -2699,7 +2702,7 @@ PWM2DCH                           00000DA4
 PWM2DCH0                          00000000
 PWM2DCH1                          00000001
 PWM2DCH2                          00000002
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 47
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 47
 
 
 SYMBOL TABLE
@@ -2758,7 +2761,7 @@ PWM2OFL2                          00000002
 PWM2OFL3                          00000003
 PWM2OFL4                          00000004
 PWM2OFL5                          00000005
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 48
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 48
 
 
 SYMBOL TABLE
@@ -2817,7 +2820,7 @@ PWM2PRL5                          00000005
 PWM2PRL6                          00000006
 PWM2PRL7                          00000007
 PWM2PS0                           00000004
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 49
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 49
 
 
 SYMBOL TABLE
@@ -2876,7 +2879,7 @@ PWM3IF                            00000006
 PWM3INTCON                        00000DBC
 PWM3INTE                          00000DBC
 PWM3INTF                          00000DBD
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 50
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 50
 
 
 SYMBOL TABLE
@@ -2935,7 +2938,7 @@ PWM3PHIE                          00000002
 PWM3PHIF                          00000002
 PWM3PHL                           00000DB1
 PWM3PHL0                          00000000
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 51
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 51
 
 
 SYMBOL TABLE
@@ -2994,7 +2997,7 @@ PWM3TMRL6                         00000006
 PWM3TMRL7                         00000007
 PWMEN                             00000D8E
 PWMLD                             00000D8F
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 52
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 52
 
 
 SYMBOL TABLE
@@ -3053,7 +3056,7 @@ SYNC_OUT                          00000002
 SYNC_PIE                          00000093
 SYNC_PIR                          00000013
 SYNC_PWMCLKCON                    00000DBE
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 53
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 53
 
 
 SYMBOL TABLE
@@ -3112,7 +3115,7 @@ TMR1GIF                           00000007
 TMR1H                             00000017
 TMR1IE                            00000000
 TMR1IF                            00000000
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 54
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 54
 
 
 SYMBOL TABLE
@@ -3171,7 +3174,7 @@ WDTPS1                            00000002
 WDTPS2                            00000003
 WDTPS3                            00000004
 WDTPS4                            00000005
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 55
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 55
 
 
 SYMBOL TABLE
@@ -3205,7 +3208,7 @@ _.org_1_00C0                      000000C0
 _.org_1_00D4                      000000D4
 _.org_1_00DC                      000000DC
 _.org_1_0242                      00000242
-_.org_1_034E                      0000034E
+_.org_1_0350                      00000350
 _BOREN_NSLEEP                     00003DFF
 _BOREN_OFF                        000039FF
 _BOREN_ON                         00003FFF
@@ -3230,7 +3233,7 @@ _IDLOC2                           00008002
 _IDLOC3                           00008003
 _LPBOREN_OFF                      00003FFF
 _LPBOREN_ON                       000037FF
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 56
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 56
 
 
 SYMBOL TABLE
@@ -3260,7 +3263,7 @@ accaH                             00000009
 accaL                             00000008
 accbH                             0000000B
 accbL                             0000000A
-add_points                        0000034F
+add_points                        00000351
 angle                             00000041
 bitmap                            0000014C
 bmp00                             0000014D
@@ -3280,7 +3283,7 @@ count_done                        0000021C
 count_full                        00000204
 count_loop                        00000208
 dec_n                             
-digits                            00000355
+digits                            00000357
 div10                             00000059
 div10_loop                        0000005C
 drop                              
@@ -3289,7 +3292,7 @@ drop1                             000001D7
 drop21                            000002F9
 drop_n                            
 drop_tetrim                       00000318
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 57
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 57
 
 
 SYMBOL TABLE
@@ -3316,18 +3319,18 @@ insert
 isr                               00000004
 isr_exit                          00000050
 koro                              00000234
-korobeiniki                       000003CE
-lbl_lines                         0000041B
-lbl_press                         00000422
-lbl_score                         00000414
+korobeiniki                       000003D0
+lbl_lines                         0000041D
+lbl_press                         00000424
+lbl_score                         00000416
 lcountH                           00000001
 lcountL                           00000000
 lit                               
 mask00                            000000FB
 mask01                            000000FE
-move_down                         0000033A
-move_left                         00000331
-move_right                        00000336
+move_down                         0000033C
+move_left                         00000333
+move_right                        00000338
 new_tminos                        0000021E
 next_flash_word                   00000134
 next_pixel                        000001EB
@@ -3348,7 +3351,7 @@ print_last                        000001B3
 print_tetrim                      0000016B
 prompt                            00000272
 prt_lbl_done                      0000019A
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 58
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 58
 
 
 SYMBOL TABLE
@@ -3367,8 +3370,8 @@ read_exit                         00000097
 read_flash                        0000012A
 read_pad                          00000067
 reserve                           
-rot_left                          0000031F
-rot_right                         00000328
+rot_left                          00000321
+rot_right                         0000032A
 row0                              00000147
 row1                              00000145
 row2                              00000143
@@ -3376,7 +3379,7 @@ row_loop                          000001D8
 rst                               00000010
 scoreH                            00000045
 scoreL                            00000044
-score_update                      00000341
+score_update                      00000343
 set_pixel                         00000100
 set_pixel_ptr                     000000EF
 set_yptr                          000000B1
@@ -3388,10 +3391,10 @@ task2                             0000004B
 tasks                             00000031
 tcyDelay                          
 tetrim                            00000040
-tetriminos                        00000381
+tetriminos                        00000383
 tetris                            000002E1
 tone                              0000009A
-tone_pr                           000003A1
+tone_pr                           000003A3
 tone_tmr                          00000004
 try_a                             00000074
 try_b                             0000007A
@@ -3407,7 +3410,7 @@ video_buffer_b0                   00000050
 video_buffer_b1                   000000A0
 video_buffer_b2                   00000120
 video_serialize                   000000BD
-MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:30:19         PAGE 59
+MPASM 5.70  /HOME/JACQUES/MPLABXPROJECTS/TET   12-18-2016  10:39:16         PAGE 59
 
 
 SYMBOL TABLE

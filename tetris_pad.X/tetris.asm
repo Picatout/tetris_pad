@@ -1425,6 +1425,8 @@ drop_tetrim:
     skpnz
     bra drop_tetrim
     decf ty,F
+    call print_tetrim
+    pop
     bra score_update
 rot_left:
     decf angle,F
