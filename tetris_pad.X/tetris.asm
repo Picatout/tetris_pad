@@ -9,7 +9,7 @@
 #define SOUND_SUPPORT
     
 FOSC equ 20000000 ; 20Mhz
-TC equ 50 ; nanosecondes 
+TC equ 50 ; nanosecondes sync timer clock period
 FCY equ FOSC/4    ; 5Mhz
 TCY equ 200 ; nanoseconds
 
@@ -131,22 +131,6 @@ case macro n, label
     bra label
     endm
  
-start_timer macro value ; start game timer
-    movlw value
-    movwf gtimer
-    bsf flags, F_GTMR
-    endm
-    
-wait_timer macro ; wait timer expiration
-    btfsc flags, F_GTMR
-    bra $-1
-    endm
-    
-pause macro value ; suspend execution (busy loop)
-    start_timer value
-    wait_timer
-    endm
-
 #ifdef SOUND_SUPPORT    
 wait_sound macro ; wait sound end
     btfsc flags,F_SND
@@ -309,15 +293,13 @@ isr:
     xorlw 3
     skpnz
     bra vsync_end
-; check if visible line    
-    movfw lcountL
-    sublw FIRST_VIDEO-1
-    skpnc
-    bra isr_exit
-    movfw lcountL
-    sublw LAST_VIDEO
+; check if visible line
+    movlw FIRST_VIDEO
+    subwf lcountL,W
     skpc
     bra isr_exit
+    sublw 4*YSIZE-1
+    skpnc
 ; output video pixels for this line    
     call video_serialize 
     bra isr_exit 
@@ -410,6 +392,19 @@ isr_exit:
     incf lcountH
     retfie
 
+;pause
+; idle loop in multiple of 1/60 sec.
+; input:
+;   WREG=delay
+; output:
+;   none    
+pause: 
+    movwf gtimer
+    bsf flags, F_GTMR
+    btfsc flags, F_GTMR
+    bra $-1
+    return
+    
 ;div10    
 ; divsion by 10    
 ; needed to convert binary to BCD
@@ -442,10 +437,6 @@ div10_loop:
 ; the Vadc value is below its threshold
 read_pad:
     clrf buttons
-#ifdef SOUND_SUPPORT    
-    btfsc flags, F_SND
-    return ; can't read while tone playing
-#endif    
     banksel TRISA
     bsf TRISA,ADC_PIN
     banksel ADCON0
@@ -1013,53 +1004,6 @@ vline_done:
     drop_n 3
     return
     
-WELL_WIDTH equ 10
-WELL_DEPTH equ 22 
-;game_init
-; initialize game state
-; input:
-;   none
-; output:
-;   none    
-game_init:
-    call clear_screen
-; draw game well
-    movlw WELL_DEPTH
-    push
-    push  ; len len
-    clrw
-    push
-    push  ; len len x=0, y=0
-    call vline ; -- len 
-    lit WELL_WIDTH+1 ; len x
-    lit 0	     ; len x y
-    call vline
-    lit WELL_WIDTH+2
-    lit WELL_DEPTH
-    lit 0
-    call hline
-; print "SCORE" label    
-    lit WELL_WIDTH+3 ; x
-    lit 0	     ; y
-    movlp high(lbl_score)
-    lit	low(lbl_score)  
-    call print_label
-; print "LINES" label    
-    lit WELL_WIDTH+3 ; x
-    lit 12	     ; y
-    movlp high(lbl_lines)
-    lit low(lbl_lines)
-    call print_label
-; variables initialization
-    bsf flags,F_GSTOP
-clear_score:
-    banksel GAME_VAR
-    clrf scoreL
-    clrf scoreH
-    clrf droppedL
-    clrf droppedH
-    return
-
 ; drop 1 row
 ; input:
 ;   r  row to drop
@@ -1217,12 +1161,14 @@ no_sound:
     skpz
     bra koro
     drop_n 2
-    pause 60
+    movlw 60
+    call pause
     bra wait_start
 wait_end:    
     drop_n 2
 #else
-    pause 20
+    movlw 20
+    call pause
     call read_pad
     btfss buttons, BTN_A
     bra wait_start
@@ -1231,6 +1177,14 @@ wait_end:
     bcf flags, F_GSTOP
     return
  
+clear_score:
+    banksel GAME_VAR
+    clrf scoreL
+    clrf scoreH
+    clrf droppedL
+    clrf droppedH
+    return
+    
 ;coll_test
 ; collision test
 ; after rotation or translation
@@ -1273,37 +1227,6 @@ update_display:
     call print_int
     return
 
-;game_over
-; signal game terminated
-; input:
-;   none
-; output:
-;   none
-game_over:
-    lit 10
-    lit 0
-clr00:    
-    over
-    over
-    call clear_pixel ; x y x y -- x y
-    dec_n 1 ; x-=1
-    skpz
-    bra clr00
-    movlw 21
-    movwf T
-    insert 1  ; counter 21
-drop21:
-    dup    ; counter 21 21
-    call drop1 ; -- counter 21
-    pause 6
-    pick 1
-    decf WREG
-    insert 1  ; -- counter-1 21
-    skpz
-    bra drop21
-    drop_n 2
-    return
-
 ;prompt
 ; print prompt message    
 prompt:
@@ -1314,6 +1237,124 @@ prompt:
     call print_label
     return
     
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+; hardware initialization
+;;;;;;;;;;;;;;;;;;;;;;;;;;    
+init:
+; parameter stack initialization    
+    clrf FSR1H
+    movlw S0
+    movwf FSR1L
+; ADC configuration
+    banksel ADCON0
+    movlw (PAD_CHS<<CHS0)
+    movwf ADCON0
+    movlw (2<<ADCS0)
+    movwf ADCON1
+    banksel WPUA
+    bcf WPUA, PAD_PIN
+;;;;;;;;;;;;;;;;;;;;;    
+    banksel TRISA
+    movlw ~((1<<SYNC_OUT)|(1<<VIDEO_OUT)|(1<<LED_PIN))
+    andwf TRISA,F
+    banksel VIDEO_LAT
+    bcf VIDEO_LAT,VIDEO_OUT
+    bcf LATA,LED_PIN
+#ifdef SOUND_SUPPORT    
+; audio pwm initialization
+    bcf LATA,AUDIO_PIN
+    banksel PWM2PH
+    clrf PWM2PHL
+    clrf PWM2PHH
+    clrf PWM2OFL
+    clrf PWM2OFH
+    bsf AUDIO_PWMCON,OE
+    banksel APFCON
+    bsf APFCON,P2SEL
+#endif   
+;configure EUSART in sychronsous mode
+;to use as pixel serializer
+    banksel SPBRG
+    movlw 2
+    movwf SPBRGL
+    clrf SPBRGH
+    clrf TXREG
+    movlw (1<<SYNC)|(1<<CSRC)|(1<<TXEN)
+    movwf TXSTA
+    bsf RCSTA, SPEN
+    movlw ~((1<<CREN)|(1<<SREN))
+    andwf RCSTA
+; configure pwm video sync for horizontal period
+    banksel SYNC_PWMDCH
+    clrf SYNC_PWMPH
+    clrf SYNC_PWMPH+1
+    clrf SYNC_PWMLDCON
+    movlw HORZ_PERIOD&0XFF
+    movwf SYNC_PWMPRL
+    movlw HORZ_PERIOD>>8
+    movwf SYNC_PWMPRH
+    clrf SYNC_PWMCLKCON
+    movlw (3<<OE)|(1<<POL)
+    movwf SYNC_PWMCON
+    movlw HORZ_PULSE&0xff
+    movwf SYNC_PWMDCL
+    movlw HORZ_PULSE>>8
+    movwf SYNC_PWMDCH
+    bsf SYNC_PWMLDCON,LDA
+   ;enable video interrupt on period match
+    bcf SYNC_PWMINTF,PRIF
+    bsf SYNC_PWMINTE,PRIE
+    ; enable peripheral interrupt
+    banksel SYNC_PIE
+    bsf SYNC_PIE,SYNC_IE
+    ;enable interrupts
+    movlw (1<<GIE)|(1<<PEIE)
+    movwf INTCON
+    clrf lcountL
+    clrf lcountH
+    clrf flags
+    ; seed lfsr PRNG
+    movlw 0xAC
+    movwf randL
+    movlw 0xE1
+    movwf randH
+;;;;;;;;;;;;;;;;;;;;;
+; game initialization
+;;;;;;;;;;;;;;;;;;;;;    
+WELL_WIDTH equ 10
+WELL_DEPTH equ 22 
+game_init:
+    call clear_screen
+; draw game well
+    movlw WELL_DEPTH
+    push
+    push  ; len len
+    clrw
+    push
+    push  ; len len x=0, y=0
+    call vline ; -- len 
+    lit WELL_WIDTH+1 ; len x
+    lit 0	     ; len x y
+    call vline
+    lit WELL_WIDTH+2
+    lit WELL_DEPTH
+    lit 0
+    call hline
+; print "SCORE" label    
+    lit WELL_WIDTH+3 ; x
+    lit 0	     ; y
+    movlp high(lbl_score)
+    lit	low(lbl_score)  
+    call print_label
+; print "LINES" label    
+    lit WELL_WIDTH+3 ; x
+    lit 12	     ; y
+    movlp high(lbl_lines)
+    lit low(lbl_lines)
+    call print_label
+; variables initialization
+    bsf flags,F_GSTOP
+    call clear_score
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;   game logic
 ;;;;;;;;;;;;;;;;;;;;;;;;;    
@@ -1334,13 +1375,38 @@ game_loop:
     call new_tminos
     btfss flags, F_GSTOP
     bra fall_loop
-    call game_over
-    call game_init
-    bra tetris
-fall_loop: ; tetriminos fall in the well
+; game_over
+game_over:
+    lit 10
+    lit 0
+clr00:    
+    over
+    over
+    call clear_pixel ; x y x y -- x y
+    dec_n 1 ; x-=1
+    skpz
+    bra clr00
+    movlw 21
+    movwf T
+    insert 1  ; counter 21
+drop21:
+    dup    ; counter 21 21
+    call drop1 ; -- counter 21
+    movlw 6
+    call pause
+    pick 1
+    decf WREG
+    insert 1  ; -- counter-1 21
+    skpz
+    bra drop21
+    drop_n 2
+    bra game_init
+; tetriminos fall in the well    
+fall_loop: 
     call print_tetrim
     pop
-    pause 10
+    movlw 10
+    call pause
     call print_tetrim ; erase tetriminos
     pop
 ; read pad
@@ -1426,99 +1492,8 @@ add_points:
     drop 
     call update_display ; display new values
     bra game_loop
-    return
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;
-; hardware initialization
-;;;;;;;;;;;;;;;;;;;;;;;;;;    
-init:
-; parameter stack initialization    
-    clrf FSR1H
-    movlw S0
-    movwf FSR1L
-; ADC configuration
-    banksel ADCON0
-    movlw (PAD_CHS<<CHS0)
-    movwf ADCON0
-    movlw (2<<ADCS0)
-    movwf ADCON1
-    banksel WPUA
-    bcf WPUA, PAD_PIN
-;;;;;;;;;;;;;;;;;;;;;    
-    banksel TRISA
-    movlw ~((1<<SYNC_OUT)|(1<<VIDEO_OUT)|(1<<LED_PIN))
-    andwf TRISA,F
-    banksel VIDEO_LAT
-    bcf VIDEO_LAT,VIDEO_OUT
-    bcf LATA,LED_PIN
-#ifdef SOUND_SUPPORT    
-; audio pwm initialization
-    bcf LATA,AUDIO_PIN
-    banksel PWM2PH
-    clrf PWM2PHL
-    clrf PWM2PHH
-    clrf PWM2OFL
-    clrf PWM2OFH
-    bsf AUDIO_PWMCON,OE
-    banksel APFCON
-    bsf APFCON,P2SEL
-#endif   
-;configure EUSART in sychronsous mode
-;to use as pixel serializer
-    banksel SPBRG
-    movlw 2
-    movwf SPBRGL
-    clrf SPBRGH
-    clrf TXREG
-    movlw (1<<SYNC)|(1<<CSRC)|(1<<TXEN)
-    movwf TXSTA
-    bsf RCSTA, SPEN
-    movlw ~((1<<CREN)|(1<<SREN))
-    andwf RCSTA
-; configure pwm video sync for horizontal period
-    banksel SYNC_PWMDCH
-    clrf SYNC_PWMPH
-    clrf SYNC_PWMPH+1
-    clrf SYNC_PWMLDCON
-    movlw HORZ_PERIOD&0XFF
-    movwf SYNC_PWMPRL
-    movlw HORZ_PERIOD>>8
-    movwf SYNC_PWMPRH
-    clrf SYNC_PWMCLKCON
-    movlw (3<<OE)|(1<<POL)
-    movwf SYNC_PWMCON
-    movlw HORZ_PULSE&0xff
-    movwf SYNC_PWMDCL
-    movlw HORZ_PULSE>>8
-    movwf SYNC_PWMDCH
-    bsf SYNC_PWMLDCON,LDA
-   ;enable video interrupt on period match
-    bcf SYNC_PWMINTF,PRIF
-    bsf SYNC_PWMINTE,PRIE
-    ; enable peripheral interrupt
-    banksel SYNC_PIE
-    bsf SYNC_PIE,SYNC_IE
-    ;enable interrupts
-    movlw (1<<GIE)|(1<<PEIE)
-    movwf INTCON
-    clrf lcountL
-    clrf lcountH
-    clrf flags
-    ; seed lfsr PRNG
-    movlw 0xAC
-    movwf randL
-    movlw 0xE1
-    movwf randH
-
-
-;;;;;;;;;;;;;;;;;;;;;
-;  main function
-;;;;;;;;;;;;;;;;;;;;;    
-main:
-    call game_init
-    call tetris
-    bra main
-  
+    
+    
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;   data tables
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
