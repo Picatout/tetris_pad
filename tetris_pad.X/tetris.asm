@@ -16,6 +16,10 @@ TC equ 50 ; FOSC period in nanosecondes
 FCY equ FOSC/4    ; 5Mhz
 TCY equ TC*4 ; nanoseconds  instruction cycle period.
 
+;NTSC signal parameters 
+HORZ_PERIOD equ FOSC/15748-1 ; 15748 hertz
+HORZ_PULSE equ 4700/TC ; 4.7탎ec 
+LAST_LINE equ 262 ; field last line
 ;display parameters
 XSIZE equ 48  ; horizontal pixels
 YSIZE equ 32  ; vertical pixels
@@ -49,10 +53,6 @@ SYNC_PIE equ PIE3 ; interrupt enable SFR
 SYNC_PIR equ PIR3 ; interrupt flag SFR 
 SYNC_PWMINTE equ PWM3INTE
 SYNC_PWMINTF equ PWM3INTF
- 
-HORZ_PERIOD equ FOSC/15748-1 ; 15748 hertz
-HORZ_PULSE equ 4700/TC ; 4.7탎ec 
-LAST_LINE equ 262 ; field last line
 
 LED_PIN equ RA0 ; power LED pin
 ADC_PIN equ RA4 ; pad buttons adc input pin
@@ -105,19 +105,18 @@ try_button macro btn, label
     endm
     
 ;boolean flags 
-F_VSYNC equ 0 ; vertical sync active
-F_EVEN equ 1  ; even field
-F_GTMR equ 2  ; game timer active
-F_GSTOP equ 3 ; game stopped
-F_COLL equ 4 ; collision flag
+F_EVEN equ 0  ; even field
+F_GTMR equ 1  ; game timer active
+F_GSTOP equ 2 ; game stopped
+F_COLL equ 3 ; collision flag set by xor_pixel routine
 #ifdef SOUND_SUPPORT 
-F_SND equ 5 ; sound timer active 
-F_NO_SND equ 6 ; quiet mode
+F_SND equ 4 ; sound timer active 
+F_NO_SND equ 5 ; quiet mode
 #endif
 ; xor mask used by pseudo random number generator 
 LFSR_TAPS equ 0xB4 
 
-; delay in TCY cycles  5 TCY per 탎ec. 
+; delay in TCY  5 TCY per 탎ec. 
 tcyDelay macro n  
     variable r=n%5
     variable q=n/5
@@ -159,7 +158,7 @@ wait_sound macro
 #define T INDF1
 STACK_SIZE equ 32
  
-S0 equ 0x1F ; stack base address - 1
+S0 equ 0x1F ; SP initial value
 
 push macro   ; ( -- n ) push WREG on stack
     movwi ++SP
@@ -327,7 +326,6 @@ vsync_start:
     movlw (HORZ_PERIOD-HORZ_PULSE)>>8
     movwf SYNC_PWMDCH
     bsf SYNC_PWMLDCON,LDA
-    bsf flags, F_VSYNC
     bra isr_exit
 ; scanline 3 end vertical sync pulse
 vsync_end: 
@@ -337,7 +335,6 @@ vsync_end:
     movlw HORZ_PULSE>>8
     movwf SYNC_PWMDCH
     bsf SYNC_PWMLDCON,LDA
-    bcf flags, F_VSYNC
     bra isr_exit
 ; scan line > 255    
 gt_255:
@@ -369,11 +366,28 @@ tasks:
     decf WREG
     skpnz 
     bra task1
+#ifdef SOUND_SUPPORT
     decf WREG
     skpnz
     bra task2
+#endif    
     bra isr_exit
 task0:
+; rotate lfsr, PRNG
+    lsrf randH
+    rrf randL
+    skpnc
+    movlw LFSR_TAPS
+    xorwf randH
+    bra isr_exit
+task1:   
+; game timer management   
+    btfsc flags, F_GTMR
+    decfsz gtimer,F ; 
+    bra isr_exit ;
+    bcf flags, F_GTMR
+    bra isr_exit ;
+task2:
 #ifdef SOUND_SUPPORT    
 ; sound timer management   
     movfw tone_tmr
@@ -387,21 +401,6 @@ task0:
     banksel TRISA
     bsf TRISA, AUDIO_PIN
 #endif    
-    bra isr_exit
-task1:   
-; game timer management   
-    btfsc flags, F_GTMR
-    decfsz gtimer,F ; 
-    bra isr_exit ;
-    bcf flags, F_GTMR
-    bra isr_exit ;
-task2:
-; rotate lfsr, PRNG
-    lsrf randH
-    rrf randL
-    skpnc
-    movlw LFSR_TAPS
-    xorwf randH
 isr_exit:
     incf lcountL
     skpnz
@@ -612,10 +611,10 @@ set_pixel_ptr:  ; ( x y -- )
     addwfc FSR0H
 ;create bit mask    
     movlw 7
-    andwf T,F ; T=bit position
+    andwf T,F ; T=shift counter
     movlw 0x1
     skpnz 
-    bra mask01 ; least significant bit
+    bra mask01 ; done
 mask00:
     lslf WREG
     decfsz T
@@ -724,9 +723,8 @@ next_flash_word:
 ;   decrement 'nibble' variable    
 ;   modify BSR
 get_nibble: ; ( -- nibble )
+    banksel PMDAT
     movfw nibble
-    skpnz 
-    call next_flash_word
 ; select nibble in word    
     xorlw 3
     skpnz
@@ -964,8 +962,7 @@ next_pixel:
     return
     
     
-ROW_EMPTY equ 0     
-ROW_FULL equ 10 ; 10 bits in row
+ROW_FULL equ 10 ; 10 pixels in row
 ; query_row 
 ; check the state of well row
 ; input:

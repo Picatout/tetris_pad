@@ -1,3 +1,11 @@
+2016-12-20
+==========
+reordering tasks in isr
+removed get_next_word from get_nibble, was never called.
+actual size: 1031i
+My optimization efforts will end here. I can't expect gaining
+more than a few instructions.
+
 2016-12-19
 ===========
 inlining clear_pixel, set_pixel and get_pixel,clear_screen
