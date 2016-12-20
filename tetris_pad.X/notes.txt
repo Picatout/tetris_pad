@@ -1,0 +1,112 @@
+2016-12-19
+===========
+inlining clear_pixel, set_pixel and get_pixel,clear_screen
+
+
+2016-12-18
+===========
+optimizing for size:
+size before: 1084 prog. words
+inlinining: game_init, tetris and game_over
+converted pause macro in sub routine
+actual size: 1070 prog. words
+----------------------------------
+corrected bug in drop_tetrim
+actual size 1072
+-----------------------------------
+optimizing for size
+hline routine inlined in game_init
+modified vline
+actual size 1053
+
+2016-12-17
+==========
+bug correction in print_char and print_row
+removed y bounds check and x right bound check in xor_row
+-------------------------
+modification to graphics fonctions
+added bitmap  integrated print_row inside bitmap
+modified print_char, print_tetrim and coding of bitmaps table
+added feature to disable intro music by pressing button B
+actual size: 1108 code words.
+-------------------------------------------
+modification in game loop
+discovered occasional bug where drawing fail to undraw properly. 
+
+2016-12-16
+==========
+modified  print_int to accept only y as argument
+modified game_over:  drop down all well rows
+optimizing for size reduction
+to do: modified collision flag logic introduced a regressive bug
+
+2016-12-15
+==========
+added set_yptr
+modified video_serialize and set_video_ptr
+renamed set_video_ptr set_pixel_ptr
+factorisation: created set_yptr
+removed mult6, mulitplication integrated in set_yptr
+added game_over
+this version is completed
+to do: looking for further size optimization.
+
+2016-12-14
+==========
+bug corrected in slide_down
+slide_down renamed drop1
+modification to bitop
+game logic completed
+beginning optimisation for size reduction
+various modification to code
+
+to do:  get rid of rot macro 
+
+2016-12-13
+==========
+working on game logic
+added coll_test
+added count_full
+to do: bug in slide_down
+
+2016-12-12
+==========
+modified tasks selector in isr
+modified bitop, added TEST_OP
+modified get_pixel, now using bitop with TEST_OP
+added SET_OP operation to bitop
+added slide_down
+
+2016-12-11
+===========
+modified schematic
+renamed project
+rework on read_pad
+rework on xor_row
+
+2016-12-10
+============
+modified schematic
+added audio
+added tone
+added korobeiniki
+added wait_start
+
+2016-12-0-09
+============
+added query_row
+added new_tminos
+added game logic
+modified schematic
+
+2016-12-08
+===========
+added print_int
+modified mult6
+work on game logic
+repacled xor_pixel by bitop now there is 2 operations xor bit or clear bit
+
+2016-12-07
+===========
+added div10
+

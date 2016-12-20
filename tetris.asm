@@ -384,8 +384,6 @@ task0:
     bcf flags,F_SND
     banksel AUDIO_PWMCON
     bcf AUDIO_PWMCON,EN
-    banksel TRISA
-    bsf TRISA, AUDIO_PIN
 #endif    
     bra isr_exit
 task1:   
@@ -456,7 +454,12 @@ div10_loop:
 ;   'buttons' variable    
 read_pad:
     clrf buttons
+#ifdef AUDIO_SUPPORT
+    banksel TRISA
+    bsf TRISA,ADC_PIN
+#else    
     banksel ADCON0
+#endif    
     bsf ADCON0,ADON
     tcyDelay 5*4 ; délais d'acquisition 4µsec
     bsf ADCON0,GO
@@ -488,6 +491,9 @@ try_dn:
     try_button DN_THR, read_exit
     bsf buttons,BTN_DN
 read_exit:
+#ifdef AUDIO_SUPPORT    
+    bcf TRISA,ADC_PIN
+#endif    
     return
 
 #ifdef SOUND_SUPPORT    
@@ -497,8 +503,8 @@ read_exit:
 ;   t   duration in multiple of 1/60 sec.
 ;   n   note index in tone_pr table
 tone: ; ( t n -- )
-    banksel TRISA
-    bcf TRISA,AUDIO_PIN
+;    banksel TRISA
+;    bcf TRISA,AUDIO_PIN
     banksel AUDIO_PWMPRL
     lslf T
     movfw T

@@ -691,7 +691,7 @@ Connection ~ 7900 4200
 Text Label 7500 4200 2    60   ~ 0
 AUDIO
 Text Label 5350 3000 2    39   ~ 0
-AUDIO
+AUDIO/BTN
 Wire Wire Line
 	4350 4050 4900 4050
 $Comp
