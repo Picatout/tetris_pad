@@ -309,6 +309,7 @@ isr:
     skpnz
     bra vsync_end
 ; check if visible line
+visible_check:    
     movlw FIRST_VIDEO
     subwf lcountL,W
     skpc
@@ -346,7 +347,7 @@ gt_255:
     skpz
     bra tasks
 ; end of field
-; reset line counter    
+; reset line counter
     clrf lcountL
     clrf lcountH
     movlw 1<<F_EVEN
@@ -579,7 +580,6 @@ byte_serialize:
     bra $-1
     decfsz T
     bra byte_serialize
-    drop ; discard bytes counter
     banksel PIXEL_TXREG
     clrf PIXEL_TXREG
     banksel TX_PIR
@@ -587,6 +587,7 @@ byte_serialize:
     bra $-1
     banksel RCSTA
     bcf RCSTA, SPEN
+    drop ; discard bytes counter
 ;restore FSR0    
     pop
     movwf FSR0H

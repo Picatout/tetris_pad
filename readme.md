@@ -6,7 +6,7 @@ generate black and white video signal 48x32 pixels
 
 ![schematic](schematic.png)
 
-![prototype board](prototype.bmp)
+![prototype board](prototype.png)
 
 ![screen view 1](screen_view_1.JPG)
 

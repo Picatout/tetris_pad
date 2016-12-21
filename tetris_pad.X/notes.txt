@@ -1,3 +1,10 @@
+2016-12-21
+==========
+modified hardware audio circuit.
+
+audio level to low circuit modified for an output to TV.
+
+
 2016-12-20
 ==========
 reordering tasks in isr
