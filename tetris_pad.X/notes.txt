@@ -4,6 +4,8 @@ modified hardware audio circuit.
 
 audio level to low circuit modified for an output to TV.
 
+modification to read_pad to slow down repeat rate
+
 
 2016-12-20
 ==========

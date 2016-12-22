@@ -231,7 +231,9 @@ scoreL res 1 ; game score  16 bits
 scoreH res 1 
 droppedL res 1	; total
 droppedH res 1	; dropped lines
-  
+btn_time res 1 ; last button timestamp
+ticks res 1 ; clock ticks in 1/60 sec.
+ 
  
 ; These 3 sections are used for video display buffering
 ; with indirect access using FSR0
@@ -299,6 +301,8 @@ rst:
 isr:
     banksel SYNC_PWMINTF
     bcf SYNC_PWMINTF,PRIF
+    banksel GAME_VAR
+    incf ticks,F
     btfsc lcountH,0
     bra gt_255 ; lcount > 255
 ; lcount < 256
@@ -371,7 +375,7 @@ tasks:
     decf WREG
     skpnz
     bra task2
-#endif    
+#endif 
     bra isr_exit
 task0:
 ; rotate lfsr, PRNG
@@ -401,7 +405,8 @@ task2:
     bcf AUDIO_PWMCON,EN
     banksel TRISA
     bsf TRISA, AUDIO_PIN
-#endif    
+    bra isr_exit
+#endif 
 isr_exit:
     incf lcountL
     skpnz
@@ -455,7 +460,7 @@ div10_loop:
 ; output:
 ;   'buttons' variable    
 read_pad:
-    clrf buttons
+    lit 0
     banksel ADCON0
     bsf ADCON0,ADON
     tcyDelay 5*4 ; délais d'acquisition 4µsec
@@ -466,28 +471,43 @@ read_pad:
 ; try each button from lower to upper
 try_a:
     try_button A_THR, try_b
-    bsf buttons,BTN_A
+    bsf T,BTN_A
     bra read_exit
 try_b:    
     try_button B_THR, try_rt
-    bsf buttons,BTN_B
+    bsf T,BTN_B
     bra read_exit
 try_rt:
     try_button RT_THR, try_up
-    bsf buttons,BTN_RT
+    bsf T,BTN_RT
     bra read_exit
 try_up:
     try_button UP_THR, try_lt
-    bsf buttons,BTN_UP
+    bsf T,BTN_UP
     bra read_exit
 try_lt:
     try_button LT_THR, try_dn
-    bsf buttons,BTN_LT
+    bsf T,BTN_LT
     bra read_exit
 try_dn:
     try_button DN_THR, read_exit
-    bsf buttons,BTN_DN
+    bsf T,BTN_DN
 read_exit:
+    banksel GAME_VAR
+    movfw buttons
+    xorwf T,W
+    skpz
+    bra rp01
+    movfw btn_time
+    subwf ticks,W
+    sublw 6
+    skpnc
+    clrf T
+rp01:
+    pop
+    movwf buttons
+    movfw ticks
+    movwf btn_time
     return
 
 #ifdef SOUND_SUPPORT    

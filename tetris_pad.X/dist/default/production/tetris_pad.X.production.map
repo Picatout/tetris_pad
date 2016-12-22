@@ -1,16 +1,16 @@
 MPLINK 5.08, LINKER
-Linker Map File - Created Wed Dec 21 16:13:44 2016
+Linker Map File - Created Wed Dec 21 19:48:58 2016
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
                 ---------  ---------  ---------  ---------  ---------
                    .org_0       code   0x000000    program   0x000008
-                   .org_1       code   0x000004    program   0x0007fe
-                   .cinit    romdata   0x000403    program   0x000004
+                   .org_1       code   0x000004    program   0x000822
+                   .cinit    romdata   0x000415    program   0x000004
 .config_8007_BUILD/DEFAULT/PRODUCTION/TETRIS.       code   0x008007    program   0x000002
 .config_8008_BUILD/DEFAULT/PRODUCTION/TETRIS.       code   0x008008    program   0x000002
                    dstack      udata   0x000020       data   0x000020
-                 game_var      udata   0x000040       data   0x000008
+                 game_var      udata   0x000040       data   0x00000a
                     vb_b0      udata   0x000050       data   0x000020
                .udata_shr      udata   0x000070       data   0x000010
                     vb_b1      udata   0x0000a0       data   0x000050
@@ -21,128 +21,130 @@ Linker Map File - Created Wed Dec 21 16:13:44 2016
                               Program Memory Usage 
                                Start         End      
                            ---------   ---------      
-                            0x000000    0x000404      
+                            0x000000    0x000416      
                             0x008007    0x008008      
-            1031 out of 2055 program addresses used, program memory utilization is 50%
+            1049 out of 2055 program addresses used, program memory utilization is 51%
 
 
 
                               Symbols - Sorted by Name
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-             _.org_1_0055   0x000055    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_0069   0x000069    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_006B   0x00006b    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_006E   0x00006e    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_00B8   0x0000b8    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_00BA   0x0000ba    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_00CE   0x0000ce    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_00D5   0x0000d5    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_020E   0x00020e    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_0327   0x000327    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               add_points   0x000328    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   bitmap   0x000130    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    bmp00   0x000131    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    bmp01   0x000144    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    bmp02   0x000133    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-           byte_serialize   0x0000c9    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    clr00   0x0002c1    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 cls_loop   0x000283    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 col_loop   0x0001a7    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                coll_test   0x000220    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               count_done   0x0001e8    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               count_full   0x0001d0    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               count_loop   0x0001d4    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   digits   0x00032e    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    div10   0x000057    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               div10_loop   0x00005a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    drop1   0x0001a4    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   drop21   0x0002d0    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-              drop_tetrim   0x0002ef    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                fall_loop   0x0002dc    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                game_init   0x00027d    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                game_loop   0x0002ba    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                game_over   0x0002bd    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-           get_flash_word   0x00010a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               get_nibble   0x00011e    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   gt_255   0x000024    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    hline   0x000295    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                     init   0x000240    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_0058   0x000058    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_006D   0x00006d    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_006F   0x00006f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_0072   0x000072    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_00CA   0x0000ca    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_00CC   0x0000cc    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_00E0   0x0000e0    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_00E7   0x0000e7    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_0220   0x000220    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_0339   0x000339    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               add_points   0x00033a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   bitmap   0x000142    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    bmp00   0x000143    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    bmp01   0x000156    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    bmp02   0x000145    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+           byte_serialize   0x0000db    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    clr00   0x0002d3    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 cls_loop   0x000295    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 col_loop   0x0001b9    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                coll_test   0x000232    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               count_done   0x0001fa    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               count_full   0x0001e2    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               count_loop   0x0001e6    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   digits   0x000340    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    div10   0x00005a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               div10_loop   0x00005d    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    drop1   0x0001b6    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   drop21   0x0002e2    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+              drop_tetrim   0x000301    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                fall_loop   0x0002ee    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                game_init   0x00028f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                game_loop   0x0002cc    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                game_over   0x0002cf    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+           get_flash_word   0x00011c    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               get_nibble   0x000130    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   gt_255   0x000026    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    hline   0x0002a7    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                     init   0x000252    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                       isr   0x000004    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 isr_exit   0x00004e    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                     koro   0x000200    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-              korobeiniki   0x0003a7    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                lbl_lines   0x0003f4    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                lbl_press   0x0003fb    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                lbl_score   0x0003ed    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   mask00   0x0000ea    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   mask01   0x0000ed    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                move_down   0x000313    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                move_left   0x00030a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               move_right   0x00030f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               new_tminos   0x0001ea    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-          next_flash_word   0x000119    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               next_pixel   0x0001b6    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 next_row   0x0001e6    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-              nibble_mask   0x00012c    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 no_sound   0x00020f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                  no_zero   0x000199    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    pause   0x000052    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               print_char   0x000147    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                print_int   0x00017f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-              print_int00   0x000183    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-              print_label   0x000169    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               print_last   0x000193    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             print_tetrim   0x00014f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   prompt   0x000237    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             prt_lbl_done   0x00017d    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                     qr00   0x0001c1    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                     qr01   0x0001cc    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                query_row   0x0001bf    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                read_exit   0x000093    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               read_flash   0x00010f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 read_pad   0x000065    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 rot_left   0x0002f8    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                rot_right   0x000301    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                     row0   0x00012b    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                     row1   0x000129    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                     row2   0x000127    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 row_loop   0x0001a5    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             score_update   0x00031a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-            set_pixel_ptr   0x0000de    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 set_yptr   0x0000ab    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    task0   0x000039    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    task1   0x00003f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    task2   0x000044    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    tasks   0x00002f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               tetriminos   0x00035a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   tetris   0x0002b6    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                     tone   0x000094    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                  tone_pr   0x00037a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    try_a   0x000070    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    try_b   0x000076    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   try_dn   0x00008e    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   try_lt   0x000088    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   try_rt   0x00007c    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   try_up   0x000082    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-           update_display   0x000226    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-          video_serialize   0x0000b7    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-            visible_check   0x00000e    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    vline   0x00019b    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                vsync_end   0x00001d    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-              vsync_start   0x000016    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 wait_end   0x00021d    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               wait_start   0x0001fb    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                xor_pixel   0x0000ef    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                  xor_row   0x0000f5    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                xor_row02   0x000104    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             xor_row_done   0x000108    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 isr_exit   0x000051    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                     koro   0x000212    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+              korobeiniki   0x0003b9    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                lbl_lines   0x000406    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                lbl_press   0x00040d    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                lbl_score   0x0003ff    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   mask00   0x0000fc    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   mask01   0x0000ff    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                move_down   0x000325    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                move_left   0x00031c    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               move_right   0x000321    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               new_tminos   0x0001fc    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+          next_flash_word   0x00012b    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               next_pixel   0x0001c8    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 next_row   0x0001f8    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+              nibble_mask   0x00013e    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 no_sound   0x000221    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                  no_zero   0x0001ab    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    pause   0x000055    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               print_char   0x000159    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                print_int   0x000191    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+              print_int00   0x000195    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+              print_label   0x00017b    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               print_last   0x0001a5    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             print_tetrim   0x000161    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   prompt   0x000249    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             prt_lbl_done   0x00018f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                     qr00   0x0001d3    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                     qr01   0x0001de    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                query_row   0x0001d1    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                read_exit   0x000097    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               read_flash   0x000121    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 read_pad   0x000068    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 rot_left   0x00030a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                rot_right   0x000313    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                     row0   0x00013d    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                     row1   0x00013b    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                     row2   0x000139    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 row_loop   0x0001b7    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                     rp01   0x0000a1    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             score_update   0x00032c    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+            set_pixel_ptr   0x0000f0    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 set_yptr   0x0000bd    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    task0   0x00003b    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    task1   0x000041    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    task2   0x000046    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    tasks   0x000031    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               tetriminos   0x00036c    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   tetris   0x0002c8    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                     tone   0x0000a6    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                  tone_pr   0x00038c    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    try_a   0x000074    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    try_b   0x00007a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   try_dn   0x000092    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   try_lt   0x00008c    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   try_rt   0x000080    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   try_up   0x000086    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+           update_display   0x000238    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+          video_serialize   0x0000c9    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+            visible_check   0x000010    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    vline   0x0001ad    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                vsync_end   0x00001f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+              vsync_start   0x000018    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 wait_end   0x00022f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               wait_start   0x00020d    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                xor_pixel   0x000101    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                  xor_row   0x000107    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                xor_row02   0x000116    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             xor_row_done   0x00011a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                    _stack   0x000020       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                     accaH   0x000079       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                     accaL   0x000078       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                     accbH   0x00007b       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                     accbL   0x00007a       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                     angle   0x000041       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 btn_time   0x000048       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                   buttons   0x00007c       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                  droppedH   0x000047       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                  droppedL   0x000046       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
@@ -160,6 +162,7 @@ Linker Map File - Created Wed Dec 21 16:13:44 2016
                        t0   0x00007e       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                        t1   0x00007f       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                    tetrim   0x000040       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    ticks   0x000049       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                  tone_tmr   0x000074       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                        tx   0x000042       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                        ty   0x000043       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
@@ -173,112 +176,113 @@ Linker Map File - Created Wed Dec 21 16:13:44 2016
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
                       isr   0x000004    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-            visible_check   0x00000e    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-              vsync_start   0x000016    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                vsync_end   0x00001d    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   gt_255   0x000024    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    tasks   0x00002f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    task0   0x000039    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    task1   0x00003f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    task2   0x000044    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 isr_exit   0x00004e    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    pause   0x000052    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_0055   0x000055    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    div10   0x000057    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               div10_loop   0x00005a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 read_pad   0x000065    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_0069   0x000069    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_006B   0x00006b    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_006E   0x00006e    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    try_a   0x000070    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    try_b   0x000076    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   try_rt   0x00007c    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   try_up   0x000082    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   try_lt   0x000088    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   try_dn   0x00008e    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                read_exit   0x000093    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                     tone   0x000094    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 set_yptr   0x0000ab    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-          video_serialize   0x0000b7    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_00B8   0x0000b8    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_00BA   0x0000ba    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-           byte_serialize   0x0000c9    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_00CE   0x0000ce    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_00D5   0x0000d5    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-            set_pixel_ptr   0x0000de    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   mask00   0x0000ea    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   mask01   0x0000ed    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                xor_pixel   0x0000ef    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                  xor_row   0x0000f5    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                xor_row02   0x000104    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             xor_row_done   0x000108    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-           get_flash_word   0x00010a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               read_flash   0x00010f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-          next_flash_word   0x000119    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               get_nibble   0x00011e    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                     row2   0x000127    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                     row1   0x000129    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                     row0   0x00012b    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-              nibble_mask   0x00012c    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   bitmap   0x000130    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    bmp00   0x000131    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    bmp02   0x000133    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    bmp01   0x000144    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               print_char   0x000147    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             print_tetrim   0x00014f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-              print_label   0x000169    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             prt_lbl_done   0x00017d    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                print_int   0x00017f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-              print_int00   0x000183    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               print_last   0x000193    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                  no_zero   0x000199    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    vline   0x00019b    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    drop1   0x0001a4    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 row_loop   0x0001a5    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 col_loop   0x0001a7    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               next_pixel   0x0001b6    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                query_row   0x0001bf    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                     qr00   0x0001c1    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                     qr01   0x0001cc    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               count_full   0x0001d0    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               count_loop   0x0001d4    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 next_row   0x0001e6    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               count_done   0x0001e8    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               new_tminos   0x0001ea    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               wait_start   0x0001fb    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                     koro   0x000200    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_020E   0x00020e    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 no_sound   0x00020f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 wait_end   0x00021d    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                coll_test   0x000220    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-           update_display   0x000226    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   prompt   0x000237    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                     init   0x000240    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                game_init   0x00027d    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 cls_loop   0x000283    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    hline   0x000295    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   tetris   0x0002b6    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                game_loop   0x0002ba    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                game_over   0x0002bd    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                    clr00   0x0002c1    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   drop21   0x0002d0    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                fall_loop   0x0002dc    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-              drop_tetrim   0x0002ef    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                 rot_left   0x0002f8    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                rot_right   0x000301    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                move_left   0x00030a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               move_right   0x00030f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                move_down   0x000313    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             score_update   0x00031a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-             _.org_1_0327   0x000327    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               add_points   0x000328    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                   digits   0x00032e    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-               tetriminos   0x00035a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                  tone_pr   0x00037a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-              korobeiniki   0x0003a7    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                lbl_score   0x0003ed    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                lbl_lines   0x0003f4    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
-                lbl_press   0x0003fb    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+            visible_check   0x000010    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+              vsync_start   0x000018    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                vsync_end   0x00001f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   gt_255   0x000026    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    tasks   0x000031    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    task0   0x00003b    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    task1   0x000041    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    task2   0x000046    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 isr_exit   0x000051    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    pause   0x000055    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_0058   0x000058    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    div10   0x00005a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               div10_loop   0x00005d    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 read_pad   0x000068    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_006D   0x00006d    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_006F   0x00006f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_0072   0x000072    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    try_a   0x000074    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    try_b   0x00007a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   try_rt   0x000080    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   try_up   0x000086    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   try_lt   0x00008c    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   try_dn   0x000092    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                read_exit   0x000097    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                     rp01   0x0000a1    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                     tone   0x0000a6    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 set_yptr   0x0000bd    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+          video_serialize   0x0000c9    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_00CA   0x0000ca    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_00CC   0x0000cc    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+           byte_serialize   0x0000db    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_00E0   0x0000e0    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_00E7   0x0000e7    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+            set_pixel_ptr   0x0000f0    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   mask00   0x0000fc    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   mask01   0x0000ff    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                xor_pixel   0x000101    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                  xor_row   0x000107    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                xor_row02   0x000116    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             xor_row_done   0x00011a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+           get_flash_word   0x00011c    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               read_flash   0x000121    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+          next_flash_word   0x00012b    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               get_nibble   0x000130    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                     row2   0x000139    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                     row1   0x00013b    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                     row0   0x00013d    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+              nibble_mask   0x00013e    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   bitmap   0x000142    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    bmp00   0x000143    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    bmp02   0x000145    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    bmp01   0x000156    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               print_char   0x000159    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             print_tetrim   0x000161    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+              print_label   0x00017b    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             prt_lbl_done   0x00018f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                print_int   0x000191    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+              print_int00   0x000195    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               print_last   0x0001a5    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                  no_zero   0x0001ab    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    vline   0x0001ad    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    drop1   0x0001b6    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 row_loop   0x0001b7    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 col_loop   0x0001b9    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               next_pixel   0x0001c8    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                query_row   0x0001d1    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                     qr00   0x0001d3    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                     qr01   0x0001de    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               count_full   0x0001e2    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               count_loop   0x0001e6    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 next_row   0x0001f8    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               count_done   0x0001fa    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               new_tminos   0x0001fc    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               wait_start   0x00020d    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                     koro   0x000212    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_0220   0x000220    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 no_sound   0x000221    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 wait_end   0x00022f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                coll_test   0x000232    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+           update_display   0x000238    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   prompt   0x000249    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                     init   0x000252    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                game_init   0x00028f    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 cls_loop   0x000295    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    hline   0x0002a7    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   tetris   0x0002c8    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                game_loop   0x0002cc    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                game_over   0x0002cf    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    clr00   0x0002d3    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   drop21   0x0002e2    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                fall_loop   0x0002ee    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+              drop_tetrim   0x000301    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 rot_left   0x00030a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                rot_right   0x000313    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                move_left   0x00031c    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               move_right   0x000321    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                move_down   0x000325    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             score_update   0x00032c    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+             _.org_1_0339   0x000339    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               add_points   0x00033a    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                   digits   0x000340    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+               tetriminos   0x00036c    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                  tone_pr   0x00038c    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+              korobeiniki   0x0003b9    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                lbl_score   0x0003ff    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                lbl_lines   0x000406    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                lbl_press   0x00040d    program     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                    _stack   0x000020       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                    tetrim   0x000040       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                     angle   0x000041       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
@@ -288,6 +292,8 @@ Linker Map File - Created Wed Dec 21 16:13:44 2016
                    scoreH   0x000045       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                  droppedL   0x000046       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                  droppedH   0x000047       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                 btn_time   0x000048       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
+                    ticks   0x000049       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
           video_buffer_b0   0x000050       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                   lcountL   0x000070       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
                   lcountH   0x000071       data     static /home/jacques/MPLABXProjects/tetris_pad/tetris_pad.X/tetris.asm
